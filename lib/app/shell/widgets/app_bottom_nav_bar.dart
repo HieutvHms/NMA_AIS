@@ -17,27 +17,23 @@ class AppBottomNavBar extends StatelessWidget {
   static const List<NavBarItemData> tabs = [
     NavBarItemData(
       path: '/overview',
-      label: 'Tổng quan',
-      icon: Icons.dashboard_outlined,
-      activeIcon: Icons.dashboard_rounded,
+      label: 'Trang chủ',
+      svgPath: 'assets/icons/navbar/ic_home.svg',
     ),
     NavBarItemData(
       path: '/devices',
       label: 'Thiết bị',
-      icon: Icons.router_outlined,
-      activeIcon: Icons.router_rounded,
+      svgPath: 'assets/icons/navbar/ic_device.svg',
     ),
     NavBarItemData(
       path: '/monitoring',
       label: 'Giám sát',
-      icon: Icons.radar_outlined,
-      activeIcon: Icons.radar_rounded,
+      svgPath: 'assets/icons/navbar/ic_map.svg',
     ),
     NavBarItemData(
       path: '/profile',
-      label: 'Cá nhân',
-      icon: Icons.person_outline_rounded,
-      activeIcon: Icons.person_rounded,
+      label: 'Tài khoản',
+      svgPath: 'assets/icons/navbar/ic_user.svg',
     ),
   ];
 
@@ -56,6 +52,10 @@ class AppBottomNavBar extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    // Trên iPhone có viền đáy an toàn (Home indicator) bottomInset ~ 34px
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+    final hasBottomInset = bottomInset > 0;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -70,7 +70,14 @@ class AppBottomNavBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+          padding: EdgeInsets.only(
+            left: 8.w,
+            right: 8.w,
+            top: 5.h,
+            // Nếu đã có Safe Area (iPhone) thì chỉ cần padding tối thiểu 2.h,
+            // tránh đội thêm khoảng trắng lớn dưới chân trang
+            bottom: hasBottomInset ? 2.h : 6.h,
+          ),
           child: Row(
             children: List.generate(
               tabs.length,

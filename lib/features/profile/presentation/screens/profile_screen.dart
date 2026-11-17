@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../app/commom/buttons/app_button.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../app/theme/text_style.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../auth/presentation/cubit/auth_state.dart';
+import '../widgets/profile_avatar_section.dart';
+import '../widgets/profile_menu_list.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -10,61 +13,36 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Cá nhân')),
+      backgroundColor: const Color(0xFFEAF1F9),
+      appBar: AppBar(
+        title: Text(
+          'Tài khoản',
+          style: AppTextStyles.titleMediumAppBar(
+            color: const Color(0xFF0F2A4A),
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+      ),
       body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           final user = state is Authenticated ? state.user : null;
 
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      const CircleAvatar(
-                        radius: 32,
-                        child: Icon(Icons.person_rounded, size: 36),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        user?.username ?? 'Người dùng',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Vai trò: ${user?.role.toUpperCase() ?? "USER"}',
-                        style: const TextStyle(color: Colors.black54),
-                      ),
-                      const Divider(height: 28),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'UDP Port được cấp quyền:',
-                            style: TextStyle(color: Colors.black54),
-                          ),
-                          Text(
-                            user?.allowedPorts.join(', ') ?? '-',
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              AppButton(
-                label: 'Đăng xuất',
-                icon: Icons.logout_rounded,
-                onPressed: () => context.read<AuthCubit>().logout(),
-              ),
-            ],
+          return SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            child: Column(
+              children: [
+                if (user != null) ...[
+                  ProfileAvatarSection(user: user),
+                  SizedBox(height: 20.h),
+                ],
+                ProfileMenuList(user: user),
+                SizedBox(height: 24.h),
+              ],
+            ),
           );
         },
       ),

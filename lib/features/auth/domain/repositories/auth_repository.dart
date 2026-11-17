@@ -6,6 +6,10 @@ abstract class AuthRepository {
     required String password,
   });
 
+  Future<bool> refreshToken();
+
   Future<void> logout();
+
+  Future<UserEntity?> getCurrentUser();
 }
 

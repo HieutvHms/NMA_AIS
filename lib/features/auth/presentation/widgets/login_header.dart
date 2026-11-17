@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../app/theme/text_style.dart';
 import 'ais_logo_icon.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoginHeader extends StatelessWidget {
   const LoginHeader({super.key});
@@ -10,18 +11,21 @@ class LoginHeader extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const AisLogoIcon(size: 72),
-        const SizedBox(height: 14),
+        AisLogoIcon(size: 72.h),
+        SizedBox(height: 14.h),
         Text(
-          'AIS Manager',
+          'NMA AIS',
           textAlign: TextAlign.center,
-          style: AppTextStyles.body13(),
+          style: AppTextStyles.titleLarge(
+            color: const Color.fromARGB(255, 5, 81, 144),
+          ),
         ),
-        const SizedBox(height: 6),
         Text(
           'Quản lý và cấu hình thiết bị AIS',
           textAlign: TextAlign.center,
-          style: AppTextStyles.bodyMedium(),
+          style: AppTextStyles.bodyMedium(
+            color: const Color.fromARGB(255, 5, 81, 144),
+          ),
         ),
       ],
     );

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../app/commom/buttons/app_button.dart';
 import '../../../../app/commom/inputs/app_text_field.dart';
+import '../../../../core/utils/snackbar_helper.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'forgot_password_button.dart';
-import 'login_submit_button.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -28,9 +29,9 @@ class _LoginFormState extends State<LoginForm> {
   void _handleLogin() {
     FocusScope.of(context).unfocus();
     context.read<AuthCubit>().login(
-          _usernameController.text,
-          _passwordController.text,
-        );
+      _usernameController.text,
+      _passwordController.text,
+    );
   }
 
   @override
@@ -38,11 +39,9 @@ class _LoginFormState extends State<LoginForm> {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is Unauthenticated && state.errorMessage != null) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(content: Text(state.errorMessage!)),
-            );
+          SnackbarHelper.showError(context, message: state.errorMessage!);
+        } else if (state is Authenticated) {
+          SnackbarHelper.showSuccess(context, message: 'Đăng nhập thành công');
         }
       },
       builder: (context, state) {
@@ -55,12 +54,13 @@ class _LoginFormState extends State<LoginForm> {
               controller: _usernameController,
               hintText: 'Tên đăng nhập',
               prefixSvgPath: 'assets/icons/sign_in/ic_user.svg',
-              textInputAction: TextInputAction.next,
-              borderRadius: 14.r,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 16.w,
-                vertical: 15.h,
-              ),
+              borderRadius: 16.r,
+              fillColor: Colors.white,
+              borderColor: const Color.fromARGB(255, 137, 148, 164),
+              borderWidth: 0.5,
+              focusedBorderColor: const Color(0xFF1B63C6),
+              focusedBorderWidth: 0.8,
+              height: 46.h,
             ),
             SizedBox(height: 14.h),
             AppTextField(
@@ -68,20 +68,23 @@ class _LoginFormState extends State<LoginForm> {
               hintText: 'Mật khẩu',
               prefixSvgPath: 'assets/icons/sign_in/ic_pass.svg',
               isPassword: true,
-              textInputAction: TextInputAction.done,
               onSubmitted: (_) => _handleLogin(),
-              borderRadius: 14.r,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 16.w,
-                vertical: 15.h,
-              ),
+              borderRadius: 16.r,
+              fillColor: Colors.white,
+              borderColor: const Color.fromARGB(255, 137, 148, 164),
+              borderWidth: 0.5,
+              focusedBorderColor: const Color(0xFF1B63C6),
+              focusedBorderWidth: 0.8,
+              height: 46.h,
             ),
             SizedBox(height: 20.h),
-            LoginSubmitButton(
+            AppButton(
+              text: 'Đăng nhập',
+              height: 46.h,
+              borderRadius: 12.r,
               isLoading: isLoading,
               onPressed: _handleLogin,
             ),
-            SizedBox(height: 12.h),
             const ForgotPasswordButton(),
           ],
         );
@@ -89,4 +92,3 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 }
-

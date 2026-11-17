@@ -12,6 +12,9 @@ class AppButton extends StatelessWidget {
   final Color? textColor;
   final double? width;
   final double? height;
+  final double? borderRadius;
+  final double? elevation;
+  final TextStyle? textStyle;
   final IconData? icon;
   final Widget? iconWidget;
 
@@ -25,6 +28,9 @@ class AppButton extends StatelessWidget {
     this.textColor,
     this.width,
     this.height,
+    this.borderRadius,
+    this.elevation,
+    this.textStyle,
     this.icon,
     this.iconWidget,
   });
@@ -41,9 +47,9 @@ class AppButton extends StatelessWidget {
           backgroundColor: backgroundColor ?? AppColors.primary,
           foregroundColor: textColor ?? Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(borderRadius ?? 12.r),
           ),
-          elevation: 0,
+          elevation: elevation ?? 0,
         ),
         onPressed: isLoading ? null : onPressed,
         child: isLoading
@@ -68,7 +74,11 @@ class AppButton extends StatelessWidget {
                   ],
                   Text(
                     _buttonText,
-                    style: AppTextStyles.labelLarge2(color: textColor ?? Colors.white),
+                    style:
+                        textStyle ??
+                        AppTextStyles.labelLarge2(
+                          color: textColor ?? Colors.white,
+                        ),
                   ),
                 ],
               ),

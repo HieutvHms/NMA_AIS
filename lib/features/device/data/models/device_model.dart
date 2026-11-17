@@ -2,7 +2,6 @@ import '../../domain/entities/device_entity.dart';
 
 class DeviceModel extends DeviceEntity {
   const DeviceModel({
-    required super.id,
     required super.imei,
     required super.stationName,
     super.simSerial = '',
@@ -23,21 +22,35 @@ class DeviceModel extends DeviceEntity {
 
   factory DeviceModel.fromJson(Map<String, dynamic> json) {
     return DeviceModel(
-      id: json['id']?.toString() ?? json['imei']?.toString() ?? '',
       imei: json['imei']?.toString() ?? '',
-      stationName: json['stationName']?.toString() ?? json['deviceName']?.toString() ?? '',
+      stationName:
+          json['stationName']?.toString() ??
+          json['deviceName']?.toString() ??
+          '',
       simSerial: json['simSerial']?.toString() ?? '',
-      aisPort: int.tryParse(json['aisPort']?.toString() ?? json['mainUdpPort']?.toString() ?? '6000') ?? 6000,
-      secondaryUdpPort: int.tryParse(json['secondaryUdpPort']?.toString() ?? ''),
+      aisPort:
+          int.tryParse(
+            json['aisPort']?.toString() ??
+                json['mainUdpPort']?.toString() ??
+                '6000',
+          ) ??
+          6000,
+      secondaryUdpPort: int.tryParse(
+        json['secondaryUdpPort']?.toString() ?? '',
+      ),
       status: DeviceStatus.fromString(json['status']?.toString()),
-      signalStrength: int.tryParse(json['signalStrength']?.toString() ?? '0') ?? 0,
+      signalStrength:
+          int.tryParse(json['signalStrength']?.toString() ?? '0') ?? 0,
       lastMessageTime: json['lastMessageTime'] != null
           ? DateTime.tryParse(json['lastMessageTime'].toString())
           : null,
       lastAisTime: json['lastAisTime'] != null
           ? DateTime.tryParse(json['lastAisTime'].toString())
           : null,
-      aisModuleType: json['aisModuleType']?.toString() ?? json['aisDeviceType']?.toString() ?? 'AIS AtoN Type 1',
+      aisModuleType:
+          json['aisModuleType']?.toString() ??
+          json['aisDeviceType']?.toString() ??
+          'AIS AtoN Type 1',
       updatedAt: json['updatedAt'] != null
           ? DateTime.tryParse(json['updatedAt'].toString())
           : null,
@@ -46,7 +59,6 @@ class DeviceModel extends DeviceEntity {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'imei': imei,
       'stationName': stationName,
       'simSerial': simSerial,
@@ -76,7 +88,6 @@ class DeviceModel extends DeviceEntity {
     DateTime? updatedAt,
   }) {
     return DeviceModel(
-      id: id ?? this.id,
       imei: imei ?? this.imei,
       stationName: stationName ?? this.stationName,
       simSerial: simSerial ?? this.simSerial,

@@ -2,8 +2,7 @@ import 'package:equatable/equatable.dart';
 
 enum DeviceStatus {
   online('Online'),
-  offline('Offline'),
-  maintenance('Đang bảo trì');
+  offline('Offline');
 
   final String label;
   const DeviceStatus(this.label);
@@ -12,15 +11,11 @@ enum DeviceStatus {
     if (value == null) return DeviceStatus.offline;
     final lower = value.toLowerCase().trim();
     if (lower == 'online' || lower == 'trực tuyến') return DeviceStatus.online;
-    if (lower == 'maintenance' || lower == 'đang bảo trì') {
-      return DeviceStatus.maintenance;
-    }
     return DeviceStatus.offline;
   }
 }
 
 class DeviceEntity extends Equatable {
-  final String id;
   final String imei; // Key chính
   final String stationName; // Tên trạm / Tên thiết bị
   final String simSerial; // Serial SIM
@@ -34,7 +29,6 @@ class DeviceEntity extends Equatable {
   final DateTime? updatedAt; // Cập nhật lần cuối
 
   const DeviceEntity({
-    required this.id,
     required this.imei,
     required this.stationName,
     this.simSerial = '',
@@ -52,18 +46,16 @@ class DeviceEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        imei,
-        stationName,
-        simSerial,
-        aisPort,
-        secondaryUdpPort,
-        status,
-        signalStrength,
-        lastMessageTime,
-        lastAisTime,
-        aisModuleType,
-        updatedAt,
-      ];
+    imei,
+    stationName,
+    simSerial,
+    aisPort,
+    secondaryUdpPort,
+    status,
+    signalStrength,
+    lastMessageTime,
+    lastAisTime,
+    aisModuleType,
+    updatedAt,
+  ];
 }
-

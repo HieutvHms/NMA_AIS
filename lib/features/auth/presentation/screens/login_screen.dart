@@ -23,7 +23,6 @@ class LoginScreen extends StatelessWidget {
                       children: [
                         SizedBox(height: constraints.maxHeight * 0.07),
                         const LoginHeader(),
-                        // Khoảng trống ở giữa để hiển thị phao AIS trên mặt biển
                         const Spacer(flex: 3),
                         const LoginForm(),
                         const Spacer(flex: 2),
@@ -39,4 +38,3 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
-

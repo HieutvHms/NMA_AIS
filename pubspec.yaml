@@ -51,6 +51,8 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets:
+    - .env
     - assets/images/
     - assets/icons/device/
     - assets/icons/sign_in/
+    - assets/icons/navbar/

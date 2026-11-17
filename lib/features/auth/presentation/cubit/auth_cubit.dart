@@ -1,11 +1,39 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/repositories/auth_repository.dart';
+import '../../../../core/error/error_mapper.dart';
+import '../../../../core/error/failures.dart';
+import '../../domain/usecases/get_current_user_usecase.dart';
+import '../../domain/usecases/login_usecase.dart';
+import '../../domain/usecases/logout_usecase.dart';
 import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  final AuthRepository _authRepository;
+  final LoginUseCase _loginUseCase;
+  final LogoutUseCase _logoutUseCase;
+  final GetCurrentUserUseCase _getCurrentUserUseCase;
 
-  AuthCubit(this._authRepository) : super(const Unauthenticated());
+  AuthCubit({
+    required LoginUseCase loginUseCase,
+    required LogoutUseCase logoutUseCase,
+    required GetCurrentUserUseCase getCurrentUserUseCase,
+  })  : _loginUseCase = loginUseCase,
+        _logoutUseCase = logoutUseCase,
+        _getCurrentUserUseCase = getCurrentUserUseCase,
+        super(const Unauthenticated()) {
+    checkAuthStatus();
+  }
+
+  Future<void> checkAuthStatus() async {
+    try {
+      final user = await _getCurrentUserUseCase();
+      if (user != null) {
+        emit(Authenticated(user));
+      } else {
+        emit(const Unauthenticated());
+      }
+    } catch (_) {
+      emit(const Unauthenticated());
+    }
+  }
 
   Future<void> login(String username, String password) async {
     if (username.trim().isEmpty || password.isEmpty) {
@@ -17,19 +45,25 @@ class AuthCubit extends Cubit<AuthState> {
 
     emit(const AuthLoading());
     try {
-      final user = await _authRepository.login(
+      final user = await _loginUseCase(
         username: username.trim(),
         password: password,
       );
       emit(Authenticated(user));
     } catch (e) {
-      emit(Unauthenticated(errorMessage: e.toString()));
+      final failure = e is Failure ? e : ErrorMapper.map(e);
+      emit(Unauthenticated(errorMessage: failure.message, failure: failure));
     }
   }
 
+  /// Đăng xuất khi phiên làm việc hết hạn (được gọi từ Dio Interceptor)
+  Future<void> forceLogout({String? reason}) async {
+    await _logoutUseCase();
+    emit(Unauthenticated(errorMessage: reason));
+  }
+
   Future<void> logout() async {
-    await _authRepository.logout();
+    await _logoutUseCase();
     emit(const Unauthenticated());
   }
 }
-

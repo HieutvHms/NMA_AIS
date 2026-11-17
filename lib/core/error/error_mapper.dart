@@ -113,7 +113,10 @@ class ErrorMapper {
     final serverMsg = data is Map ? data['message']?.toString() : null;
 
     return switch (code) {
-      401 => const UnauthorizedFailure(),
+      401 =>
+        serverMsg != null && serverMsg.isNotEmpty
+            ? ServerFailure(message: sanitize(serverMsg), code: code)
+            : const UnauthorizedFailure(),
       403 => const ForbiddenFailure(),
       404 => const NotFoundFailure(),
       422 => ServerFailure(

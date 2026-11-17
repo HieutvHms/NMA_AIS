@@ -1,0 +1,452 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../app/theme/text_style.dart';
+import '../../../auth/domain/entities/user_entity.dart';
+import '../../../auth/presentation/cubit/auth_cubit.dart';
+
+class ProfileMenuList extends StatelessWidget {
+  final UserEntity? user;
+
+  const ProfileMenuList({super.key, this.user});
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(8.r),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEE2E2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.logout_rounded,
+                color: const Color(0xFFDC2626),
+                size: 20.r,
+              ),
+            ),
+            SizedBox(width: 10.w),
+            Text(
+              'Đăng xuất',
+              style: AppTextStyles.titleMediumBlack().copyWith(
+                fontSize: 17.sp,
+                color: const Color(0xFF0F2A4A),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống giám sát AIS?',
+          style: AppTextStyles.labelLarge().copyWith(
+            color: const Color(0xFF5B6B82),
+            fontSize: 14.sp,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogCtx).pop(),
+            child: Text(
+              'Hủy',
+              style: AppTextStyles.labelLarge().copyWith(
+                color: const Color(0xFF5B6B82),
+              ),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDC2626),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(dialogCtx).pop();
+              context.read<AuthCubit>().logout();
+            },
+            child: const Text('Đăng xuất'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPermissionsDialog(BuildContext context) {
+    if (user == null) return;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFCBD5E1),
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                'Quyền hạn & Cổng kết nối',
+                style: AppTextStyles.titleMediumBlack().copyWith(
+                  fontSize: 17.sp,
+                  color: const Color(0xFF0F2A4A),
+                ),
+              ),
+              SizedBox(height: 12.h),
+              _buildPermissionRow(
+                'Vai trò hệ thống',
+                user!.isAdmin
+                    ? 'Quản trị viên (Admin)'
+                    : 'Người vận hành (User)',
+                Icons.badge_outlined,
+              ),
+              SizedBox(height: 16.h),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1565C0),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                  ),
+                  onPressed: () => Navigator.of(sheetCtx).pop(),
+                  child: const Text('Đóng'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPermissionRow(
+    String label,
+    String value,
+    IconData icon, {
+    bool? isAllowed,
+  }) {
+    Color valueColor = const Color(0xFF0F2A4A);
+    if (isAllowed != null) {
+      valueColor = isAllowed
+          ? const Color(0xFF15803D)
+          : const Color(0xFFDC2626);
+    }
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.h),
+      child: Row(
+        children: [
+          Icon(icon, size: 20.r, color: const Color(0xFF1565C0)),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Text(
+              label,
+              style: AppTextStyles.labelLarge().copyWith(
+                color: const Color(0xFF5B6B82),
+                fontSize: 13.sp,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: AppTextStyles.labelLarge().copyWith(
+              color: valueColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 13.sp,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showChangePasswordDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: Text(
+          'Đổi mật khẩu',
+          style: AppTextStyles.titleMediumBlack().copyWith(
+            fontSize: 17.sp,
+            color: const Color(0xFF0F2A4A),
+          ),
+        ),
+        content: Text(
+          'Tính năng đổi mật khẩu trực tiếp trên ứng dụng đang được đồng bộ với máy chủ quản trị.',
+          style: AppTextStyles.labelLarge().copyWith(
+            color: const Color(0xFF5B6B82),
+            fontSize: 14.sp,
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1565C0),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+            ),
+            onPressed: () => Navigator.of(dialogCtx).pop(),
+            child: const Text('Đã hiểu'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // 1. Nhóm Tính năng quản lý thiết bị & giám sát
+        _ProfileCard(
+          children: [
+            _ProfileMenuItem(
+              svgPath: 'assets/icons/navbar/ic_device.svg',
+              label: 'Quản lý thiết bị 4G',
+              isFirst: true,
+              onTap: () => context.push('/profile/device-management'),
+            ),
+            Divider(
+              height: 1,
+              thickness: 1,
+              indent: 52.w,
+              endIndent: 14.w,
+              color: const Color(0xFFF1F5F9),
+            ),
+            _ProfileMenuItem(
+              svgPath: 'assets/icons/navbar/ic_map.svg',
+              label: 'Giám sát thiết bị',
+              isLast: true,
+              onTap: () => context.go('/monitoring'),
+            ),
+          ],
+        ),
+        SizedBox(height: 12.h),
+
+        // 2. Nhóm Quyền hạn & Bảo mật
+        _ProfileCard(
+          children: [
+            _ProfileMenuItem(
+              icon: Icons.shield_outlined,
+              label: 'Quyền hạn & Cổng UDP',
+              isFirst: true,
+              onTap: () => _showPermissionsDialog(context),
+            ),
+            Divider(
+              height: 1,
+              thickness: 1,
+              indent: 52.w,
+              endIndent: 14.w,
+              color: const Color(0xFFF1F5F9),
+            ),
+            _ProfileMenuItem(
+              svgPath: 'assets/icons/sign_in/ic_pass.svg',
+              label: 'Đổi mật khẩu',
+              isLast: true,
+              onTap: () => _showChangePasswordDialog(context),
+            ),
+          ],
+        ),
+        SizedBox(height: 12.h),
+
+        // 3. Nhóm Thông tin ứng dụng
+        _ProfileCard(
+          children: [
+            _ProfileMenuItem(
+              icon: Icons.info_outline_rounded,
+              label: 'Phiên bản ứng dụng',
+              value: '1.0.0',
+              showChevron: false,
+              isFirst: true,
+              isLast: true,
+              onTap: null,
+            ),
+          ],
+        ),
+        SizedBox(height: 12.h),
+
+        // 4. Nhóm Đăng xuất
+        _ProfileCard(
+          children: [
+            _ProfileMenuItem(
+              icon: Icons.logout_rounded,
+              iconColor: const Color(0xFFDC2626),
+              iconBgColor: const Color(0xFFFEE2E2),
+              label: 'Đăng xuất',
+              labelColor: const Color(0xFFDC2626),
+              showChevron: false,
+              isFirst: true,
+              isLast: true,
+              onTap: () => _showLogoutDialog(context),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _ProfileCard extends StatelessWidget {
+  final List<Widget> children;
+  const _ProfileCard({required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(16.r);
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: radius,
+        border: Border.all(
+          color: const Color.fromARGB(255, 198, 204, 211),
+          width: 1.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0D3B7A).withValues(alpha: 0.08),
+            blurRadius: 10.r,
+            offset: Offset(0, 3.h),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: radius,
+        clipBehavior: Clip.antiAlias,
+        child: Column(children: children),
+      ),
+    );
+  }
+}
+
+class _ProfileMenuItem extends StatelessWidget {
+  final String? svgPath;
+  final IconData? icon;
+  final String label;
+  final String? value;
+  final Color? iconColor;
+  final Color? iconBgColor;
+  final Color? labelColor;
+  final bool showChevron;
+  final bool isFirst;
+  final bool isLast;
+  final VoidCallback? onTap;
+
+  const _ProfileMenuItem({
+    this.svgPath,
+    this.icon,
+    required this.label,
+    this.value,
+    this.iconColor,
+    this.iconBgColor,
+    this.labelColor,
+    this.showChevron = true,
+    this.isFirst = false,
+    this.isLast = false,
+    this.onTap,
+  }) : assert(
+         svgPath != null || icon != null,
+         'Phải cung cấp svgPath hoặc icon',
+       );
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: const Color(0xFF1565C0).withValues(alpha: 0.08),
+        highlightColor: const Color(0xFF1565C0).withValues(alpha: 0.04),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+          child: Row(
+            children: [
+              Container(
+                width: 36.r,
+                height: 36.r,
+                decoration: BoxDecoration(
+                  color: iconBgColor ?? const Color(0xFFE8F1FC),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Center(
+                  child: svgPath != null
+                      ? SvgPicture.asset(
+                          svgPath!,
+                          width: 20.r,
+                          height: 20.r,
+                          colorFilter: ColorFilter.mode(
+                            iconColor ?? const Color(0xFF1565C0),
+                            BlendMode.srcIn,
+                          ),
+                        )
+                      : Icon(
+                          icon,
+                          size: 20.r,
+                          color: iconColor ?? const Color(0xFF1565C0),
+                        ),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Text(
+                  label,
+                  style: AppTextStyles.labelLarge().copyWith(
+                    color: labelColor ?? const Color(0xFF0F2A4A),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.sp,
+                  ),
+                ),
+              ),
+              if (value != null) ...[
+                Text(
+                  value!,
+                  style: AppTextStyles.labelLarge().copyWith(
+                    color: const Color(0xFF5B6B82),
+                    fontSize: 13.sp,
+                  ),
+                ),
+                SizedBox(width: 6.w),
+              ],
+              if (showChevron)
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: const Color(0xFFCBD5E1),
+                  size: 22.r,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

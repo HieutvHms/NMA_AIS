@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
-import '../../../features/device/presentation/cubit/device_config_cubit.dart';
-import '../../../features/device/presentation/cubit/device_list_cubit.dart';
+import '../../../features/device/presentation/device_config/cubit/device_config_cubit.dart';
+import '../../../features/device/presentation/device_list/cubit/device_list_cubit.dart';
 import '../../../features/device/data/datasources/device_remote_datasource.dart';
 import '../../../features/device/data/repositories/device_repository_impl.dart';
 import '../../../features/device/domain/repositories/device_repository.dart';

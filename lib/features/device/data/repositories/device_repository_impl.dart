@@ -9,8 +9,14 @@ class DeviceRepositoryImpl implements DeviceRepository {
   DeviceRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<List<DeviceEntity>> getDevices({String? query, DeviceStatus? statusFilter}) {
-    return remoteDataSource.getDevices(query: query, statusFilter: statusFilter);
+  Future<List<DeviceEntity>> getDevices({
+    String? query,
+    DeviceStatus? statusFilter,
+  }) {
+    return remoteDataSource.getDevices(
+      query: query,
+      statusFilter: statusFilter,
+    );
   }
 
   @override
@@ -21,7 +27,6 @@ class DeviceRepositoryImpl implements DeviceRepository {
   @override
   Future<DeviceEntity> createDevice(DeviceEntity device) {
     final model = DeviceModel(
-      id: device.imei,
       imei: device.imei,
       stationName: device.stationName,
       simSerial: device.simSerial,

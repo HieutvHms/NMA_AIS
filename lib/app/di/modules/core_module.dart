@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/storage/local_storage.dart';
 import '../../../core/storage/secure_storege.dart';
+import '../../../features/auth/presentation/cubit/auth_cubit.dart';
 
 Future<void> registerCoreModule(GetIt sl) async {
   final prefs = await SharedPreferences.getInstance();
@@ -19,6 +20,15 @@ Future<void> registerCoreModule(GetIt sl) async {
     () => LocalStorage(sl<SharedPreferences>()),
   );
   sl.registerLazySingleton<DioClient>(
-    () => DioClient(sl<LocalStorage>()),
+    () => DioClient(
+      sl<LocalStorage>(),
+      onSessionExpired: () {
+        if (sl.isRegistered<AuthCubit>()) {
+          sl<AuthCubit>().forceLogout(
+            reason: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+          );
+        }
+      },
+    ),
   );
 }

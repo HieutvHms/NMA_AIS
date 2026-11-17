@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../core/constants/app_constants.dart';
 import '../features/auth/presentation/cubit/auth_cubit.dart';
 import 'di/injection_container.dart';
-import 'routes.dart';
+import 'router/routes.dart';
 import 'theme/app_theme.dart';
 
 class AisApp extends StatefulWidget {

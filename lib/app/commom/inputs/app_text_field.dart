@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/text_style.dart';
 
-/// TextField dùng chung cho toàn bộ ứng dụng, tuân thủ AppTheme & Clean Design
+/// TextField dùng chung cho toàn bộ ứng dụng
 class AppTextField extends StatefulWidget {
   final String? label;
   final bool isRequired;
@@ -34,12 +34,25 @@ class AppTextField extends StatefulWidget {
   final bool autoFocus;
   final FocusNode? focusNode;
   final double? borderRadius;
+  final double? height;
   final EdgeInsetsGeometry? contentPadding;
   final EdgeInsetsGeometry? margin;
   final Color? fillColor;
+  final Color? focusedFillColor;
+  final Color? borderColor;
+  final Color? focusedBorderColor;
+  final Color? errorBorderColor;
+  final double? borderWidth;
+  final double? focusedBorderWidth;
+  final InputBorder? customBorder;
+  final InputBorder? customFocusedBorder;
   final TextAlign textAlign;
+  final TextAlignVertical? textAlignVertical;
   final TextStyle? style;
   final TextStyle? hintStyle;
+
+  final bool? autocorrect;
+  final bool? enableSuggestions;
 
   const AppTextField({
     super.key,
@@ -59,6 +72,8 @@ class AppTextField extends StatefulWidget {
     this.inputFormatters,
     this.isPassword = false,
     this.showClearButton = false,
+    this.autocorrect,
+    this.enableSuggestions,
     this.prefixIcon,
     this.prefixSvgPath,
     this.suffixIcon,
@@ -70,10 +85,20 @@ class AppTextField extends StatefulWidget {
     this.autoFocus = false,
     this.focusNode,
     this.borderRadius,
+    this.height,
     this.contentPadding,
     this.margin,
     this.fillColor,
+    this.focusedFillColor,
+    this.borderColor,
+    this.focusedBorderColor,
+    this.errorBorderColor,
+    this.borderWidth,
+    this.focusedBorderWidth,
+    this.customBorder,
+    this.customFocusedBorder,
     this.textAlign = TextAlign.start,
+    this.textAlignVertical,
     this.style,
     this.hintStyle,
   });
@@ -85,10 +110,14 @@ class AppTextField extends StatefulWidget {
 class _AppTextFieldState extends State<AppTextField> {
   late bool _obscureText;
   TextEditingController? _internalController;
+  FocusNode? _internalFocusNode;
   bool _hasText = false;
+  bool _isFocused = false;
 
   TextEditingController get _effectiveController =>
       widget.controller ?? _internalController!;
+
+  FocusNode get _effectiveFocusNode => widget.focusNode ?? _internalFocusNode!;
 
   String? get _effectiveHint => widget.hintText ?? widget.hint;
 
@@ -101,8 +130,25 @@ class _AppTextFieldState extends State<AppTextField> {
       _internalController = TextEditingController(text: widget.initialValue);
     }
 
+    if (widget.focusNode == null) {
+      _internalFocusNode = FocusNode();
+    }
+
+    _effectiveFocusNode.addListener(_handleFocusChange);
+    _isFocused = _effectiveFocusNode.hasFocus;
+
     _hasText = _effectiveController.text.isNotEmpty;
     _effectiveController.addListener(_handleControllerChange);
+  }
+
+  void _handleFocusChange() {
+    if (_effectiveFocusNode.hasFocus != _isFocused) {
+      if (mounted) {
+        setState(() {
+          _isFocused = _effectiveFocusNode.hasFocus;
+        });
+      }
+    }
   }
 
   @override
@@ -115,6 +161,17 @@ class _AppTextFieldState extends State<AppTextField> {
       }
       _effectiveController.addListener(_handleControllerChange);
       _hasText = _effectiveController.text.isNotEmpty;
+    }
+
+    if (widget.focusNode != oldWidget.focusNode) {
+      (oldWidget.focusNode ?? _internalFocusNode)?.removeListener(
+        _handleFocusChange,
+      );
+      if (widget.focusNode == null && _internalFocusNode == null) {
+        _internalFocusNode = FocusNode();
+      }
+      _effectiveFocusNode.addListener(_handleFocusChange);
+      _isFocused = _effectiveFocusNode.hasFocus;
     }
   }
 
@@ -133,6 +190,8 @@ class _AppTextFieldState extends State<AppTextField> {
   void dispose() {
     _effectiveController.removeListener(_handleControllerChange);
     _internalController?.dispose();
+    _effectiveFocusNode.removeListener(_handleFocusChange);
+    _internalFocusNode?.dispose();
     super.dispose();
   }
 
@@ -144,21 +203,37 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
     final radius = widget.borderRadius ?? 12.r;
-    final effectiveFillColor = widget.fillColor ?? Colors.white;
+    final defaultBgColor = widget.fillColor ?? Colors.white;
+    final effectiveFillColor = _isFocused
+        ? (widget.focusedFillColor ?? defaultBgColor)
+        : defaultBgColor;
 
-    final baseBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radius),
-      borderSide: const BorderSide(color: Color(0xFFCBD5E1), width: 1),
-    );
+    final baseBorder =
+        widget.customBorder ??
+        OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radius),
+          borderSide: BorderSide(
+            color: widget.borderColor ?? const Color(0xFFCBD5E1),
+            width: widget.borderWidth ?? 1,
+          ),
+        );
 
-    final focusedBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radius),
-      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-    );
+    final focusedBorder =
+        widget.customFocusedBorder ??
+        OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radius),
+          borderSide: BorderSide(
+            color: widget.focusedBorderColor ?? AppColors.primary,
+            width: widget.focusedBorderWidth ?? 1.5,
+          ),
+        );
 
     final errorBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(radius),
-      borderSide: const BorderSide(color: Colors.redAccent, width: 1.2),
+      borderSide: BorderSide(
+        color: widget.errorBorderColor ?? Colors.redAccent,
+        width: 1.2,
+      ),
     );
 
     return Container(
@@ -191,23 +266,33 @@ class _AppTextFieldState extends State<AppTextField> {
             enabled: widget.enabled,
             readOnly: widget.readOnly,
             autofocus: widget.autoFocus,
-            focusNode: widget.focusNode,
+            focusNode: _effectiveFocusNode,
             obscureText: widget.isPassword ? _obscureText : false,
+            enableSuggestions: widget.enableSuggestions ?? !widget.isPassword,
+            autocorrect: widget.autocorrect ?? false,
             keyboardType: widget.keyboardType,
             textInputAction: widget.textInputAction,
             inputFormatters: widget.inputFormatters,
             maxLines: widget.isPassword ? 1 : widget.maxLines,
             minLines: widget.minLines,
             textAlign: widget.textAlign,
+            textAlignVertical: widget.textAlignVertical ??
+                ((widget.maxLines > 1 && !widget.isPassword)
+                    ? TextAlignVertical.top
+                    : TextAlignVertical.center),
             onChanged: widget.onChanged,
             onFieldSubmitted: widget.onSubmitted,
             validator: widget.validator,
             onSaved: widget.onSaved,
             style:
-                widget.style ??
-                AppTextStyles.bodyMedium(color: AppColors.textPrimary),
+                (widget.style ??
+                        AppTextStyles.bodyMedium(color: AppColors.textPrimary))
+                    .copyWith(decoration: TextDecoration.none),
             decoration: InputDecoration(
               isDense: true,
+              constraints: widget.height != null
+                  ? BoxConstraints.tightFor(height: widget.height)
+                  : null,
               hintText: _effectiveHint,
               hintStyle:
                   widget.hintStyle ??

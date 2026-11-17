@@ -1,0 +1,16 @@
+library;
+
+class RouteNames {
+  RouteNames._();
+
+  // Auth
+  static const String splash = '/';
+  static const String login = '/login';
+  static const String overview = '/overview';
+  static const String devices = '/devices';
+  static const String deviceTable = '/devices/table';
+  static const String monitoring = '/monitoring';
+  static const String profile = '/profile';
+  static const String deviceManagement = '/profile/device-management';
+  static const String deviceManagementTable = '/profile/device-management/table';
+}

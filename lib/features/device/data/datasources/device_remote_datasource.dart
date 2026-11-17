@@ -2,7 +2,10 @@ import '../models/device_model.dart';
 import '../../domain/entities/device_entity.dart';
 
 abstract class DeviceRemoteDataSource {
-  Future<List<DeviceModel>> getDevices({String? query, DeviceStatus? statusFilter});
+  Future<List<DeviceModel>> getDevices({
+    String? query,
+    DeviceStatus? statusFilter,
+  });
   Future<DeviceModel> getDeviceByImei(String imei);
   Future<DeviceModel> createDevice(DeviceModel device);
   Future<DeviceModel> updateDevice(DeviceModel device);
@@ -12,7 +15,6 @@ abstract class DeviceRemoteDataSource {
 class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
   final List<DeviceModel> _devices = [
     DeviceModel(
-      id: '860123456789012',
       imei: '860123456789012',
       stationName: 'AIS Device 001',
       simSerial: '89840480009494087557',
@@ -25,7 +27,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 14, 30),
     ),
     DeviceModel(
-      id: '860123456789013',
       imei: '860123456789013',
       stationName: 'AIS Device 002',
       simSerial: '89840480009494087680',
@@ -38,7 +39,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 10, 15),
     ),
     DeviceModel(
-      id: '860123456789014',
       imei: '860123456789014',
       stationName: 'AIS Device 003',
       simSerial: '89840480009343953231',
@@ -51,7 +51,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 14, 25),
     ),
     DeviceModel(
-      id: '860123456789015',
       imei: '860123456789015',
       stationName: 'AIS Device 004',
       simSerial: '89840480009762352139',
@@ -64,12 +63,11 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 14, 20),
     ),
     DeviceModel(
-      id: '860123456789016',
       imei: '860123456789016',
       stationName: 'AIS Device 005',
       simSerial: '89840480009343953223',
       aisPort: 6021,
-      status: DeviceStatus.maintenance,
+      status: DeviceStatus.offline,
       signalStrength: 14,
       lastMessageTime: DateTime.now().subtract(const Duration(hours: 1)),
       lastAisTime: DateTime(2026, 11, 14, 13, 00),
@@ -77,7 +75,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 13, 00),
     ),
     DeviceModel(
-      id: '862211074322678',
       imei: '862211074322678',
       stationName: 'DUNG QUẤT',
       simSerial: '89840480009494087557',
@@ -90,7 +87,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 14, 28),
     ),
     DeviceModel(
-      id: '862211074346420',
       imei: '862211074346420',
       stationName: 'THUẬN AN',
       simSerial: '89840480009494087680',
@@ -103,12 +99,11 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 09, 30),
     ),
     DeviceModel(
-      id: '862211074323429',
       imei: '862211074323429',
       stationName: 'CỬA GIANH',
       simSerial: '89840480009343953231',
       aisPort: 6020,
-      status: DeviceStatus.maintenance,
+      status: DeviceStatus.offline,
       signalStrength: 15,
       lastMessageTime: DateTime.now().subtract(const Duration(hours: 2)),
       lastAisTime: DateTime(2026, 11, 14, 12, 10),
@@ -116,7 +111,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 12, 10),
     ),
     DeviceModel(
-      id: '865194061637497',
       imei: '865194061637497',
       stationName: 'MŨI DINH',
       simSerial: '89840480009762352139',
@@ -129,7 +123,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 14, 22),
     ),
     DeviceModel(
-      id: '862211074322884',
       imei: '862211074322884',
       stationName: 'NHẬT LỆ',
       simSerial: '89840480009343953223',
@@ -142,7 +135,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 14, 19),
     ),
     DeviceModel(
-      id: '862211074336587',
       imei: '862211074336587',
       stationName: 'CHÂN MÂY',
       simSerial: '89840480009494087672',
@@ -155,7 +147,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 14, 16),
     ),
     DeviceModel(
-      id: '862211074342361',
       imei: '862211074342361',
       stationName: 'CỒN CỎ',
       simSerial: '89840480009343952506',
@@ -168,7 +159,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 14, 12),
     ),
     DeviceModel(
-      id: '862211074347204',
       imei: '862211074347204',
       stationName: 'CỬA VIỆT',
       simSerial: '89840480009343953207',
@@ -181,7 +171,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 14, 09),
     ),
     DeviceModel(
-      id: '862211074343427',
       imei: '862211074343427',
       stationName: 'LẠCH GIANG',
       simSerial: '89840480009343953280',
@@ -194,7 +183,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 14, 05),
     ),
     DeviceModel(
-      id: '862211074344235',
       imei: '862211074344235',
       stationName: 'MŨI RÒN',
       simSerial: '89840480009343953330',
@@ -207,7 +195,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 14, 02),
     ),
     DeviceModel(
-      id: '862211074344284',
       imei: '862211074344284',
       stationName: 'CỬA HỘI',
       simSerial: '89840480009343953306',
@@ -220,7 +207,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       updatedAt: DateTime(2026, 11, 14, 13, 58),
     ),
     DeviceModel(
-      id: '862211074346461',
       imei: '862211074346461',
       stationName: 'BA LÀNG AN',
       simSerial: '89840480009494087615',
@@ -235,7 +221,10 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
   ];
 
   @override
-  Future<List<DeviceModel>> getDevices({String? query, DeviceStatus? statusFilter}) async {
+  Future<List<DeviceModel>> getDevices({
+    String? query,
+    DeviceStatus? statusFilter,
+  }) async {
     await Future.delayed(const Duration(milliseconds: 250));
     var result = List<DeviceModel>.from(_devices);
 
@@ -270,7 +259,9 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
     await Future.delayed(const Duration(milliseconds: 300));
     final exists = _devices.any((e) => e.imei == device.imei);
     if (exists) {
-      throw Exception('Thiết bị có IMEI ${device.imei} đã tồn tại trong hệ thống');
+      throw Exception(
+        'Thiết bị có IMEI ${device.imei} đã tồn tại trong hệ thống',
+      );
     }
     _devices.insert(0, device);
     return device;
