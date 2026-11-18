@@ -16,17 +16,17 @@ enum DeviceStatus {
 }
 
 class DeviceEntity extends Equatable {
-  final String imei; // Key chính
-  final String stationName; // Tên trạm / Tên thiết bị
-  final String simSerial; // Serial SIM
-  final int aisPort; // Cổng nhận dữ liệu AIS (Main UDP Port)
-  final int? secondaryUdpPort; // UDP Port phụ
-  final DeviceStatus status; // Trạng thái
-  final int signalStrength; // Cường độ sóng (0 - 31 hoặc %)
-  final DateTime? lastMessageTime; // Thời gian gửi tin gần nhất
-  final DateTime? lastAisTime; // Thời gian nhận AIS gần nhất
-  final String aisModuleType; // Loại module AIS
-  final DateTime? updatedAt; // Cập nhật lần cuối
+  final String imei;
+  final String stationName;
+  final String simSerial;
+  final int aisPort;
+  final int? secondaryUdpPort;
+  final DeviceStatus status;
+  final int signalStrength;
+  final DateTime? lastMessageTime;
+  final DateTime? lastAisTime;
+  final String aisModuleType;
+  final DateTime? updatedAt;
 
   const DeviceEntity({
     required this.imei,

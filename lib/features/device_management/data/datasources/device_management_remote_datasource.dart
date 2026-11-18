@@ -49,10 +49,7 @@ class DeviceManagementRemoteDataSourceImpl extends BaseRemoteDataSource
           statusCode: e.response?.statusCode,
         );
       }
-      throw ServerException(
-        message: 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.',
-        statusCode: e.response?.statusCode,
-      );
+      rethrow;
     }
   }
 
@@ -89,6 +86,7 @@ class DeviceManagementRemoteDataSourceImpl extends BaseRemoteDataSource
       devices = devices.where((e) {
         return e.stationName.toLowerCase().contains(q) ||
             e.imei.toLowerCase().contains(q) ||
+            e.mmsi.toLowerCase().contains(q) ||
             e.aisPort.toString().contains(q) ||
             e.simSerial.toLowerCase().contains(q);
       }).toList();
@@ -103,7 +101,7 @@ class DeviceManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   ) async {
     final response = await _safePost(AppConfig.deviceUpdateUrl, {
       'type': 1,
-      'data': device.toCreatePayload(_currentUserId),
+      'data': device.toJson(_currentUserId),
     });
 
     if (response is Map<String, dynamic> &&
@@ -122,7 +120,7 @@ class DeviceManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   ) async {
     final response = await _safePost(AppConfig.deviceUpdateUrl, {
       'type': 2,
-      'data': device.toUpdatePayload(_currentUserId),
+      'data': device.toJson(_currentUserId),
     });
 
     if (response is Map<String, dynamic> &&

@@ -25,6 +25,7 @@ class ManagedDeviceEntity extends Equatable {
   final int? secondaryUdpPort;
   final ManagedDeviceStatus status;
   final int signalStrength;
+  final String mmsi;
   final DateTime? lastMessageTime;
   final DateTime? lastAisTime;
   final String aisModuleType;
@@ -40,6 +41,7 @@ class ManagedDeviceEntity extends Equatable {
     this.signalStrength = 0,
     this.lastMessageTime,
     this.lastAisTime,
+    this.mmsi = '',
     this.aisModuleType = 'AIS AtoN Type 1',
     this.updatedAt,
   });
@@ -61,6 +63,7 @@ class ManagedDeviceEntity extends Equatable {
     aisPort,
     secondaryUdpPort,
     status,
+    mmsi,
     signalStrength,
     lastMessageTime,
     lastAisTime,

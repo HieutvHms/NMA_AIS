@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/network/dio_client.dart';
+import '../../../core/network/token_refresh_coordinator.dart';
 import '../../../core/storage/local_storage.dart';
 import '../../../core/storage/secure_storege.dart';
 import '../../../features/auth/presentation/cubit/auth_cubit.dart';
@@ -16,19 +17,31 @@ Future<void> registerCoreModule(GetIt sl) async {
   sl.registerLazySingleton<SecureStorage>(
     () => SecureStorage(sl<FlutterSecureStorage>()),
   );
-  sl.registerLazySingleton<LocalStorage>(
-    () => LocalStorage(sl<SharedPreferences>()),
+
+  final localStorage = LocalStorage(
+    sl<SharedPreferences>(),
+    secureStorage: sl<SecureStorage>(),
   );
-  sl.registerLazySingleton<DioClient>(
-    () => DioClient(
+  await localStorage.init();
+  sl.registerLazySingleton<LocalStorage>(() => localStorage);
+
+  sl.registerLazySingleton<TokenRefreshCoordinator>(
+    () => TokenRefreshCoordinator(
       sl<LocalStorage>(),
       onSessionExpired: () {
         if (sl.isRegistered<AuthCubit>()) {
           sl<AuthCubit>().forceLogout(
-            reason: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+            reason: 'Phiên đăng nhập hết hạn, vui lòng đăng nhập lại.',
           );
         }
       },
+    ),
+  );
+
+  sl.registerLazySingleton<DioClient>(
+    () => DioClient(
+      sl<LocalStorage>(),
+      refreshCoordinator: sl<TokenRefreshCoordinator>(),
     ),
   );
 }

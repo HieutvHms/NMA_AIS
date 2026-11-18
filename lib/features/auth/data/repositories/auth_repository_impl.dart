@@ -1,4 +1,6 @@
 import '../../../../core/error/error_mapper.dart';
+import '../../../../core/error/exceptions.dart';
+import '../../../../core/network/token_refresh_coordinator.dart';
 import '../../../../core/storage/local_storage.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -8,12 +10,15 @@ import '../models/user_model.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
   final LocalStorage _localStorage;
+  final TokenRefreshCoordinator _refreshCoordinator;
 
   AuthRepositoryImpl({
     required AuthRemoteDataSource remoteDataSource,
     required LocalStorage localStorage,
+    required TokenRefreshCoordinator refreshCoordinator,
   }) : _remoteDataSource = remoteDataSource,
-       _localStorage = localStorage;
+       _localStorage = localStorage,
+       _refreshCoordinator = refreshCoordinator;
 
   @override
   Future<UserEntity> login({
@@ -48,42 +53,37 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<bool> refreshToken() async {
-    final oldAccessToken = _localStorage.getToken();
-    final oldRefreshToken = _localStorage.getRefreshToken();
+    final result = await _refreshCoordinator.refresh();
 
-    if (oldRefreshToken == null || oldRefreshToken.isEmpty) {
-      await _localStorage.clearSession();
+    if (result.isSuccess) {
+      return true;
+    }
+
+    if (result.isInvalidSession) {
       return false;
     }
 
-    try {
-      final data = await _remoteDataSource.refreshToken(
-        accessToken: oldAccessToken ?? '',
-        refreshToken: oldRefreshToken,
-      );
-
-      final newAccessToken = data['accessToken']?.toString() ?? '';
-      final newRefreshToken = data['refreshToken']?.toString() ?? '';
-
-      if (newAccessToken.isNotEmpty) {
-        await _localStorage.saveToken(newAccessToken);
-        if (newRefreshToken.isNotEmpty) {
-          await _localStorage.saveRefreshToken(newRefreshToken);
-        }
-        return true;
-      }
-      await _localStorage.clearSession();
-      return false;
-    } catch (_) {
-      await _localStorage.clearSession();
-      return false;
-    }
+    // Lỗi mạng / 5xx: ném Failure để tầng trên phân biệt với phiên hết hạn,
+    // KHÔNG xóa phiên đã lưu.
+    throw ErrorMapper.map(
+      result.dioException ??
+          NetworkException(
+            message: result.message ?? 'Không có kết nối mạng.',
+          ),
+    );
   }
 
   @override
-  Future<void> logout() async {
+  Future<void> logout({bool callRemote = true}) async {
     try {
-      await _remoteDataSource.logout();
+      if (callRemote) {
+        // Chờ request refresh đang chạy (nếu có) hoàn tất để gửi refreshToken mới nhất
+        await _refreshCoordinator.waitForPendingRefresh();
+        final refreshToken = _localStorage.getRefreshToken();
+        if (refreshToken != null && refreshToken.isNotEmpty) {
+          await _remoteDataSource.logout(refreshToken: refreshToken);
+        }
+      }
     } catch (_) {
     } finally {
       await _localStorage.clearSession();
@@ -93,12 +93,15 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<UserEntity?> getCurrentUser() async {
     final token = _localStorage.getToken();
-    if (token == null || token.isEmpty) return null;
+    final refreshToken = _localStorage.getRefreshToken();
+    if ((token == null || token.isEmpty) &&
+        (refreshToken == null || refreshToken.isEmpty)) {
+      return null;
+    }
 
     final username = _localStorage.getUsername() ?? 'admin';
-    final role = _localStorage.getRole() ?? 'admin';
+    final role = _localStorage.getRole() ?? '0';
     final userId = _localStorage.getUserId() ?? '1';
-    final refreshToken = _localStorage.getRefreshToken();
 
     return UserModel(
       id: userId,

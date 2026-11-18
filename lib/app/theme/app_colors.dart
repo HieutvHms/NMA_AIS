@@ -49,4 +49,9 @@ class AppColors {
   static const Color success = online;
   static const Color error = offline;
   static const Color info = Color(0xFF0284C7);
+  static const Color warning = Color(0xFFD97706);
+  static const Color alertWarning = warning;
+  static const Color alertRed = error;
+  static const Color confirmDelete = error;
+  static const Color dashboardSuccess = success;
 }

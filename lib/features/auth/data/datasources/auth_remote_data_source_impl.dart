@@ -34,15 +34,15 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
       final accessToken = data['accessToken']?.toString() ?? '';
       final refreshToken = data['refreshToken']?.toString();
 
-      // Lấy userId trực tiếp từ response của BE
-      final userId = data['userId']?.toString() ??
-          data['id']?.toString() ??
-          '1';
+      // Lấy userId và role trực tiếp từ response của BE
+      final userId =
+          data['userId']?.toString() ?? data['id']?.toString() ?? '1';
+      final role = data['role']?.toString() ?? '0';
 
       return UserModel(
         id: userId,
         username: username,
-        role: 'admin',
+        role: role,
         accessToken: accessToken,
         refreshToken: refreshToken,
       );
@@ -59,7 +59,6 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
 
   @override
   Future<Map<String, dynamic>> refreshToken({
-    required String accessToken,
     required String refreshToken,
   }) async {
     try {
@@ -76,9 +75,13 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
 
       final success = body['success'] == true;
       if (!success) {
-        throw ServerException(
-          message: body['message']?.toString() ?? 'Lỗi làm mới phiên đăng nhập',
-        );
+        final code = body['code']?.toString() ?? '';
+        final message =
+            body['message']?.toString() ?? 'Lỗi làm mới phiên đăng nhập';
+        if (code == 'INVALID_REFRESH_TOKEN') {
+          throw UnauthorizedException(message: message);
+        }
+        throw ServerException(message: message);
       }
 
       final data = body['data'] as Map<String, dynamic>?;
@@ -89,6 +92,8 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
       }
 
       return {
+        'userId': data['userId']?.toString(),
+        'role': data['role']?.toString(),
         'accessToken': data['accessToken']?.toString() ?? '',
         'expiresIn':
             int.tryParse(data['expiresIn']?.toString() ?? '900') ?? 900,
@@ -98,14 +103,24 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
     } on DioException catch (e) {
       if (e.response?.data is Map<String, dynamic>) {
         final res = e.response!.data as Map<String, dynamic>;
+        final code = res['code']?.toString() ?? '';
         final message = res['message']?.toString();
+        if (e.response?.statusCode == 401 || code == 'INVALID_REFRESH_TOKEN') {
+          throw UnauthorizedException(
+            message: message ?? 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn.',
+          );
+        }
         if (message != null && message.isNotEmpty) {
           throw ServerException(
             message: message,
             statusCode: e.response?.statusCode,
           );
         }
+      } else if (e.response?.statusCode == 401) {
+        throw const UnauthorizedException();
       }
+      rethrow;
+    } on UnauthorizedException {
       rethrow;
     } on ServerException {
       rethrow;
@@ -117,9 +132,12 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<void> logout() async {
+  Future<void> logout({required String refreshToken}) async {
     try {
-      final body = await post(AppConfig.logoutUrl);
+      final body = await post(
+        AppConfig.logoutUrl,
+        data: {'refreshToken': refreshToken},
+      );
 
       if (body is Map<String, dynamic>) {
         final success = body['success'] == true;

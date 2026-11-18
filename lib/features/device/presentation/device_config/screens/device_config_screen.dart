@@ -75,23 +75,24 @@ class _DeviceConfigScreenState extends State<DeviceConfigScreen> {
     if (!confirmed || !mounted) return;
 
     context.read<DeviceConfigCubit>().submitConfig(
-          imei: widget.device.imei,
-          stationName: _nameController.text.trim(),
-          mainUdpPort: mainPort,
-          secondaryUdpPort: secondaryPort,
-          aisDeviceType: _selectedAisType,
-        );
+      imei: widget.device.imei,
+      stationName: _nameController.text.trim(),
+      mainUdpPort: mainPort,
+      secondaryUdpPort: secondaryPort,
+      aisDeviceType: _selectedAisType,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cấu hình 4G (M03)', style: AppTextStyles.titleMediumAppBar()),
+        title: Text('Cấu hình 4G (M03)', style: AppTextStyles.s16w600()),
       ),
       body: BlocBuilder<DeviceConfigCubit, DeviceConfigState>(
         builder: (context, state) {
-          final isBusy = state.status == ConfigSubmissionStatus.sending ||
+          final isBusy =
+              state.status == ConfigSubmissionStatus.sending ||
               state.status == ConfigSubmissionStatus.sent;
 
           return SingleChildScrollView(
@@ -106,17 +107,14 @@ class _DeviceConfigScreenState extends State<DeviceConfigScreen> {
                     children: [
                       Text(
                         'Trạng thái cấu hình:',
-                        style: AppTextStyles.titleMediumBlack(),
+                        style: AppTextStyles.s16w600(),
                       ),
                       ConfigStatusChip(status: state.status),
                     ],
                   ),
                   if (state.message != null) ...[
                     SizedBox(height: 8.h),
-                    Text(
-                      state.message!,
-                      style: AppTextStyles.bodySmall(),
-                    ),
+                    Text(state.message!, style: AppTextStyles.s14w500()),
                   ],
                   SizedBox(height: 20.h),
                   AppTextField(
@@ -147,13 +145,17 @@ class _DeviceConfigScreenState extends State<DeviceConfigScreen> {
                     initialValue: _selectedAisType,
                     decoration: InputDecoration(
                       labelText: 'Loại thiết bị AIS kết nối (DC-04)',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.r)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
                     ),
                     items: _aisDeviceTypes
-                        .map((type) => DropdownMenuItem(
-                              value: type,
-                              child: Text(type, style: AppTextStyles.bodyMedium()),
-                            ))
+                        .map(
+                          (type) => DropdownMenuItem(
+                            value: type,
+                            child: Text(type, style: AppTextStyles.s14w500()),
+                          ),
+                        )
                         .toList(),
                     onChanged: (value) {
                       if (value != null) {

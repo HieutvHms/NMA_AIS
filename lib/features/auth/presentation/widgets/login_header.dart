@@ -23,7 +23,7 @@ class LoginHeader extends StatelessWidget {
         Text(
           'Quản lý và cấu hình thiết bị AIS',
           textAlign: TextAlign.center,
-          style: AppTextStyles.bodyMedium(
+          style: AppTextStyles.s14w500(
             color: const Color.fromARGB(255, 5, 81, 144),
           ),
         ),

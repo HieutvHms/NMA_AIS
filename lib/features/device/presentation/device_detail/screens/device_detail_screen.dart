@@ -45,10 +45,7 @@ class DeviceDetailScreen extends StatelessWidget {
           tooltip: 'Quay lại',
           onPressed: () => context.pop(),
         ),
-        title: Text(
-          'Chi tiết thiết bị',
-          style: AppTextStyles.titleMediumBlack(),
-        ),
+        title: Text('Chi tiết thiết bị', style: AppTextStyles.s16w600()),
       ),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -91,7 +88,7 @@ class DeviceDetailScreen extends StatelessWidget {
                           Expanded(
                             child: Text(
                               device.stationName,
-                              style: AppTextStyles.titleMediumBlack(),
+                              style: AppTextStyles.s16w600(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -107,7 +104,7 @@ class DeviceDetailScreen extends StatelessWidget {
                             ),
                             child: Text(
                               device.status.label,
-                              style: AppTextStyles.labelSmall(
+                              style: AppTextStyles.s14w500(
                                 color: statusColor,
                               ).copyWith(fontWeight: FontWeight.w600),
                             ),
@@ -117,14 +114,14 @@ class DeviceDetailScreen extends StatelessWidget {
                       SizedBox(height: 4.h),
                       Text(
                         'IMEI: ${device.imei}',
-                        style: AppTextStyles.bodySmall(
+                        style: AppTextStyles.s14w500(
                           color: const Color(0xFF64748B),
                         ),
                       ),
                       SizedBox(height: 3.h),
                       Text(
                         'Cập nhật: $formattedTime',
-                        style: AppTextStyles.bodySmall(
+                        style: AppTextStyles.s14w500(
                           color: const Color(0xFF64748B),
                         ),
                       ),
@@ -137,7 +134,7 @@ class DeviceDetailScreen extends StatelessWidget {
           SizedBox(height: 20.h),
 
           // 2. Khối Thông tin kết nối theo Mockup 4
-          Text('Thông tin kết nối', style: AppTextStyles.titleMediumBlack()),
+          Text('Thông tin kết nối', style: AppTextStyles.s16w600()),
           SizedBox(height: 8.h),
           Container(
             decoration: BoxDecoration(
@@ -182,7 +179,7 @@ class DeviceDetailScreen extends StatelessWidget {
           SizedBox(height: 20.h),
 
           // 3. Khối Chức năng theo Mockup 4
-          Text('Chức năng', style: AppTextStyles.titleMediumBlack()),
+          Text('Chức năng', style: AppTextStyles.s16w600()),
           SizedBox(height: 8.h),
           Container(
             decoration: BoxDecoration(
@@ -246,10 +243,10 @@ class DeviceDetailScreen extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
+              style: AppTextStyles.s14w500(color: AppColors.textSecondary),
             ),
           ),
-          Text(value, style: AppTextStyles.labelLarge2()),
+          Text(value, style: AppTextStyles.s14w600()),
         ],
       ),
     );
@@ -263,7 +260,7 @@ class DeviceDetailScreen extends StatelessWidget {
   }) {
     return ListTile(
       leading: Icon(icon, color: iconColor, size: 24.r),
-      title: Text(title, style: AppTextStyles.labelLarge2()),
+      title: Text(title, style: AppTextStyles.s14w600()),
       trailing: Icon(
         Icons.chevron_right_rounded,
         color: const Color(0xFF94A3B8),

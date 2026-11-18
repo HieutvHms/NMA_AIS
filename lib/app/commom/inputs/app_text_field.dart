@@ -10,97 +10,48 @@ class AppTextField extends StatefulWidget {
   final String? label;
   final bool isRequired;
   final String? hintText;
-  final String? hint; // Hỗ trợ tương thích ngược
   final TextEditingController? controller;
-  final String? initialValue;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
   final FormFieldValidator<String>? validator;
-  final FormFieldSetter<String>? onSaved;
-  final String? errorText;
   final TextInputType keyboardType;
-  final TextInputAction? textInputAction;
   final List<TextInputFormatter>? inputFormatters;
   final bool isPassword;
   final bool showClearButton;
-  final Widget? prefixIcon;
   final String? prefixSvgPath;
-  final Widget? suffixIcon;
-  final String? suffixText;
   final int maxLines;
-  final int? minLines;
   final bool enabled;
-  final bool readOnly;
-  final bool autoFocus;
-  final FocusNode? focusNode;
-  final double? borderRadius;
   final double? height;
-  final EdgeInsetsGeometry? contentPadding;
-  final EdgeInsetsGeometry? margin;
+  final double? borderRadius;
   final Color? fillColor;
-  final Color? focusedFillColor;
   final Color? borderColor;
   final Color? focusedBorderColor;
-  final Color? errorBorderColor;
   final double? borderWidth;
   final double? focusedBorderWidth;
-  final InputBorder? customBorder;
-  final InputBorder? customFocusedBorder;
-  final TextAlign textAlign;
-  final TextAlignVertical? textAlignVertical;
-  final TextStyle? style;
-  final TextStyle? hintStyle;
-
-  final bool? autocorrect;
-  final bool? enableSuggestions;
 
   const AppTextField({
     super.key,
     this.label,
     this.isRequired = false,
     this.hintText,
-    this.hint,
     this.controller,
-    this.initialValue,
     this.onChanged,
     this.onSubmitted,
     this.validator,
-    this.onSaved,
-    this.errorText,
     this.keyboardType = TextInputType.text,
-    this.textInputAction,
     this.inputFormatters,
     this.isPassword = false,
     this.showClearButton = false,
-    this.autocorrect,
-    this.enableSuggestions,
-    this.prefixIcon,
     this.prefixSvgPath,
-    this.suffixIcon,
-    this.suffixText,
     this.maxLines = 1,
-    this.minLines,
     this.enabled = true,
-    this.readOnly = false,
-    this.autoFocus = false,
-    this.focusNode,
-    this.borderRadius,
     this.height,
-    this.contentPadding,
-    this.margin,
+    this.borderRadius,
     this.fillColor,
-    this.focusedFillColor,
     this.borderColor,
     this.focusedBorderColor,
-    this.errorBorderColor,
     this.borderWidth,
     this.focusedBorderWidth,
-    this.customBorder,
-    this.customFocusedBorder,
-    this.textAlign = TextAlign.start,
-    this.textAlignVertical,
-    this.style,
-    this.hintStyle,
   });
 
   @override
@@ -109,46 +60,14 @@ class AppTextField extends StatefulWidget {
 
 class _AppTextFieldState extends State<AppTextField> {
   late bool _obscureText;
-  TextEditingController? _internalController;
-  FocusNode? _internalFocusNode;
   bool _hasText = false;
-  bool _isFocused = false;
-
-  TextEditingController get _effectiveController =>
-      widget.controller ?? _internalController!;
-
-  FocusNode get _effectiveFocusNode => widget.focusNode ?? _internalFocusNode!;
-
-  String? get _effectiveHint => widget.hintText ?? widget.hint;
 
   @override
   void initState() {
     super.initState();
     _obscureText = widget.isPassword;
-
-    if (widget.controller == null) {
-      _internalController = TextEditingController(text: widget.initialValue);
-    }
-
-    if (widget.focusNode == null) {
-      _internalFocusNode = FocusNode();
-    }
-
-    _effectiveFocusNode.addListener(_handleFocusChange);
-    _isFocused = _effectiveFocusNode.hasFocus;
-
-    _hasText = _effectiveController.text.isNotEmpty;
-    _effectiveController.addListener(_handleControllerChange);
-  }
-
-  void _handleFocusChange() {
-    if (_effectiveFocusNode.hasFocus != _isFocused) {
-      if (mounted) {
-        setState(() {
-          _isFocused = _effectiveFocusNode.hasFocus;
-        });
-      }
-    }
+    _hasText = widget.controller?.text.isNotEmpty ?? false;
+    widget.controller?.addListener(_handleControllerChange);
   }
 
   @override
@@ -156,199 +75,135 @@ class _AppTextFieldState extends State<AppTextField> {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
       oldWidget.controller?.removeListener(_handleControllerChange);
-      if (widget.controller == null && _internalController == null) {
-        _internalController = TextEditingController(text: widget.initialValue);
-      }
-      _effectiveController.addListener(_handleControllerChange);
-      _hasText = _effectiveController.text.isNotEmpty;
-    }
-
-    if (widget.focusNode != oldWidget.focusNode) {
-      (oldWidget.focusNode ?? _internalFocusNode)?.removeListener(
-        _handleFocusChange,
-      );
-      if (widget.focusNode == null && _internalFocusNode == null) {
-        _internalFocusNode = FocusNode();
-      }
-      _effectiveFocusNode.addListener(_handleFocusChange);
-      _isFocused = _effectiveFocusNode.hasFocus;
+      widget.controller?.addListener(_handleControllerChange);
+      _hasText = widget.controller?.text.isNotEmpty ?? false;
     }
   }
 
   void _handleControllerChange() {
-    final hasText = _effectiveController.text.isNotEmpty;
-    if (hasText != _hasText) {
-      if (mounted) {
-        setState(() {
-          _hasText = hasText;
-        });
-      }
+    final hasText = widget.controller?.text.isNotEmpty ?? false;
+    if (hasText != _hasText && mounted) {
+      setState(() => _hasText = hasText);
     }
   }
 
   @override
   void dispose() {
-    _effectiveController.removeListener(_handleControllerChange);
-    _internalController?.dispose();
-    _effectiveFocusNode.removeListener(_handleFocusChange);
-    _internalFocusNode?.dispose();
+    widget.controller?.removeListener(_handleControllerChange);
     super.dispose();
   }
 
   void _clearText() {
-    _effectiveController.clear();
+    widget.controller?.clear();
     widget.onChanged?.call('');
+  }
+
+  OutlineInputBorder _buildBorder(Color color, double width, double radius) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(radius),
+      borderSide: BorderSide(color: color, width: width),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final radius = widget.borderRadius ?? 12.r;
-    final defaultBgColor = widget.fillColor ?? Colors.white;
-    final effectiveFillColor = _isFocused
-        ? (widget.focusedFillColor ?? defaultBgColor)
-        : defaultBgColor;
+    final targetHeight = widget.height ?? 48.h;
+    final verticalPadding = ((targetHeight - 20.h) / 2).clamp(8.h, 20.h);
 
-    final baseBorder =
-        widget.customBorder ??
-        OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radius),
-          borderSide: BorderSide(
-            color: widget.borderColor ?? const Color(0xFFCBD5E1),
-            width: widget.borderWidth ?? 1,
-          ),
-        );
-
-    final focusedBorder =
-        widget.customFocusedBorder ??
-        OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radius),
-          borderSide: BorderSide(
-            color: widget.focusedBorderColor ?? AppColors.primary,
-            width: widget.focusedBorderWidth ?? 1.5,
-          ),
-        );
-
-    final errorBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radius),
-      borderSide: BorderSide(
-        color: widget.errorBorderColor ?? Colors.redAccent,
-        width: 1.2,
-      ),
+    final baseBorder = _buildBorder(
+      widget.borderColor ?? const Color(0xFFCBD5E1),
+      widget.borderWidth ?? 1,
+      radius,
     );
+    final focusedBorder = _buildBorder(
+      widget.focusedBorderColor ?? AppColors.primary,
+      widget.focusedBorderWidth ?? 1.5,
+      radius,
+    );
+    final errorBorder = _buildBorder(Colors.redAccent, 1.2, radius);
 
-    return Container(
-      margin: widget.margin,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (widget.label != null) ...[
-            RichText(
-              text: TextSpan(
-                text: widget.label!,
-                style: AppTextStyles.labelLarge(color: AppColors.textPrimary),
-                children: [
-                  if (widget.isRequired)
-                    const TextSpan(
-                      text: ' *',
-                      style: TextStyle(
-                        color: Colors.redAccent,
-                        fontWeight: FontWeight.bold,
-                      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (widget.label != null) ...[
+          RichText(
+            text: TextSpan(
+              text: widget.label!,
+              style: AppTextStyles.s13w500(color: AppColors.textPrimary),
+              children: [
+                if (widget.isRequired)
+                  const TextSpan(
+                    text: ' *',
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                      fontWeight: FontWeight.bold,
                     ),
-                ],
-              ),
-            ),
-            SizedBox(height: 6.h),
-          ],
-          TextFormField(
-            controller: _effectiveController,
-            enabled: widget.enabled,
-            readOnly: widget.readOnly,
-            autofocus: widget.autoFocus,
-            focusNode: _effectiveFocusNode,
-            obscureText: widget.isPassword ? _obscureText : false,
-            enableSuggestions: widget.enableSuggestions ?? !widget.isPassword,
-            autocorrect: widget.autocorrect ?? false,
-            keyboardType: widget.keyboardType,
-            textInputAction: widget.textInputAction,
-            inputFormatters: widget.inputFormatters,
-            maxLines: widget.isPassword ? 1 : widget.maxLines,
-            minLines: widget.minLines,
-            textAlign: widget.textAlign,
-            textAlignVertical: widget.textAlignVertical ??
-                ((widget.maxLines > 1 && !widget.isPassword)
-                    ? TextAlignVertical.top
-                    : TextAlignVertical.center),
-            onChanged: widget.onChanged,
-            onFieldSubmitted: widget.onSubmitted,
-            validator: widget.validator,
-            onSaved: widget.onSaved,
-            style:
-                (widget.style ??
-                        AppTextStyles.bodyMedium(color: AppColors.textPrimary))
-                    .copyWith(decoration: TextDecoration.none),
-            decoration: InputDecoration(
-              isDense: true,
-              constraints: widget.height != null
-                  ? BoxConstraints.tightFor(height: widget.height)
-                  : null,
-              hintText: _effectiveHint,
-              hintStyle:
-                  widget.hintStyle ??
-                  AppTextStyles.bodyMedium(color: const Color(0xFF94A3B8)),
-              errorText: widget.errorText,
-              errorMaxLines: 2,
-              errorStyle: AppTextStyles.labelSmall(color: Colors.redAccent),
-              prefixIcon: _buildPrefixIcon(),
-              suffixIcon: _buildSuffixIcon(),
-              suffixIconConstraints: BoxConstraints(
-                minWidth: 36.w,
-                minHeight: 0,
-              ),
-              suffixText: widget.suffixText,
-              suffixStyle: AppTextStyles.bodyMedium(
-                color: AppColors.textSecondary,
-              ),
-              filled: true,
-              fillColor: effectiveFillColor,
-              contentPadding:
-                  widget.contentPadding ??
-                  EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-              border: baseBorder,
-              enabledBorder: baseBorder,
-              focusedBorder: focusedBorder,
-              errorBorder: errorBorder,
-              focusedErrorBorder: errorBorder.copyWith(
-                borderSide: const BorderSide(
-                  color: Colors.redAccent,
-                  width: 1.5,
-                ),
-              ),
-              disabledBorder: baseBorder.copyWith(
-                borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-              ),
+                  ),
+              ],
             ),
           ),
+          SizedBox(height: 6.h),
         ],
-      ),
+        TextFormField(
+          controller: widget.controller,
+          enabled: widget.enabled,
+          obscureText: widget.isPassword ? _obscureText : false,
+          enableSuggestions: !widget.isPassword,
+          autocorrect: false,
+          keyboardType: widget.keyboardType,
+          inputFormatters: widget.inputFormatters,
+          maxLines: widget.isPassword ? 1 : widget.maxLines,
+          textAlignVertical: (widget.maxLines > 1 && !widget.isPassword)
+              ? TextAlignVertical.top
+              : TextAlignVertical.center,
+          onChanged: widget.onChanged,
+          onFieldSubmitted: widget.onSubmitted,
+          validator: widget.validator,
+          style: AppTextStyles.s14w500().copyWith(
+            decoration: TextDecoration.none,
+          ),
+          decoration: InputDecoration(
+            isDense: true,
+            hintText: widget.hintText,
+            hintStyle: AppTextStyles.s14w500(color: const Color(0xFF94A3B8)),
+            errorMaxLines: 2,
+            errorStyle: AppTextStyles.s11w500(color: Colors.redAccent),
+            prefixIcon: _buildPrefixIcon(),
+            prefixIconConstraints: BoxConstraints(minWidth: 36.w, minHeight: 0),
+            suffixIcon: _buildSuffixIcon(),
+            suffixIconConstraints: BoxConstraints(minWidth: 36.w, minHeight: 0),
+            filled: true,
+            fillColor: widget.fillColor ?? Colors.white,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 14.w,
+              vertical: verticalPadding,
+            ),
+            border: baseBorder,
+            enabledBorder: baseBorder,
+            focusedBorder: focusedBorder,
+            errorBorder: errorBorder,
+            focusedErrorBorder: _buildBorder(Colors.redAccent, 1.5, radius),
+            disabledBorder: _buildBorder(const Color(0xFFE2E8F0), 1, radius),
+          ),
+        ),
+      ],
     );
   }
 
   Widget? _buildPrefixIcon() {
-    if (widget.prefixSvgPath != null) {
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
-        child: UnconstrainedBox(
-          child: SvgPicture.asset(
-            widget.prefixSvgPath!,
-            width: 20.r,
-            height: 20.r,
-          ),
+    if (widget.prefixSvgPath == null) return null;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12.w),
+      child: UnconstrainedBox(
+        child: SvgPicture.asset(
+          widget.prefixSvgPath!,
+          width: 20.r,
+          height: 20.r,
         ),
-      );
-    }
-    return widget.prefixIcon;
+      ),
+    );
   }
 
   Widget? _buildSuffixIcon() {
@@ -364,11 +219,7 @@ class _AppTextFieldState extends State<AppTextField> {
           ),
         ),
         tooltip: _obscureText ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
-        onPressed: () {
-          setState(() {
-            _obscureText = !_obscureText;
-          });
-        },
+        onPressed: () => setState(() => _obscureText = !_obscureText),
         splashRadius: 18.r,
       );
     }
@@ -389,6 +240,6 @@ class _AppTextFieldState extends State<AppTextField> {
       );
     }
 
-    return widget.suffixIcon;
+    return null;
   }
 }

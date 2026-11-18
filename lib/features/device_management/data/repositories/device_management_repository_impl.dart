@@ -25,6 +25,7 @@ class DeviceManagementRepositoryImpl implements DeviceManagementRepository {
       imei: device.imei,
       stationName: device.stationName,
       simSerial: device.simSerial,
+      mmsi: device.mmsi,
       aisPort: device.aisPort,
       secondaryUdpPort: device.secondaryUdpPort,
       aisModuleType: device.aisModuleType,

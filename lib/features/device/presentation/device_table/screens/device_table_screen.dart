@@ -38,7 +38,7 @@ class _DeviceTableScreenState extends State<DeviceTableScreen> {
         title: 'Bảng thiết bị',
         backgroundColor: AppColors.background,
         textColor: AppColors.textPrimary,
-        titleStyle: AppTextStyles.titleMediumBlack(),
+        titleStyle: AppTextStyles.s16w600(),
         searchHintText: 'Tìm kiếm',
         searchController: _searchController,
         searchBackgroundColor: Colors.white,
@@ -70,13 +70,12 @@ class _DeviceTableScreenState extends State<DeviceTableScreen> {
           }
           if (state is DeviceListError) {
             return Center(
-              child: Text(state.message, style: AppTextStyles.bodyMedium()),
+              child: Text(state.message, style: AppTextStyles.s14w500()),
             );
           }
           if (state is DeviceListLoaded) {
             return DeviceTableView(
               devices: state.devices,
-              showActions: false,
               onSelect: (dev) =>
                   context.push('/devices/${dev.imei}', extra: dev),
             );

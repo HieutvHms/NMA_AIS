@@ -84,6 +84,12 @@ class ErrorMapper {
     }
     if (e.error is ForbiddenException) return const ForbiddenFailure();
     if (e.error is NotFoundException) return const NotFoundFailure();
+    if (e.error is String && (e.error as String).trim().isNotEmpty) {
+      return ServerFailure(
+        message: sanitize(e.error as String),
+        code: e.response?.statusCode ?? 401,
+      );
+    }
 
     switch (e.type) {
       case DioExceptionType.connectionError:

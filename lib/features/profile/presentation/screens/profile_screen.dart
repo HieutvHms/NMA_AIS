@@ -17,9 +17,7 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Tài khoản',
-          style: AppTextStyles.titleMediumAppBar(
-            color: const Color(0xFF0F2A4A),
-          ),
+          style: AppTextStyles.s16w600(color: const Color(0xFF0F2A4A)),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,

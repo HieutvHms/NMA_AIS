@@ -20,6 +20,18 @@ class _LoginFormState extends State<LoginForm> {
   final _passwordController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final state = context.read<AuthCubit>().state;
+      if (state is Unauthenticated && state.errorMessage != null) {
+        SnackbarHelper.showError(context, message: state.errorMessage!);
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();

@@ -23,7 +23,7 @@ class ForgotPasswordButton extends StatelessWidget {
         foregroundColor: const Color(0xFF16519F),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       ),
-      child: Text('Quên mật khẩu?', style: AppTextStyles.labelLarge2()),
+      child: Text('Quên mật khẩu?', style: AppTextStyles.s14w500()),
     );
   }
 }

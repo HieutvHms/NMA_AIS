@@ -7,9 +7,7 @@ class OverviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tổng quan hệ thống'),
-      ),
+      appBar: AppBar(title: const Text('Tổng quan hệ thống')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -69,16 +67,10 @@ class _SummaryCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               value,
-              style: const TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
             Text(
               subtitle,
               style: const TextStyle(fontSize: 12, color: Colors.black54),
@@ -89,4 +81,3 @@ class _SummaryCard extends StatelessWidget {
     );
   }
 }
-

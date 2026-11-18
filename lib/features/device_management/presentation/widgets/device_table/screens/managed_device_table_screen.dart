@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../../app/commom/app_bar/searchable_app_bar.dart';
-import '../../../../../app/theme/app_colors.dart';
-import '../../../../../app/theme/text_style.dart';
-import '../../../domain/entities/managed_device_entity.dart';
-import '../../cubit/device_management_cubit.dart';
-import '../../cubit/device_management_state.dart';
-import '../../widgets/managed_device_form_dialog.dart';
+import '../../../../../../app/commom/app_bar/searchable_app_bar.dart';
+import '../../../../../../app/theme/app_colors.dart';
+import '../../../../../../app/theme/text_style.dart';
+import '../../../../../../core/utils/snackbar_helper.dart';
+import '../../../../domain/entities/managed_device_entity.dart';
+import '../../../cubit/device_management_cubit.dart';
+import '../../../cubit/device_management_state.dart';
+import '../../managed_device_form_screen.dart';
 import '../widgets/managed_device_table_view.dart';
 
 class ManagedDeviceTableScreen extends StatefulWidget {
@@ -35,14 +37,14 @@ class _ManagedDeviceTableScreenState extends State<ManagedDeviceTableScreen> {
   }
 
   void _openAddDialog() async {
-    final device = await ManagedDeviceFormDialog.show(context);
+    final device = await ManagedDeviceFormScreen.open(context);
     if (device != null && mounted) {
       context.read<DeviceManagementCubit>().createDevice(device);
     }
   }
 
   void _openEditDialog(ManagedDeviceEntity device) async {
-    final updated = await ManagedDeviceFormDialog.show(
+    final updated = await ManagedDeviceFormScreen.open(
       context,
       initialDevice: device,
     );
@@ -58,21 +60,15 @@ class _ManagedDeviceTableScreenState extends State<ManagedDeviceTableScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
-        title: Text(
-          'Xác nhận xóa thiết bị 4G',
-          style: AppTextStyles.titleMediumBlack(),
-        ),
+        title: Text('Xác nhận xóa thiết bị 4G', style: AppTextStyles.s16w600()),
         content: Text(
           'Bạn có chắc chắn muốn xóa trạm "${device.stationName}" (IMEI: ${device.imei}) khỏi hệ thống không?',
-          style: AppTextStyles.bodyMedium(),
+          style: AppTextStyles.s14w500(),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              'Hủy',
-              style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
-            ),
+            child: Text('Hủy', style: AppTextStyles.s14w500()),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
@@ -85,10 +81,7 @@ class _ManagedDeviceTableScreenState extends State<ManagedDeviceTableScreen> {
               Navigator.pop(ctx);
               context.read<DeviceManagementCubit>().deleteDevice(device);
             },
-            child: Text(
-              'Xóa',
-              style: AppTextStyles.labelLarge2(color: Colors.white),
-            ),
+            child: Text('Xóa', style: AppTextStyles.s14w500()),
           ),
         ],
       ),
@@ -100,11 +93,11 @@ class _ManagedDeviceTableScreenState extends State<ManagedDeviceTableScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: SearchableAppBar(
-        title: 'Bảng thiết bị 4G',
+        title: 'Bảng trạm thu AIS',
         backgroundColor: AppColors.background,
         textColor: Color(0xFF1565C0),
-        titleStyle: AppTextStyles.titleMediumAppBar(color: Color(0xFF1565C0)),
-        searchHintText: 'Tìm kiếm theo tên trạm, IMEI, SIM, cổng...',
+        titleStyle: AppTextStyles.s16w600(color: Color(0xFF1565C0)),
+        searchHintText: 'Tìm kiếm...',
         searchController: _searchController,
         searchBackgroundColor: Colors.white,
         searchBorder: Border.all(color: const Color(0xFFCBD5E1)),
@@ -119,11 +112,15 @@ class _ManagedDeviceTableScreenState extends State<ManagedDeviceTableScreen> {
         },
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.add_circle_outline_rounded,
-              color: Color(0xFF1565C0),
+            icon: SvgPicture.asset(
+              'assets/icons/device/ic_add.svg',
+              width: 24.r,
+              height: 24.r,
+              colorFilter: const ColorFilter.mode(
+                Color(0xFF1565C0),
+                BlendMode.srcIn,
+              ),
             ),
-            tooltip: 'Thêm mới thiết bị 4G',
             onPressed: _openAddDialog,
           ),
         ],
@@ -131,20 +128,9 @@ class _ManagedDeviceTableScreenState extends State<ManagedDeviceTableScreen> {
       body: BlocConsumer<DeviceManagementCubit, DeviceManagementState>(
         listener: (context, state) {
           if (state is DeviceManagementLoaded && state.actionMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.actionMessage!),
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            SnackbarHelper.showSuccess(context, message: state.actionMessage!);
           } else if (state is DeviceManagementError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: const Color(0xFFDC2626),
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            SnackbarHelper.showError(context, message: state.message);
           }
         },
         builder: (context, state) {
@@ -156,10 +142,7 @@ class _ManagedDeviceTableScreenState extends State<ManagedDeviceTableScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    state.message,
-                    style: AppTextStyles.bodyMedium(color: Colors.red),
-                  ),
+                  Text(state.message, style: AppTextStyles.s14w500()),
                   SizedBox(height: 8.h),
                   TextButton(
                     onPressed: () => context

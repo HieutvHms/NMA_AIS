@@ -37,70 +37,6 @@ class AppTextStyles {
     );
   }
 
-  static TextStyle titleLargeDiaLog() {
-    return GoogleFonts.inter(
-      fontSize: 16.sp,
-      fontWeight: FontWeight.w400,
-      color: AppColors.textPrimary,
-    );
-  }
-
-  static TextStyle titleMediumBlack() {
-    return GoogleFonts.inter(
-      fontSize: 16.sp,
-      fontWeight: FontWeight.w600,
-      color: AppColors.textPrimary,
-    );
-  }
-
-  static TextStyle titleMedium({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 16.sp,
-      fontWeight: FontWeight.w600,
-      color: color,
-    );
-  }
-
-  static TextStyle titleMediumLogin() {
-    return GoogleFonts.inter(
-      fontSize: 16.sp,
-      fontWeight: FontWeight.w500,
-      color: AppColors.textPrimary,
-    );
-  }
-
-  static TextStyle titleMediumAppBar({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 16.sp,
-      fontWeight: FontWeight.w600,
-      color: color,
-    );
-  }
-
-  static TextStyle titleSmall({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 11.sp,
-      fontWeight: FontWeight.w500,
-      color: color,
-    );
-  }
-
-  static TextStyle titleSmall2({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 12.sp,
-      fontWeight: FontWeight.w500,
-      color: color,
-    );
-  }
-
-  static TextStyle titleSmall3({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 12.sp,
-      fontWeight: FontWeight.w600,
-      color: color,
-    );
-  }
-
   static TextStyle titleMediumIcon() {
     return GoogleFonts.inter(
       fontSize: 19.sp,
@@ -109,138 +45,205 @@ class AppTextStyles {
     );
   }
 
-  static TextStyle titleMedium16({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 16.sp,
-      fontWeight: FontWeight.w500,
-      color: color,
-    );
-  }
+  // ===========================================================================
+  // Hệ thống TextStyle chuẩn theo Size (10 -> 18) & FontWeight (400, 500, 600)
+  // ===========================================================================
 
-  // Label styles
-  static TextStyle labelLarge({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 14.sp,
-      fontWeight: FontWeight.w500,
-      color: color,
-    );
-  }
+  // --- Size 10 ---
+  static TextStyle s10w400({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w400,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  static TextStyle labelLarge2({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 14.sp,
-      fontWeight: FontWeight.w600,
-      color: color,
-    );
-  }
+  static TextStyle s10w500({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w500,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  static TextStyle labelMedium({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 12.sp,
-      fontWeight: FontWeight.w600,
-      height: 16 / 12,
-      color: color ?? AppColors.textSecondary,
-    );
-  }
+  static TextStyle s10w600({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w600,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  static TextStyle labelSmall({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 11.sp,
-      fontWeight: FontWeight.w500,
-      color: color,
-    );
-  }
+  // --- Size 11 ---
+  static TextStyle s11w400({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 11.sp,
+    fontWeight: FontWeight.w400,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  static TextStyle labelSmall2({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 11.sp,
-      fontWeight: FontWeight.w600,
-      color: color,
-    );
-  }
+  static TextStyle s11w500({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 11.sp,
+    fontWeight: FontWeight.w500,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  static TextStyle labelSmall10({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 10.sp,
-      fontWeight: FontWeight.w600,
-      color: color,
-    );
-  }
+  static TextStyle s11w600({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 11.sp,
+    fontWeight: FontWeight.w600,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  static TextStyle labelSmall102({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 10.sp,
-      fontWeight: FontWeight.w500,
-      color: color,
-    );
-  }
+  // --- Size 12 ---
+  static TextStyle s12w400({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w400,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  // Body styles
-  static TextStyle bodyLarge({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 16.sp,
-      fontWeight: FontWeight.w500,
-      color: color,
-    );
-  }
+  static TextStyle s12w500({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w500,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  static TextStyle bodyLarge15({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 15.sp,
-      fontWeight: FontWeight.w500,
-      color: color,
-    );
-  }
+  static TextStyle s12w600({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w600,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  // Body styles
-  static TextStyle bodyLarge1({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 14.sp,
-      fontWeight: FontWeight.w700,
-      color: color,
-    );
-  }
+  // --- Size 13 ---
+  static TextStyle s13w400({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 13.sp,
+    fontWeight: FontWeight.w400,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  static TextStyle bodyLargeEmphasized() {
-    return GoogleFonts.inter(
-      fontSize: 16.sp,
-      fontWeight: FontWeight.w500,
-      color: AppColors.textPrimary,
-    );
-  }
+  static TextStyle s13w500({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 13.sp,
+    fontWeight: FontWeight.w500,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  static TextStyle bodyMedium({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 14.sp,
-      fontWeight: FontWeight.w500,
-      color: color,
-      height: 20 / 14,
-    );
-  }
+  static TextStyle s13w600({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 13.sp,
+    fontWeight: FontWeight.w600,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  static TextStyle bodySmall({Color? color}) {
-    return GoogleFonts.inter(
-      fontSize: 12.sp,
-      fontWeight: FontWeight.w400,
-      color: color ?? AppColors.textPrimary,
-      height: 16 / 12,
-    );
-  }
+  // --- Size 14 ---
+  static TextStyle s14w400({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w400,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  // 13.sp styles
-  static TextStyle body13({Color? color, FontWeight? fontWeight}) {
-    return GoogleFonts.inter(
-      fontSize: 13.sp,
-      fontWeight: fontWeight ?? FontWeight.w400,
-      color: color ?? AppColors.textPrimary,
-    );
-  }
+  static TextStyle s14w500({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w500,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 
-  static TextStyle label13({Color? color, FontWeight? fontWeight}) {
-    return GoogleFonts.inter(
-      fontSize: 13.sp,
-      fontWeight: fontWeight ?? FontWeight.w500,
-      color: color ?? AppColors.textPrimary,
-    );
-  }
+  static TextStyle s14w600({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w600,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
+
+  // --- Size 15 ---
+  static TextStyle s15w400({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w400,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
+
+  static TextStyle s15w500({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w500,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
+
+  static TextStyle s15w600({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w600,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
+
+  // --- Size 16 ---
+  static TextStyle s16w400({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w400,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
+
+  static TextStyle s16w500({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w500,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
+
+  static TextStyle s16w600({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w600,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
+
+  // --- Size 17 ---
+  static TextStyle s17w400({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 17.sp,
+    fontWeight: FontWeight.w400,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
+
+  static TextStyle s17w500({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 17.sp,
+    fontWeight: FontWeight.w500,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
+
+  static TextStyle s17w600({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 17.sp,
+    fontWeight: FontWeight.w600,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
+
+  // --- Size 18 ---
+  static TextStyle s18w400({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 18.sp,
+    fontWeight: FontWeight.w400,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
+
+  static TextStyle s18w500({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 18.sp,
+    fontWeight: FontWeight.w500,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
+
+  static TextStyle s18w600({Color? color, double? height}) => GoogleFonts.inter(
+    fontSize: 18.sp,
+    fontWeight: FontWeight.w600,
+    color: color ?? AppColors.textPrimary,
+    height: height,
+  );
 }

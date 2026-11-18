@@ -223,8 +223,8 @@ class _TopSnackBarWidgetState extends State<_TopSnackBarWidget>
                               ? widget.title
                               : widget.message,
                           style: widget.title.isNotEmpty
-                              ? AppTextStyles.labelLarge(color: Colors.white)
-                              : AppTextStyles.bodyMedium(color: Colors.white),
+                              ? AppTextStyles.s16w600(color: Colors.white)
+                              : AppTextStyles.s14w500(color: Colors.white),
                         ),
                       ),
                     ],
@@ -233,7 +233,7 @@ class _TopSnackBarWidgetState extends State<_TopSnackBarWidget>
                     SizedBox(height: 4.h),
                     Text(
                       widget.message,
-                      style: AppTextStyles.bodyMedium(color: Colors.white),
+                      style: AppTextStyles.s14w500(color: Colors.white),
                     ),
                   ],
                 ],

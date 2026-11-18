@@ -16,7 +16,7 @@ class UserEntity extends Equatable {
     this.refreshToken,
   });
 
-  bool get isAdmin => role == 'admin';
+  bool get isAdmin => role == 'admin' || role == '0';
 
   @override
   List<Object?> get props => [id, username, role, accessToken, refreshToken];

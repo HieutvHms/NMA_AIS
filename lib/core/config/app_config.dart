@@ -30,6 +30,10 @@ class AppConfig {
   static String get deviceUpdateUrl =>
       '$authBaseUrl${ApiEndpoints.deviceUpdate}';
 
+  // User / Member Management
+  static String get userQueryUrl => '$authBaseUrl${ApiEndpoints.userQuery}';
+  static String get userUpdateUrl => '$authBaseUrl${ApiEndpoints.userUpdate}';
+
   // API Base URLs
   static String get managerBaseUrl => dotenv.get(
     'MANAGER_BASE_URL',

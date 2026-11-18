@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import '../../../core/network/dio_client.dart';
+import '../../../core/network/token_refresh_coordinator.dart';
 import '../../../core/storage/local_storage.dart';
 import '../../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../../features/auth/data/datasources/auth_remote_data_source_impl.dart';
@@ -22,6 +23,7 @@ void registerAuthModule(GetIt sl) {
     () => AuthRepositoryImpl(
       remoteDataSource: sl<AuthRemoteDataSource>(),
       localStorage: sl<LocalStorage>(),
+      refreshCoordinator: sl<TokenRefreshCoordinator>(),
     ),
   );
 
@@ -36,6 +38,7 @@ void registerAuthModule(GetIt sl) {
     () => AuthCubit(
       loginUseCase: sl<LoginUseCase>(),
       logoutUseCase: sl<LogoutUseCase>(),
+      refreshTokenUseCase: sl<RefreshTokenUseCase>(),
       getCurrentUserUseCase: sl<GetCurrentUserUseCase>(),
     ),
   );

@@ -8,7 +8,7 @@ abstract class AuthRepository {
 
   Future<bool> refreshToken();
 
-  Future<void> logout();
+  Future<void> logout({bool callRemote = true});
 
   Future<UserEntity?> getCurrentUser();
 }

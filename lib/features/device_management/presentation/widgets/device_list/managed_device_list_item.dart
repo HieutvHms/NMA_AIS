@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../app/theme/app_colors.dart';
-import '../../../../app/theme/text_style.dart';
-import '../../domain/entities/managed_device_entity.dart';
+import '../../../../../app/theme/app_colors.dart';
+import '../../../../../app/theme/text_style.dart';
+import '../../../domain/entities/managed_device_entity.dart';
 
 class ManagedDeviceListItem extends StatelessWidget {
   final ManagedDeviceEntity device;
@@ -52,7 +52,6 @@ class ManagedDeviceListItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Hàng 1: Icon trạm + Tên trạm + Trạng thái + Nút Sửa / Xóa trực tiếp
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -76,19 +75,14 @@ class ManagedDeviceListItem extends StatelessWidget {
                         Flexible(
                           child: Text(
                             device.stationName,
-                            style: AppTextStyles.titleMedium(
-                              color: const Color(0xFF0F2A4A),
-                            ),
+                            style: AppTextStyles.s14w500(),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         SizedBox(width: 8.w),
                         Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 7.w,
-                            vertical: 2.h,
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 6.w),
                           decoration: BoxDecoration(
                             color: statusColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12.r),
@@ -107,9 +101,9 @@ class ManagedDeviceListItem extends StatelessWidget {
                               SizedBox(width: 4.w),
                               Text(
                                 device.status.label,
-                                style: AppTextStyles.labelSmall(
+                                style: AppTextStyles.s10w500(
                                   color: statusColor,
-                                ).copyWith(fontWeight: FontWeight.w600),
+                                ),
                               ),
                             ],
                           ),
@@ -119,7 +113,7 @@ class ManagedDeviceListItem extends StatelessWidget {
                     SizedBox(height: 3.h),
                     Text(
                       'IMEI: ${device.imei}',
-                      style: AppTextStyles.bodySmall(
+                      style: AppTextStyles.s12w500(
                         color: const Color(0xFF5B6B82),
                       ),
                       maxLines: 1,

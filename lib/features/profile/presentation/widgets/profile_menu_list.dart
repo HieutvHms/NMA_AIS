@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/text_style.dart';
 import '../../../auth/domain/entities/user_entity.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
+import '../../../../app/router/route_names.dart';
 
 class ProfileMenuList extends StatelessWidget {
   final UserEntity? user;
@@ -36,28 +37,20 @@ class ProfileMenuList extends StatelessWidget {
             SizedBox(width: 10.w),
             Text(
               'Đăng xuất',
-              style: AppTextStyles.titleMediumBlack().copyWith(
-                fontSize: 17.sp,
-                color: const Color(0xFF0F2A4A),
-              ),
+              style: AppTextStyles.s16w600(color: const Color(0xFF0F2A4A)),
             ),
           ],
         ),
         content: Text(
           'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống giám sát AIS?',
-          style: AppTextStyles.labelLarge().copyWith(
-            color: const Color(0xFF5B6B82),
-            fontSize: 14.sp,
-          ),
+          style: AppTextStyles.s14w500(color: const Color(0xFF5B6B82)),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(dialogCtx).pop(),
+            onPressed: () => Navigator.of(context).pop(),
             child: Text(
               'Hủy',
-              style: AppTextStyles.labelLarge().copyWith(
-                color: const Color(0xFF5B6B82),
-              ),
+              style: AppTextStyles.s14w500(color: const Color(0xFF5B6B82)),
             ),
           ),
           ElevatedButton(
@@ -109,10 +102,7 @@ class ProfileMenuList extends StatelessWidget {
               SizedBox(height: 16.h),
               Text(
                 'Quyền hạn & Cổng kết nối',
-                style: AppTextStyles.titleMediumBlack().copyWith(
-                  fontSize: 17.sp,
-                  color: const Color(0xFF0F2A4A),
-                ),
+                style: AppTextStyles.s16w600(color: const Color(0xFF0F2A4A)),
               ),
               SizedBox(height: 12.h),
               _buildPermissionRow(
@@ -166,20 +156,10 @@ class ProfileMenuList extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: AppTextStyles.labelLarge().copyWith(
-                color: const Color(0xFF5B6B82),
-                fontSize: 13.sp,
-              ),
+              style: AppTextStyles.s14w500(color: const Color(0xFF5B6B82)),
             ),
           ),
-          Text(
-            value,
-            style: AppTextStyles.labelLarge().copyWith(
-              color: valueColor,
-              fontWeight: FontWeight.w600,
-              fontSize: 13.sp,
-            ),
-          ),
+          Text(value, style: AppTextStyles.s14w500(color: valueColor)),
         ],
       ),
     );
@@ -194,17 +174,11 @@ class ProfileMenuList extends StatelessWidget {
         ),
         title: Text(
           'Đổi mật khẩu',
-          style: AppTextStyles.titleMediumBlack().copyWith(
-            fontSize: 17.sp,
-            color: const Color(0xFF0F2A4A),
-          ),
+          style: AppTextStyles.s16w600(color: const Color(0xFF0F2A4A)),
         ),
         content: Text(
           'Tính năng đổi mật khẩu trực tiếp trên ứng dụng đang được đồng bộ với máy chủ quản trị.',
-          style: AppTextStyles.labelLarge().copyWith(
-            color: const Color(0xFF5B6B82),
-            fontSize: 14.sp,
-          ),
+          style: AppTextStyles.s14w500(color: const Color(0xFF5B6B82)),
         ),
         actions: [
           ElevatedButton(
@@ -232,23 +206,26 @@ class ProfileMenuList extends StatelessWidget {
           children: [
             _ProfileMenuItem(
               svgPath: 'assets/icons/navbar/ic_device.svg',
-              label: 'Quản lý thiết bị 4G',
+              label: 'Quản lý trạm thu AIS',
               isFirst: true,
-              onTap: () => context.push('/profile/device-management'),
+              isLast: !(user?.isAdmin ?? false),
+              onTap: () => context.push(RouteNames.deviceManagement),
             ),
-            Divider(
-              height: 1,
-              thickness: 1,
-              indent: 52.w,
-              endIndent: 14.w,
-              color: const Color(0xFFF1F5F9),
-            ),
-            _ProfileMenuItem(
-              svgPath: 'assets/icons/navbar/ic_map.svg',
-              label: 'Giám sát thiết bị',
-              isLast: true,
-              onTap: () => context.go('/monitoring'),
-            ),
+            if (user?.isAdmin ?? false) ...[
+              Divider(
+                height: 1,
+                thickness: 1,
+                indent: 52.w,
+                endIndent: 14.w,
+                color: const Color(0xFFF1F5F9),
+              ),
+              _ProfileMenuItem(
+                icon: Icons.group_outlined,
+                label: 'Quản lý thành viên',
+                isLast: true,
+                onTap: () => context.push(RouteNames.memberManagement),
+              ),
+            ],
           ],
         ),
         SizedBox(height: 12.h),
@@ -388,7 +365,7 @@ class _ProfileMenuItem extends StatelessWidget {
         splashColor: const Color(0xFF1565C0).withValues(alpha: 0.08),
         highlightColor: const Color(0xFF1565C0).withValues(alpha: 0.04),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
           child: Row(
             children: [
               Container(
@@ -420,20 +397,15 @@ class _ProfileMenuItem extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: AppTextStyles.labelLarge().copyWith(
+                  style: AppTextStyles.s14w500(
                     color: labelColor ?? const Color(0xFF0F2A4A),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14.sp,
                   ),
                 ),
               ),
               if (value != null) ...[
                 Text(
                   value!,
-                  style: AppTextStyles.labelLarge().copyWith(
-                    color: const Color(0xFF5B6B82),
-                    fontSize: 13.sp,
-                  ),
+                  style: AppTextStyles.s14w500(color: const Color(0xFF5B6B82)),
                 ),
                 SizedBox(width: 6.w),
               ],

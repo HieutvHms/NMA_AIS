@@ -29,18 +29,10 @@ class StatusBadge extends StatelessWidget {
           Container(
             width: 6.r,
             height: 6.r,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           SizedBox(width: 4.w),
-          Text(
-            label,
-            style: AppTextStyles.labelSmall(color: color).copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          Text(label, style: AppTextStyles.s11w600(color: color).copyWith()),
         ],
       ),
     );
@@ -58,18 +50,18 @@ class ConfigStatusChip extends StatelessWidget {
       case ConfigSubmissionStatus.unchanged:
         return const StatusBadge(label: 'Chưa thay đổi', color: Colors.grey);
       case ConfigSubmissionStatus.sending:
-        return const StatusBadge(
-            label: 'Đang gửi yêu cầu', color: Colors.blue);
+        return const StatusBadge(label: 'Đang gửi yêu cầu', color: Colors.blue);
       case ConfigSubmissionStatus.sent:
-        return const StatusBadge(
-            label: 'Đã gửi yêu cầu', color: Colors.indigo);
+        return const StatusBadge(label: 'Đã gửi yêu cầu', color: Colors.indigo);
       case ConfigSubmissionStatus.success:
         return const StatusBadge(label: 'Thành công', color: Colors.green);
       case ConfigSubmissionStatus.failure:
         return const StatusBadge(label: 'Thất bại', color: Colors.red);
       case ConfigSubmissionStatus.noResponse:
         return const StatusBadge(
-            label: 'Không nhận được phản hồi', color: Colors.orange);
+          label: 'Không nhận được phản hồi',
+          color: Colors.orange,
+        );
     }
   }
 }

@@ -74,9 +74,7 @@ class DeviceListItem extends StatelessWidget {
                           Expanded(
                             child: Text(
                               device.stationName,
-                              style: AppTextStyles.titleMedium(
-                                color: const Color(0xFF0F2A4A),
-                              ),
+                              style: AppTextStyles.s16w600(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -96,9 +94,7 @@ class DeviceListItem extends StatelessWidget {
                               SizedBox(width: 5.w),
                               Text(
                                 device.status.label,
-                                style: AppTextStyles.bodySmall(
-                                  color: statusColor,
-                                ).copyWith(fontWeight: FontWeight.w500),
+                                style: AppTextStyles.s14w500(),
                               ),
                             ],
                           ),
@@ -108,9 +104,7 @@ class DeviceListItem extends StatelessWidget {
                       // Số IMEI (chữ phụ xám xanh #5B6B82)
                       Text(
                         'IMEI: ${device.imei}',
-                        style: AppTextStyles.bodySmall(
-                          color: const Color(0xFF5B6B82),
-                        ),
+                        style: AppTextStyles.s14w400(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

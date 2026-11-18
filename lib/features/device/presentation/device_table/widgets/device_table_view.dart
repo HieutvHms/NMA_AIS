@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../app/theme/text_style.dart';
@@ -8,19 +7,9 @@ import '../../../domain/entities/device_entity.dart';
 
 class DeviceTableView extends StatefulWidget {
   final List<DeviceEntity> devices;
-  final ValueChanged<DeviceEntity>? onEdit;
-  final ValueChanged<DeviceEntity>? onDelete;
   final ValueChanged<DeviceEntity>? onSelect;
-  final bool showActions;
 
-  const DeviceTableView({
-    super.key,
-    required this.devices,
-    this.onEdit,
-    this.onDelete,
-    this.onSelect,
-    this.showActions = false,
-  });
+  const DeviceTableView({super.key, required this.devices, this.onSelect});
 
   @override
   State<DeviceTableView> createState() => _DeviceTableViewState();
@@ -42,7 +31,7 @@ class _DeviceTableViewState extends State<DeviceTableView> {
   double get colStatusWidth => 100.w;
   double get colLastMsgWidth => 200.w;
   double get colLastAisWidth => 200.w;
-  double get colSignalWidth => 140.w;
+  double get colSignalWidth => 130.w;
   double get colModuleWidth => 130.w;
   double get colActionWidth => 105.w;
 
@@ -132,7 +121,7 @@ class _DeviceTableViewState extends State<DeviceTableView> {
               text,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.titleSmall3(color: Colors.white),
+              style: AppTextStyles.s12w600(color: Colors.white),
             ),
           ),
         ],
@@ -171,7 +160,7 @@ class _DeviceTableViewState extends State<DeviceTableView> {
       return Center(
         child: Text(
           'Không có dữ liệu thiết bị',
-          style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
+          style: AppTextStyles.s14w500(color: AppColors.textSecondary),
         ),
       );
     }
@@ -185,7 +174,7 @@ class _DeviceTableViewState extends State<DeviceTableView> {
         colLastAisWidth +
         colSignalWidth +
         colModuleWidth +
-        (widget.showActions ? colActionWidth : 0);
+        colActionWidth;
 
     return Container(
       decoration: const BoxDecoration(
@@ -221,7 +210,7 @@ class _DeviceTableViewState extends State<DeviceTableView> {
                           _buildDataCell(
                             Text(
                               '${index + 1}',
-                              style: AppTextStyles.body13(),
+                              style: AppTextStyles.s13w500(),
                             ),
                             colSttWidth,
                             isEven,
@@ -232,9 +221,7 @@ class _DeviceTableViewState extends State<DeviceTableView> {
                               item.stationName,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.body13(
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: AppTextStyles.s13w500(),
                             ),
                             colNameWidth,
                             isEven,
@@ -292,18 +279,7 @@ class _DeviceTableViewState extends State<DeviceTableView> {
                           colSignalWidth,
                           isCenter: true,
                         ),
-                        _buildHeaderCell(
-                          'Loại module AIS',
-                          colModuleWidth,
-                          showBorderRight: widget.showActions,
-                        ),
-                        if (widget.showActions)
-                          _buildHeaderCell(
-                            'Thao tác',
-                            colActionWidth,
-                            isCenter: true,
-                            showBorderRight: false,
-                          ),
+                        _buildHeaderCell('Loại module AIS', colModuleWidth),
                       ],
                     ),
                     // Danh sách dữ liệu các cột cuộn ngang
@@ -317,148 +293,83 @@ class _DeviceTableViewState extends State<DeviceTableView> {
                           final item = widget.devices[index];
                           final isEven = index % 2 == 0;
                           final rowWidget = Row(
-                              children: [
-                                _buildDataCell(
-                                  Text(
-                                    item.imei,
-                                    style: AppTextStyles.body13(),
-                                  ),
-                                  colImeiWidth,
-                                  isEven,
+                            children: [
+                              _buildDataCell(
+                                Text(item.imei, style: AppTextStyles.s13w500()),
+                                colImeiWidth,
+                                isEven,
+                              ),
+                              _buildDataCell(
+                                Text(
+                                  item.simSerial.isEmpty ? '-' : item.simSerial,
+                                  style: AppTextStyles.s13w500(),
                                 ),
-                                _buildDataCell(
-                                  Text(
-                                    item.simSerial.isEmpty
-                                        ? '-'
-                                        : item.simSerial,
-                                    style: AppTextStyles.body13(),
-                                  ),
-                                  colSimWidth,
-                                  isEven,
+                                colSimWidth,
+                                isEven,
+                              ),
+                              _buildDataCell(
+                                Text(
+                                  '${item.aisPort}',
+                                  style: AppTextStyles.s13w500(),
                                 ),
-                                _buildDataCell(
-                                  Text(
-                                    '${item.aisPort}',
-                                    style: AppTextStyles.body13(),
+                                colPortWidth,
+                                isEven,
+                                isCenter: true,
+                              ),
+                              _buildDataCell(
+                                Text(
+                                  item.status.label,
+                                  style: AppTextStyles.s13w500(
+                                    color: item.status == DeviceStatus.online
+                                        ? const Color(0xFF15803D)
+                                        : const Color(0xFFDC2626),
                                   ),
-                                  colPortWidth,
-                                  isEven,
-                                  isCenter: true,
                                 ),
-                                _buildDataCell(
-                                  Text(
-                                    item.status.label,
-                                    style: AppTextStyles.labelSmall(
-                                      color: item.status == DeviceStatus.online
-                                          ? const Color(0xFF15803D)
-                                          : const Color(0xFFDC2626),
-                                    ),
-                                  ),
-                                  colStatusWidth,
-                                  isEven,
-                                  isCenter: true,
+                                colStatusWidth,
+                                isEven,
+                                isCenter: true,
+                              ),
+                              _buildDataCell(
+                                Text(
+                                  item.lastMessageTime != null
+                                      ? _dateFormat.format(
+                                          item.lastMessageTime!,
+                                        )
+                                      : '-',
+                                  style: AppTextStyles.s13w500(),
                                 ),
-                                _buildDataCell(
-                                  Text(
-                                    item.lastMessageTime != null
-                                        ? _dateFormat.format(
-                                            item.lastMessageTime!,
-                                          )
-                                        : '-',
-                                    style: AppTextStyles.body13(),
-                                  ),
-                                  colLastMsgWidth,
-                                  isEven,
+                                colLastMsgWidth,
+                                isEven,
+                              ),
+                              _buildDataCell(
+                                Text(
+                                  item.lastAisTime != null
+                                      ? _dateFormat.format(item.lastAisTime!)
+                                      : '00:00:00 01-01-2000',
+                                  style: AppTextStyles.s13w500(),
                                 ),
-                                _buildDataCell(
-                                  Text(
-                                    item.lastAisTime != null
-                                        ? _dateFormat.format(item.lastAisTime!)
-                                        : '00:00:00 01-01-2000',
-                                    style: AppTextStyles.body13(),
-                                  ),
-                                  colLastAisWidth,
-                                  isEven,
+                                colLastAisWidth,
+                                isEven,
+                              ),
+                              _buildDataCell(
+                                Text(
+                                  '${item.signalStrength}',
+                                  style: AppTextStyles.s13w500(),
                                 ),
-                                _buildDataCell(
-                                  Text(
-                                    '${item.signalStrength}',
-                                    style: AppTextStyles.body13(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  colSignalWidth,
-                                  isEven,
-                                  isCenter: true,
+                                colSignalWidth,
+                                isEven,
+                                isCenter: true,
+                              ),
+                              _buildDataCell(
+                                Text(
+                                  item.aisModuleType,
+                                  style: AppTextStyles.s13w500(),
                                 ),
-                                _buildDataCell(
-                                  Text(
-                                    item.aisModuleType,
-                                    style: AppTextStyles.body13(),
-                                  ),
-                                  colModuleWidth,
-                                  isEven,
-                                  showBorderRight: widget.showActions,
-                                ),
-                                if (widget.showActions)
-                                  _buildDataCell(
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        InkWell(
-                                          onTap: widget.onEdit != null
-                                              ? () => widget.onEdit!(item)
-                                              : null,
-                                          borderRadius: BorderRadius.circular(
-                                            6.r,
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.all(6.r),
-                                            child: SvgPicture.asset(
-                                              'assets/icons/device/ic_edit.svg',
-                                              width: 18.r,
-                                              height: 18.r,
-                                              colorFilter:
-                                                  const ColorFilter.mode(
-                                                    AppColors.primary,
-                                                    BlendMode.srcIn,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 8.w),
-                                        InkWell(
-                                          onTap: widget.onDelete != null
-                                              ? () => widget.onDelete!(item)
-                                              : null,
-                                          borderRadius: BorderRadius.circular(
-                                            6.r,
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.all(6.r),
-                                            child: SvgPicture.asset(
-                                              'assets/icons/device/ic_delete.svg',
-                                              width: 18.r,
-                                              height: 18.r,
-                                              colorFilter:
-                                                  const ColorFilter.mode(
-                                                    Colors.redAccent,
-                                                    BlendMode.srcIn,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    colActionWidth,
-                                    isEven,
-                                    isCenter: true,
-                                    showBorderRight: false,
-                                  ),
-                              ],
-                            );
+                                colModuleWidth,
+                                isEven,
+                              ),
+                            ],
+                          );
                           if (widget.onSelect != null) {
                             return InkWell(
                               onTap: () => widget.onSelect!(item),

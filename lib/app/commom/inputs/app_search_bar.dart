@@ -11,7 +11,6 @@ class AppSearchBar extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
   final VoidCallback? onClear;
-  final VoidCallback? onFilter;
   final Color? backgroundColor;
   final BoxBorder? border;
   final double? borderRadius;
@@ -29,7 +28,6 @@ class AppSearchBar extends StatefulWidget {
     this.onChanged,
     this.onSubmitted,
     this.onClear,
-    this.onFilter,
     this.backgroundColor,
     this.border,
     this.borderRadius,
@@ -131,6 +129,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
         border: widget.border,
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
             padding: EdgeInsets.only(left: 12.w, right: 8.w),
@@ -146,16 +145,14 @@ class _AppSearchBarState extends State<AppSearchBar> {
               focusNode: _focusNode,
               autofocus: widget.autoFocus,
               textInputAction: TextInputAction.search,
-              style: widget.textStyle ?? AppTextStyles.bodyMedium(),
+              textAlignVertical: TextAlignVertical.center,
+              style: widget.textStyle ?? AppTextStyles.s14w500(),
               decoration: InputDecoration(
                 hintText: widget.hintText,
-                hintStyle: widget.hintStyle ??
-                    AppTextStyles.bodyMedium(
-                      color: const Color(0xFF94A3B8),
-                    ),
+                hintStyle: widget.hintStyle ?? AppTextStyles.s14w500(),
                 border: InputBorder.none,
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: 10.h),
+                contentPadding: EdgeInsets.zero,
               ),
               onChanged: widget.onChanged,
               onSubmitted: widget.onSubmitted,
@@ -166,26 +163,11 @@ class _AppSearchBarState extends State<AppSearchBar> {
               icon: Icon(Icons.clear_rounded, size: 18.r),
               color: const Color(0xFF94A3B8),
               onPressed: _handleClear,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              tooltip: 'Xóa tìm kiếm',
-            ),
-          if (widget.onFilter != null) ...[
-            SizedBox(width: 4.w),
-            IconButton(
-              icon: Icon(
-                Icons.tune_rounded, // Icon bộ lọc theo Mockup 3
-                color: const Color(0xFF475569),
-                size: 20.r,
-              ),
-              tooltip: 'Bộ lọc trạng thái',
-              onPressed: widget.onFilter,
               padding: EdgeInsets.symmetric(horizontal: 10.w),
               constraints: const BoxConstraints(),
-            ),
-          ] else ...[
+            )
+          else
             SizedBox(width: 8.w),
-          ],
         ],
       ),
     );

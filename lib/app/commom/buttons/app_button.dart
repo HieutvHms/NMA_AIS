@@ -17,6 +17,8 @@ class AppButton extends StatelessWidget {
   final TextStyle? textStyle;
   final IconData? icon;
   final Widget? iconWidget;
+  final EdgeInsetsGeometry? padding;
+  final BorderSide? side;
 
   const AppButton({
     super.key,
@@ -33,6 +35,8 @@ class AppButton extends StatelessWidget {
     this.textStyle,
     this.icon,
     this.iconWidget,
+    this.padding,
+    this.side,
   });
 
   String get _buttonText => text ?? label ?? '';
@@ -44,8 +48,10 @@ class AppButton extends StatelessWidget {
       height: height ?? 48.h,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
+          padding: padding ?? EdgeInsets.symmetric(horizontal: 12.w),
           backgroundColor: backgroundColor ?? AppColors.primary,
           foregroundColor: textColor ?? Colors.white,
+          side: side,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius ?? 12.r),
           ),
@@ -72,13 +78,15 @@ class AppButton extends StatelessWidget {
                     iconWidget!,
                     SizedBox(width: 8.w),
                   ],
-                  Text(
-                    _buttonText,
-                    style:
-                        textStyle ??
-                        AppTextStyles.labelLarge2(
-                          color: textColor ?? Colors.white,
-                        ),
+                  Flexible(
+                    child: Text(
+                      _buttonText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          textStyle ??
+                          AppTextStyles.s14w600(color: textColor ?? Colors.white),
+                    ),
                   ),
                 ],
               ),

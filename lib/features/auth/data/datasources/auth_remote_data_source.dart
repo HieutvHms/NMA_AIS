@@ -6,10 +6,7 @@ abstract class AuthRemoteDataSource {
     required String password,
   });
 
-  Future<Map<String, dynamic>> refreshToken({
-    required String accessToken,
-    required String refreshToken,
-  });
+  Future<Map<String, dynamic>> refreshToken({required String refreshToken});
 
-  Future<void> logout();
+  Future<void> logout({required String refreshToken});
 }

@@ -1,22 +1,78 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
+import 'secure_storege.dart';
 
 class LocalStorage {
   final SharedPreferences _prefs;
+  final SecureStorage? _secureStorage;
 
-  LocalStorage(this._prefs);
+  String? _cachedAccessToken;
+  String? _cachedRefreshToken;
+
+  LocalStorage(this._prefs, {SecureStorage? secureStorage})
+    : _secureStorage = secureStorage {
+    _cachedAccessToken = _prefs.getString(AppConstants.keyAccessToken);
+    _cachedRefreshToken = _prefs.getString(AppConstants.keyRefreshToken);
+  }
+
+  /// Nạp token từ SecureStorage vào bộ nhớ đệm khi khởi động app
+  /// và di chuyển dữ liệu cũ từ SharedPreferences (nếu có) sang SecureStorage.
+  Future<void> init() async {
+    final secure = _secureStorage;
+    if (secure == null) return;
+
+    var secureAccess = await secure.read(AppConstants.keyAccessToken);
+    var secureRefresh = await secure.read(AppConstants.keyRefreshToken);
+
+    // Di chuyển token cũ từ SharedPreferences sang SecureStorage (1 lần)
+    final legacyAccess = _prefs.getString(AppConstants.keyAccessToken);
+    final legacyRefresh = _prefs.getString(AppConstants.keyRefreshToken);
+
+    if ((secureAccess == null || secureAccess.isEmpty) &&
+        legacyAccess != null &&
+        legacyAccess.isNotEmpty) {
+      secureAccess = legacyAccess;
+      await secure.write(AppConstants.keyAccessToken, legacyAccess);
+    }
+    if ((secureRefresh == null || secureRefresh.isEmpty) &&
+        legacyRefresh != null &&
+        legacyRefresh.isNotEmpty) {
+      secureRefresh = legacyRefresh;
+      await secure.write(AppConstants.keyRefreshToken, legacyRefresh);
+    }
+
+    if (legacyAccess != null) {
+      await _prefs.remove(AppConstants.keyAccessToken);
+    }
+    if (legacyRefresh != null) {
+      await _prefs.remove(AppConstants.keyRefreshToken);
+    }
+
+    _cachedAccessToken = secureAccess;
+    _cachedRefreshToken = secureRefresh;
+  }
 
   Future<void> saveToken(String token) async {
-    await _prefs.setString(AppConstants.keyAccessToken, token);
+    _cachedAccessToken = token;
+    if (_secureStorage != null) {
+      await _secureStorage.write(AppConstants.keyAccessToken, token);
+    } else {
+      await _prefs.setString(AppConstants.keyAccessToken, token);
+    }
   }
 
-  String? getToken() => _prefs.getString(AppConstants.keyAccessToken);
+  String? getToken() => _cachedAccessToken;
 
   Future<void> saveRefreshToken(String token) async {
-    await _prefs.setString(AppConstants.keyRefreshToken, token);
+    _cachedRefreshToken = token;
+    if (_secureStorage != null) {
+      await _secureStorage.write(AppConstants.keyRefreshToken, token);
+    } else {
+      await _prefs.setString(AppConstants.keyRefreshToken, token);
+    }
   }
 
-  String? getRefreshToken() => _prefs.getString(AppConstants.keyRefreshToken);
+  String? getRefreshToken() => _cachedRefreshToken;
 
   Future<void> saveUserId(String userId) async {
     await _prefs.setString(AppConstants.keyUserId, userId);
@@ -49,6 +105,12 @@ class LocalStorage {
   }
 
   Future<void> clearSession() async {
+    _cachedAccessToken = null;
+    _cachedRefreshToken = null;
+    if (_secureStorage != null) {
+      await _secureStorage.delete(AppConstants.keyAccessToken);
+      await _secureStorage.delete(AppConstants.keyRefreshToken);
+    }
     await _prefs.remove(AppConstants.keyAccessToken);
     await _prefs.remove(AppConstants.keyRefreshToken);
     await _prefs.remove(AppConstants.keyUserId);
@@ -57,4 +119,3 @@ class LocalStorage {
     await _prefs.remove(AppConstants.keyAllowedPorts);
   }
 }
-

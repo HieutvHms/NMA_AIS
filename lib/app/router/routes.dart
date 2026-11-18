@@ -23,9 +23,13 @@ import '../../features/monitoring/presentation/screens/route_screen.dart';
 import '../../features/monitoring/presentation/screens/vessel_detail_screen.dart';
 import '../../features/overview/presentation/screens/overview_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/device_management/domain/entities/managed_device_entity.dart';
 import '../../features/device_management/presentation/cubit/device_management_cubit.dart';
 import '../../features/device_management/presentation/screens/device_management_screen.dart';
-import '../../features/device_management/presentation/device_table/screens/managed_device_table_screen.dart';
+import '../../features/device_management/presentation/widgets/managed_device_form_screen.dart';
+import '../../features/device_management/presentation/widgets/device_table/screens/managed_device_table_screen.dart';
+import '../../features/member_management/presentation/cubit/member_management_cubit.dart';
+import '../../features/member_management/presentation/screens/member_management_screen.dart';
 import '../di/injection_container.dart';
 import '../shell/main_shell_screen.dart';
 import '../shell/widgets/app_bottom_nav_bar.dart';
@@ -52,7 +56,10 @@ GoRouter createRouter(AuthCubit authCubit) {
     initialLocation: '/overview',
     refreshListenable: GoRouterRefreshStream(authCubit.stream),
     redirect: (context, state) {
-      final isAuthenticated = authCubit.state is Authenticated;
+      final authState = authCubit.state;
+      if (authState is AuthInitial) return null;
+
+      final isAuthenticated = authState is Authenticated;
       final isLoggingIn = state.matchedLocation == '/login';
 
       if (!isAuthenticated && !isLoggingIn) {
@@ -203,7 +210,34 @@ GoRouter createRouter(AuthCubit authCubit) {
                           child: const ManagedDeviceTableScreen(),
                         ),
                       ),
+                      GoRoute(
+                        path: 'form',
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) {
+                          final extra = state.extra;
+                          final initialDevice = extra is ManagedDeviceEntity
+                              ? extra
+                              : null;
+                          return ManagedDeviceFormScreen(
+                            initialDevice: initialDevice,
+                          );
+                        },
+                      ),
                     ],
+                  ),
+                  GoRoute(
+                    path: 'member-management',
+                    parentNavigatorKey: _rootNavigatorKey,
+                    redirect: (context, state) {
+                      final authState = authCubit.state;
+                      final isAdmin =
+                          authState is Authenticated && authState.user.isAdmin;
+                      return isAdmin ? null : '/profile';
+                    },
+                    builder: (context, state) => BlocProvider(
+                      create: (_) => sl<MemberManagementCubit>(),
+                      child: const MemberManagementScreen(),
+                    ),
                   ),
                 ],
               ),

@@ -65,6 +65,7 @@ class DeviceManagementCubit extends Cubit<DeviceManagementState> {
       result = result.where((e) {
         return e.stationName.toLowerCase().contains(q) ||
             e.imei.toLowerCase().contains(q) ||
+            e.mmsi.toLowerCase().contains(q) ||
             e.aisPort.toString().contains(q) ||
             e.simSerial.toLowerCase().contains(q);
       }).toList();

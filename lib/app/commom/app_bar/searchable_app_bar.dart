@@ -37,7 +37,6 @@ class SearchableAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback? onSearchOpened;
   final VoidCallback? onSearchClosed;
   final VoidCallback? onSearchCleared;
-  final VoidCallback? onFilter;
   final Color? searchBackgroundColor;
   final BoxBorder? searchBorder;
   final double? searchBorderRadius;
@@ -84,7 +83,6 @@ class SearchableAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.onSearchOpened,
     this.onSearchClosed,
     this.onSearchCleared,
-    this.onFilter,
     this.searchBackgroundColor,
     this.searchBorder,
     this.searchBorderRadius,
@@ -302,7 +300,8 @@ class _SearchableAppBarState extends State<SearchableAppBar>
         automaticallyImplyLeading: false,
         systemOverlayStyle: widget.systemOverlayStyle,
         titleSpacing: 0,
-        bottom: widget.bottom ??
+        bottom:
+            widget.bottom ??
             (widget.showBottomBorder
                 ? PreferredSize(
                     preferredSize: Size.fromHeight(widget.bottomBorderHeight),
@@ -348,7 +347,7 @@ class _SearchableAppBarState extends State<SearchableAppBar>
                                         widget.title ?? '',
                                         style:
                                             widget.titleStyle ??
-                                            AppTextStyles.titleMediumAppBar(
+                                            AppTextStyles.s16w600(
                                               color: widget.textColor,
                                             ),
                                         maxLines: 1,
@@ -412,7 +411,6 @@ class _SearchableAppBarState extends State<SearchableAppBar>
                                     widget.onSearch?.call('');
                                     widget.onSearchCleared?.call();
                                   },
-                                  onFilter: widget.onFilter,
                                 ),
                               ),
                               // Nút đóng tìm kiếm bên phải

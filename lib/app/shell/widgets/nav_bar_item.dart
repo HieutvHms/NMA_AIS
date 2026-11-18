@@ -79,13 +79,9 @@ class NavBarItem extends StatelessWidget {
                 item.label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.label13(
-                  color: color,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                ).copyWith(
-                  fontSize: 11.5.sp,
-                  height: 1.2,
-                ),
+                style: isSelected
+                    ? AppTextStyles.s13w600(color: color)
+                    : AppTextStyles.s13w500(color: color),
               ),
             ],
           ),

@@ -61,15 +61,12 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Lọc trạng thái thiết bị',
-                  style: AppTextStyles.titleMediumBlack(),
-                ),
+                Text('Lọc trạng thái thiết bị', style: AppTextStyles.s16w600()),
                 SizedBox(height: 12.h),
                 ListTile(
                   title: Text(
                     'Tất cả trạng thái',
-                    style: AppTextStyles.bodyMedium(),
+                    style: AppTextStyles.s14w500(),
                   ),
                   leading: const Icon(Icons.all_inclusive_rounded),
                   trailing: _currentStatusFilter == null
@@ -83,7 +80,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                 ListTile(
                   title: Text(
                     'Online',
-                    style: AppTextStyles.bodyMedium(
+                    style: AppTextStyles.s14w500(
                       color: const Color(0xFF16A34A),
                     ),
                   ),
@@ -102,7 +99,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                 ListTile(
                   title: Text(
                     'Ngoại tuyến (Offline)',
-                    style: AppTextStyles.bodyMedium(
+                    style: AppTextStyles.s14w500(
                       color: const Color(0xFFDC2626),
                     ),
                   ),
@@ -132,9 +129,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
       backgroundColor: AppColors.background,
       appBar: SearchableAppBar(
         title: 'Thiết bị',
-        titleStyle: AppTextStyles.titleMediumAppBar(
-          color: const Color(0xFF1565C0),
-        ),
+        titleStyle: AppTextStyles.s16w600(color: const Color(0xFF1565C0)),
         backgroundColor: AppColors.background,
         textColor: const Color(0xFF1565C0),
         leading: IconButton(
@@ -161,7 +156,6 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
           query: value,
           statusFilter: _currentStatusFilter,
         ),
-        onFilter: _showFilterSheet,
         actions: [
           IconButton(
             icon: Icon(
@@ -197,7 +191,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                       children: [
                         Text(
                           'Lọc: ${_currentStatusFilter!.label}',
-                          style: AppTextStyles.bodySmall(
+                          style: AppTextStyles.s12w400(
                             color: AppColors.primary,
                           ),
                         ),
@@ -229,7 +223,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                       children: [
                         Text(
                           state.message,
-                          style: AppTextStyles.bodyMedium(color: Colors.red),
+                          style: AppTextStyles.s14w500(color: Colors.red),
                         ),
                         SizedBox(height: 8.h),
                         TextButton(
@@ -254,8 +248,8 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                           ),
                           SizedBox(height: 8.h),
                           Text(
-                            'Không tìm thấy thiết bị nào.',
-                            style: AppTextStyles.bodyMedium(
+                            'Không tìm thấy trạm thu AIS nào.',
+                            style: AppTextStyles.s16w600(
                               color: AppColors.textSecondary,
                             ),
                           ),
