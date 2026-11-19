@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../app/commom/dia_logs/app_confirm_dialog.dart';
+import '../../../../app/router/route_names.dart';
 import '../../../../app/theme/text_style.dart';
 import '../../../auth/domain/entities/user_entity.dart';
-import '../../../auth/presentation/cubit/auth_cubit.dart';
-import '../../../../app/router/route_names.dart';
+import '../../../auth/presentation/login/cubit/auth_cubit.dart';
 
 class ProfileMenuList extends StatelessWidget {
   final UserEntity? user;
@@ -14,62 +15,9 @@ class ProfileMenuList extends StatelessWidget {
   const ProfileMenuList({super.key, this.user});
 
   void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogCtx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        title: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(8.r),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFEE2E2),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.logout_rounded,
-                color: const Color(0xFFDC2626),
-                size: 20.r,
-              ),
-            ),
-            SizedBox(width: 10.w),
-            Text(
-              'Đăng xuất',
-              style: AppTextStyles.s16w600(color: const Color(0xFF0F2A4A)),
-            ),
-          ],
-        ),
-        content: Text(
-          'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống giám sát AIS?',
-          style: AppTextStyles.s14w500(color: const Color(0xFF5B6B82)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(
-              'Hủy',
-              style: AppTextStyles.s14w500(color: const Color(0xFF5B6B82)),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFDC2626),
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-            ),
-            onPressed: () {
-              Navigator.of(dialogCtx).pop();
-              context.read<AuthCubit>().logout();
-            },
-            child: const Text('Đăng xuất'),
-          ),
-        ],
-      ),
+    AppConfirmDialog.showLogout(
+      context,
+      onConfirm: () => context.read<AuthCubit>().logout(),
     );
   }
 
@@ -165,47 +113,39 @@ class ProfileMenuList extends StatelessWidget {
     );
   }
 
-  void _showChangePasswordDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogCtx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        title: Text(
-          'Đổi mật khẩu',
-          style: AppTextStyles.s16w600(color: const Color(0xFF0F2A4A)),
-        ),
-        content: Text(
-          'Tính năng đổi mật khẩu trực tiếp trên ứng dụng đang được đồng bộ với máy chủ quản trị.',
-          style: AppTextStyles.s14w500(color: const Color(0xFF5B6B82)),
-        ),
-        actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1565C0),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-            ),
-            onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: const Text('Đã hiểu'),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        _ProfileCard(
+          children: [
+            _ProfileMenuItem(
+              svgPath: 'assets/icons/setting/ic_infomation.svg',
+              label: 'Thông tin tài khoản',
+              isFirst: true,
+              onTap: () => _showPermissionsDialog(context),
+            ),
+            Divider(
+              height: 1,
+              thickness: 1,
+              indent: 52.w,
+              endIndent: 14.w,
+              color: const Color(0xFFF1F5F9),
+            ),
+            _ProfileMenuItem(
+              svgPath: 'assets/icons/setting/ic_pass.svg',
+              label: 'Đổi mật khẩu',
+              isLast: true,
+              onTap: () => context.push(RouteNames.changePassword),
+            ),
+          ],
+        ),
+        SizedBox(height: 12.h),
         // 1. Nhóm Tính năng quản lý thiết bị & giám sát
         _ProfileCard(
           children: [
             _ProfileMenuItem(
-              svgPath: 'assets/icons/navbar/ic_device.svg',
+              svgPath: 'assets/icons/device/ic_device.svg',
               label: 'Quản lý trạm thu AIS',
               isFirst: true,
               isLast: !(user?.isAdmin ?? false),
@@ -220,38 +160,12 @@ class ProfileMenuList extends StatelessWidget {
                 color: const Color(0xFFF1F5F9),
               ),
               _ProfileMenuItem(
-                icon: Icons.group_outlined,
+                svgPath: 'assets/icons/setting/ic_people.svg',
                 label: 'Quản lý thành viên',
                 isLast: true,
                 onTap: () => context.push(RouteNames.memberManagement),
               ),
             ],
-          ],
-        ),
-        SizedBox(height: 12.h),
-
-        // 2. Nhóm Quyền hạn & Bảo mật
-        _ProfileCard(
-          children: [
-            _ProfileMenuItem(
-              icon: Icons.shield_outlined,
-              label: 'Quyền hạn & Cổng UDP',
-              isFirst: true,
-              onTap: () => _showPermissionsDialog(context),
-            ),
-            Divider(
-              height: 1,
-              thickness: 1,
-              indent: 52.w,
-              endIndent: 14.w,
-              color: const Color(0xFFF1F5F9),
-            ),
-            _ProfileMenuItem(
-              svgPath: 'assets/icons/sign_in/ic_pass.svg',
-              label: 'Đổi mật khẩu',
-              isLast: true,
-              onTap: () => _showChangePasswordDialog(context),
-            ),
           ],
         ),
         SizedBox(height: 12.h),

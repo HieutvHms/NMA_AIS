@@ -199,9 +199,9 @@ class _DeviceManagementScreenState extends State<DeviceManagementScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
+            Icons.arrow_back_ios,
             size: 18,
-            color: Color(0xFF1565C0),
+            color: AppColors.textAppbar,
           ),
           tooltip: 'Quay lại',
           onPressed: () {
@@ -214,16 +214,16 @@ class _DeviceManagementScreenState extends State<DeviceManagementScreen> {
         ),
         title: Text(
           'Quản lý trạm thu AIS',
-          style: AppTextStyles.s16w600(color: Color(0xFF1565C0)),
+          style: AppTextStyles.s16w600(color: AppColors.textAppbar),
         ),
         actions: [
           IconButton(
             icon: SvgPicture.asset(
               'assets/icons/device/ic_add.svg',
-              width: 24.r,
-              height: 24.r,
+              width: 26.r,
+              height: 26.r,
               colorFilter: const ColorFilter.mode(
-                Color(0xFF1565C0),
+                AppColors.textAppbar,
                 BlendMode.srcIn,
               ),
             ),
@@ -395,13 +395,13 @@ class _DeviceManagementScreenState extends State<DeviceManagementScreen> {
                         children: [
                           Icon(
                             Icons.devices_other_rounded,
-                            size: 48.r,
+                            size: 40.r,
                             color: const Color(0xFFCBD5E1),
                           ),
                           SizedBox(height: 8.h),
                           Text(
-                            'Không tìm thấy trạm thu AIS nào.',
-                            style: AppTextStyles.s16w600(
+                            'Không tìm thấy trạm thu AIS nào',
+                            style: AppTextStyles.s14w500(
                               color: AppColors.textSecondary,
                             ),
                           ),

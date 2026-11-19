@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../app/theme/app_colors.dart';
-import '../../../../app/theme/text_style.dart';
-import '../../domain/entities/member_entity.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../../app/theme/app_colors.dart';
+import '../../../../../app/theme/text_style.dart';
+import '../../../domain/entities/member_entity.dart';
 
-/// Bottom sheet hiển thị thông tin chi tiết của một thành viên.
 class MemberDetailSheet extends StatelessWidget {
   final MemberEntity member;
 
@@ -33,9 +33,9 @@ class MemberDetailSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
-      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 20.h),
+      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 20.h),
       child: SafeArea(
         top: false,
         child: Column(
@@ -52,8 +52,9 @@ class MemberDetailSheet extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 8.h),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CircleAvatar(
                   radius: 24.r,
@@ -70,38 +71,44 @@ class MemberDetailSheet extends StatelessWidget {
                     children: [
                       Text(
                         member.displayName,
-                        style: AppTextStyles.s16w600(
+                        style: AppTextStyles.s15w500(
                           color: AppColors.textPrimary,
-                        ),
-                      ),
-                      Text(
-                        '@${member.username} · Thành viên',
-                        style: AppTextStyles.s13w500(
-                          color: AppColors.textSecondary,
                         ),
                       ),
                     ],
                   ),
                 ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  visualDensity: VisualDensity.compact,
+                  tooltip: 'Đóng',
+                  icon: Icon(
+                    Icons.close_rounded,
+                    size: 22.r,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ],
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
             const Divider(height: 1, color: AppColors.divider),
-            SizedBox(height: 12.h),
+            SizedBox(height: 8.h),
             _DetailRow(
-              label: 'User ID',
-              value: member.userId.toString(),
-              icon: Icons.badge_outlined,
+              label: 'Tên đăng nhập',
+              value: member.username,
+              svgPath: 'assets/icons/member/ic_name.svg',
             ),
             _DetailRow(
               label: 'Email',
               value: member.email.isNotEmpty ? member.email : 'Chưa cập nhật',
-              icon: Icons.email_outlined,
+              svgPath: 'assets/icons/member/ic_email.svg',
             ),
             _DetailRow(
               label: 'Số điện thoại',
               value: member.phone.isNotEmpty ? member.phone : 'Chưa cập nhật',
-              icon: Icons.phone_outlined,
+              svgPath: 'assets/icons/member/ic_phone.svg',
             ),
             _DetailRow(
               label: 'Cổng UDP',
@@ -115,26 +122,6 @@ class MemberDetailSheet extends StatelessWidget {
               value: _formatDate(member.createdAt),
               icon: Icons.calendar_today_outlined,
             ),
-            SizedBox(height: 16.h),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 12.h),
-                ),
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text(
-                  'Đóng',
-                  style: AppTextStyles.s14w600(color: Colors.white),
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -145,13 +132,15 @@ class MemberDetailSheet extends StatelessWidget {
 class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
-  final IconData icon;
+  final String? svgPath;
+  final IconData? icon;
 
   const _DetailRow({
     required this.label,
     required this.value,
-    required this.icon,
-  });
+    this.svgPath,
+    this.icon,
+  }) : assert(svgPath != null || icon != null);
 
   @override
   Widget build(BuildContext context) {
@@ -159,19 +148,31 @@ class _DetailRow extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 7.h),
       child: Row(
         children: [
-          Icon(icon, size: 18.r, color: AppColors.primary),
+          if (svgPath != null)
+            SvgPicture.asset(
+              svgPath!,
+              width: 18.r,
+              height: 18.r,
+              colorFilter: const ColorFilter.mode(
+                AppColors.primary,
+                BlendMode.srcIn,
+              ),
+            )
+          else
+            Icon(icon, size: 18.r, color: AppColors.primary),
           SizedBox(width: 10.w),
           Text(
             label,
             style: AppTextStyles.s13w500(color: AppColors.textSecondary),
           ),
-          const Spacer(),
-          Flexible(
+          SizedBox(width: 12.w),
+          Expanded(
             child: Text(
               value,
               textAlign: TextAlign.end,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.s13w600(color: AppColors.textPrimary),
+              style: AppTextStyles.s13w500(color: AppColors.textPrimary),
             ),
           ),
         ],
@@ -179,4 +180,3 @@ class _DetailRow extends StatelessWidget {
     );
   }
 }
-

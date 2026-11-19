@@ -33,23 +33,9 @@ class MemberEntity extends Equatable {
   }
 
   String get initials {
-    final parts = displayName
-        .trim()
-        .split(RegExp(r'\s+'))
-        .where((p) => p.isNotEmpty)
-        .toList();
-
-    if (parts.isEmpty) return '?';
-    if (parts.length == 1) {
-      final word = parts.first;
-      return word.length >= 2
-          ? word.substring(0, 2).toUpperCase()
-          : word.toUpperCase();
-    }
-
-    final secondLast = parts[parts.length - 2][0];
-    final last = parts[parts.length - 1][0];
-    return '$secondLast$last'.toUpperCase();
+    final trimmed = displayName.trim();
+    if (trimmed.isEmpty) return '?';
+    return trimmed[0].toUpperCase();
   }
 
   MemberEntity copyWith({

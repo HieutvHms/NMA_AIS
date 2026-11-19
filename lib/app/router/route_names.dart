@@ -15,4 +15,5 @@ class RouteNames {
   static const String deviceManagementTable = '/profile/device-management/table';
   static const String deviceManagementForm = '/profile/device-management/form';
   static const String memberManagement = '/profile/member-management';
+  static const String changePassword = '/profile/change-password';
 }

@@ -144,6 +144,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
               controller: _controller,
               focusNode: _focusNode,
               autofocus: widget.autoFocus,
+              onTapOutside: (_) => _focusNode.unfocus(),
               textInputAction: TextInputAction.search,
               textAlignVertical: TextAlignVertical.center,
               style: widget.textStyle ?? AppTextStyles.s14w500(),

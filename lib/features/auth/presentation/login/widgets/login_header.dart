@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../app/theme/text_style.dart';
+import '../../../../../app/theme/text_style.dart';
 import 'ais_logo_icon.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

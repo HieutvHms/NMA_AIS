@@ -5,9 +5,11 @@ import 'package:go_router/go_router.dart';
 import '../../features/ais_config/cubit/ais_config_cubit.dart';
 import '../../features/ais_config/presentation/screens/ais_config_screen.dart';
 import '../../features/ais_config/presentation/screens/buoy_config_screen.dart';
-import '../../features/auth/presentation/cubit/auth_cubit.dart';
-import '../../features/auth/presentation/cubit/auth_state.dart';
-import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/presentation/login/cubit/auth_cubit.dart';
+import '../../features/auth/presentation/login/cubit/auth_state.dart';
+import '../../features/auth/presentation/change_password/cubit/change_password_cubit.dart';
+import '../../features/auth/presentation/change_password/pages/change_password_page.dart';
+import '../../features/auth/presentation/login/screens/login_screen.dart';
 import '../../features/device/presentation/device_config/cubit/device_config_cubit.dart';
 import '../../features/device/presentation/device_list/cubit/device_list_cubit.dart';
 import '../../features/device/domain/entities/device_entity.dart';
@@ -237,6 +239,14 @@ GoRouter createRouter(AuthCubit authCubit) {
                     builder: (context, state) => BlocProvider(
                       create: (_) => sl<MemberManagementCubit>(),
                       child: const MemberManagementScreen(),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'change-password',
+                    parentNavigatorKey: _rootNavigatorKey,
+                    builder: (context, state) => BlocProvider(
+                      create: (_) => sl<ChangePasswordCubit>(),
+                      child: const ChangePasswordPage(),
                     ),
                   ),
                 ],

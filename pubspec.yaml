@@ -56,3 +56,5 @@ flutter:
     - assets/icons/device/
     - assets/icons/sign_in/
     - assets/icons/navbar/
+    - assets/icons/setting/
+    - assets/icons/member/

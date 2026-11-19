@@ -140,7 +140,7 @@ class ManagedDeviceListItem extends StatelessWidget {
                           width: 16.r,
                           height: 16.r,
                           colorFilter: const ColorFilter.mode(
-                            AppColors.primary,
+                            AppColors.textAppbar,
                             BlendMode.srcIn,
                           ),
                         ),

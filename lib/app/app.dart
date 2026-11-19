@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../core/constants/app_constants.dart';
-import '../features/auth/presentation/cubit/auth_cubit.dart';
+import '../features/auth/presentation/login/cubit/auth_cubit.dart';
 import 'di/injection_container.dart';
 import 'router/routes.dart';
 import 'theme/app_theme.dart';

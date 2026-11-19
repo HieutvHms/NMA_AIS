@@ -11,5 +11,10 @@ abstract class AuthRepository {
   Future<void> logout({bool callRemote = true});
 
   Future<UserEntity?> getCurrentUser();
+
+  Future<void> changePassword({
+    required String oldPassword,
+    required String newPassword,
+  });
 }
 

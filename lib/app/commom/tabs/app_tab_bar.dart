@@ -26,7 +26,6 @@ class AppTabItem {
   });
 }
 
-/// Thanh Tab dùng chung toàn ứng dụng, hỗ trợ kiểu Pill (bo tròn trượt) và Underline.
 class AppTabBar extends StatelessWidget {
   final List<AppTabItem> tabs;
   final TabController? controller;
@@ -85,7 +84,7 @@ class AppTabBar extends StatelessWidget {
             )
           : BoxDecoration(
               color: indicatorColor,
-              borderRadius: BorderRadius.circular((borderRadius - 2).r),
+              borderRadius: BorderRadius.circular(borderRadius.r),
               boxShadow: [
                 BoxShadow(
                   color: indicatorColor.withValues(alpha: 0.22),
@@ -105,18 +104,18 @@ class AppTabBar extends StatelessWidget {
 
     if (isUnderline) {
       return Container(
-        margin: margin ?? EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        height: height ?? 42.h,
+        margin: margin ?? EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+        height: height ?? 40.h,
         child: tabBar,
       );
     }
 
     return Container(
-      margin: margin ?? EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      height: height ?? 42.h,
-      padding: EdgeInsets.all(3.r),
+      margin: margin ?? EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+      height: height ?? 40.h,
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: backgroundColor ?? const Color(0xFFE2E8F0).withValues(alpha: 0.7),
+        color: backgroundColor ?? AppColors.borderDark,
         borderRadius: BorderRadius.circular(borderRadius.r),
       ),
       child: tabBar,
@@ -161,8 +160,8 @@ class AppTabBar extends StatelessWidget {
         final iconColor = IconTheme.of(context).color ?? AppColors.textPrimary;
         return SvgPicture.asset(
           assetPath,
-          width: 16.r,
-          height: 16.r,
+          width: 14.r,
+          height: 14.r,
           colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
         );
       },
@@ -194,4 +193,3 @@ class AppTabBar extends StatelessWidget {
     );
   }
 }
-

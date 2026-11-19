@@ -52,7 +52,6 @@ class MemberRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<List<MemberModel>> getMembers() async {
     final currentUserId = _currentUserId;
 
-    // Chỉ lấy danh sách thành viên con theo parentId (type: 2), không lấy thông tin Admin
     final response = await _safePost(AppConfig.userQueryUrl, {
       'type': 2,
       'userId': currentUserId,
@@ -74,7 +73,7 @@ class MemberRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<void> createMember(MemberModel member) async {
     await _safePost(AppConfig.userUpdateUrl, {
       'type': 1,
-      'data': member.toCreateJson(),
+      'data': member.toCreateJson(_currentUserId),
     });
   }
 

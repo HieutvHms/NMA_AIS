@@ -5,7 +5,6 @@ class ApiEndpoints {
   static const String login = '/auth/login';
   static const String logout = '/auth/logout';
   static const String refreshToken = '/auth/refresh';
-  static const String changePassword = '/auth/change-password';
 
   // Device Management
   static const String deviceQuery = '/device/query';
@@ -14,4 +13,6 @@ class ApiEndpoints {
   // User / Member Management
   static const String userQuery = '/user/query';
   static const String userUpdate = '/user/update';
+  static const String changePassword = '/user/change-password';
+  static const String resetPassword = '/user/reset-password';
 }

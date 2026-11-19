@@ -33,6 +33,8 @@ class AppConfig {
   // User / Member Management
   static String get userQueryUrl => '$authBaseUrl${ApiEndpoints.userQuery}';
   static String get userUpdateUrl => '$authBaseUrl${ApiEndpoints.userUpdate}';
+  static String get changePasswordUrl =>
+      '$authBaseUrl${ApiEndpoints.changePassword}';
 
   // API Base URLs
   static String get managerBaseUrl => dotenv.get(

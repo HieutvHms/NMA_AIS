@@ -129,16 +129,15 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
       backgroundColor: AppColors.background,
       appBar: SearchableAppBar(
         title: 'Thiết bị',
-        titleStyle: AppTextStyles.s16w600(color: const Color(0xFF1565C0)),
+        titleStyle: AppTextStyles.s16w600(color: AppColors.textAppbar),
         backgroundColor: AppColors.background,
-        textColor: const Color(0xFF1565C0),
         leading: IconButton(
           icon: SvgPicture.asset(
             'assets/icons/device/ic_grid.svg',
             width: 22.r,
             height: 22.r,
-            colorFilter: const ColorFilter.mode(
-              Color(0xFF1565C0),
+            colorFilter: ColorFilter.mode(
+              AppColors.textAppbar,
               BlendMode.srcIn,
             ),
           ),
@@ -161,7 +160,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
             icon: Icon(
               Icons.tune_rounded,
               color: _currentStatusFilter != null
-                  ? const Color(0xFF1565C0)
+                  ? AppColors.primary
                   : const Color(0xFF475569),
               size: 22.r,
             ),

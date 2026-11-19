@@ -6,11 +6,13 @@ import '../../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../../features/auth/data/datasources/auth_remote_data_source_impl.dart';
 import '../../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../../features/auth/domain/repositories/auth_repository.dart';
+import '../../../features/auth/domain/usecases/change_password_usecase.dart';
 import '../../../features/auth/domain/usecases/get_current_user_usecase.dart';
 import '../../../features/auth/domain/usecases/login_usecase.dart';
 import '../../../features/auth/domain/usecases/logout_usecase.dart';
 import '../../../features/auth/domain/usecases/refresh_token_usecase.dart';
-import '../../../features/auth/presentation/cubit/auth_cubit.dart';
+import '../../../features/auth/presentation/login/cubit/auth_cubit.dart';
+import '../../../features/auth/presentation/change_password/cubit/change_password_cubit.dart';
 
 void registerAuthModule(GetIt sl) {
   // Remote Data Source
@@ -32,6 +34,7 @@ void registerAuthModule(GetIt sl) {
   sl.registerLazySingleton(() => LogoutUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => RefreshTokenUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => GetCurrentUserUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => ChangePasswordUseCase(sl<AuthRepository>()));
 
   // Cubit
   sl.registerLazySingleton<AuthCubit>(
@@ -40,6 +43,11 @@ void registerAuthModule(GetIt sl) {
       logoutUseCase: sl<LogoutUseCase>(),
       refreshTokenUseCase: sl<RefreshTokenUseCase>(),
       getCurrentUserUseCase: sl<GetCurrentUserUseCase>(),
+    ),
+  );
+  sl.registerFactory<ChangePasswordCubit>(
+    () => ChangePasswordCubit(
+      changePasswordUseCase: sl<ChangePasswordUseCase>(),
     ),
   );
 }

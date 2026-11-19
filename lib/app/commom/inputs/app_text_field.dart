@@ -11,6 +11,8 @@ class AppTextField extends StatefulWidget {
   final bool isRequired;
   final String? hintText;
   final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
   final FormFieldValidator<String>? validator;
@@ -18,7 +20,9 @@ class AppTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final bool isPassword;
   final bool showClearButton;
+  final bool showSuccessIcon;
   final String? prefixSvgPath;
+  final IconData? prefixIcon;
   final int maxLines;
   final bool enabled;
   final double? height;
@@ -35,6 +39,8 @@ class AppTextField extends StatefulWidget {
     this.isRequired = false,
     this.hintText,
     this.controller,
+    this.focusNode,
+    this.textInputAction,
     this.onChanged,
     this.onSubmitted,
     this.validator,
@@ -42,7 +48,9 @@ class AppTextField extends StatefulWidget {
     this.inputFormatters,
     this.isPassword = false,
     this.showClearButton = false,
+    this.showSuccessIcon = false,
     this.prefixSvgPath,
+    this.prefixIcon,
     this.maxLines = 1,
     this.enabled = true,
     this.height,
@@ -118,7 +126,7 @@ class _AppTextFieldState extends State<AppTextField> {
     );
     final focusedBorder = _buildBorder(
       widget.focusedBorderColor ?? AppColors.primary,
-      widget.focusedBorderWidth ?? 1.5,
+      widget.focusedBorderWidth ?? 1,
       radius,
     );
     final errorBorder = _buildBorder(Colors.redAccent, 1.2, radius);
@@ -128,10 +136,10 @@ class _AppTextFieldState extends State<AppTextField> {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (widget.label != null) ...[
-          RichText(
-            text: TextSpan(
+          Text.rich(
+            TextSpan(
               text: widget.label!,
-              style: AppTextStyles.s13w500(color: AppColors.textPrimary),
+              style: AppTextStyles.s12w500(color: AppColors.textPrimary),
               children: [
                 if (widget.isRequired)
                   const TextSpan(
@@ -148,6 +156,8 @@ class _AppTextFieldState extends State<AppTextField> {
         ],
         TextFormField(
           controller: widget.controller,
+          focusNode: widget.focusNode,
+          textInputAction: widget.textInputAction,
           enabled: widget.enabled,
           obscureText: widget.isPassword ? _obscureText : false,
           enableSuggestions: !widget.isPassword,
@@ -193,22 +203,36 @@ class _AppTextFieldState extends State<AppTextField> {
   }
 
   Widget? _buildPrefixIcon() {
-    if (widget.prefixSvgPath == null) return null;
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12.w),
-      child: UnconstrainedBox(
-        child: SvgPicture.asset(
-          widget.prefixSvgPath!,
-          width: 20.r,
-          height: 20.r,
+    if (widget.prefixSvgPath != null) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        child: UnconstrainedBox(
+          child: SvgPicture.asset(
+            widget.prefixSvgPath!,
+            width: 20.r,
+            height: 20.r,
+          ),
         ),
-      ),
-    );
+      );
+    }
+    if (widget.prefixIcon != null) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        child: Icon(
+          widget.prefixIcon,
+          size: 19.r,
+          color: AppColors.textSecondary,
+        ),
+      );
+    }
+    return null;
   }
 
   Widget? _buildSuffixIcon() {
+    Widget? actionIcon;
+
     if (widget.isPassword) {
-      return IconButton(
+      actionIcon = IconButton(
         icon: UnconstrainedBox(
           child: SvgPicture.asset(
             _obscureText
@@ -218,14 +242,15 @@ class _AppTextFieldState extends State<AppTextField> {
             height: 20.r,
           ),
         ),
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        constraints: const BoxConstraints(),
+        visualDensity: VisualDensity.compact,
         tooltip: _obscureText ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
         onPressed: () => setState(() => _obscureText = !_obscureText),
         splashRadius: 18.r,
       );
-    }
-
-    if (widget.showClearButton && _hasText) {
-      return IconButton(
+    } else if (widget.showClearButton && _hasText) {
+      actionIcon = IconButton(
         padding: EdgeInsets.symmetric(horizontal: 10.w),
         constraints: const BoxConstraints(),
         visualDensity: VisualDensity.compact,
@@ -240,6 +265,21 @@ class _AppTextFieldState extends State<AppTextField> {
       );
     }
 
-    return null;
+    if (!widget.showSuccessIcon) return actionIcon;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(right: actionIcon == null ? 12.w : 2.w),
+          child: Icon(
+            Icons.check_circle_outline_rounded,
+            size: 20.r,
+            color: AppColors.online,
+          ),
+        ),
+        if (actionIcon != null) actionIcon,
+      ],
+    );
   }
 }

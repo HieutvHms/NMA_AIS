@@ -46,8 +46,9 @@ class MemberModel extends MemberEntity {
     );
   }
 
-  Map<String, dynamic> toCreateJson() {
+  Map<String, dynamic> toCreateJson(int userId) {
     return {
+      'userId': userId,
       'username': username.trim(),
       'password': password ?? '',
       'email': email.trim(),

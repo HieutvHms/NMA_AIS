@@ -5,7 +5,7 @@ import '../../../core/network/dio_client.dart';
 import '../../../core/network/token_refresh_coordinator.dart';
 import '../../../core/storage/local_storage.dart';
 import '../../../core/storage/secure_storege.dart';
-import '../../../features/auth/presentation/cubit/auth_cubit.dart';
+import '../../../features/auth/presentation/login/cubit/auth_cubit.dart';
 
 Future<void> registerCoreModule(GetIt sl) async {
   final prefs = await SharedPreferences.getInstance();

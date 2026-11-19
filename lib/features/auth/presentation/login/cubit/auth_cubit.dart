@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/error/error_mapper.dart';
-import '../../../../core/error/failures.dart';
-import '../../domain/usecases/get_current_user_usecase.dart';
-import '../../domain/usecases/login_usecase.dart';
-import '../../domain/usecases/logout_usecase.dart';
-import '../../domain/usecases/refresh_token_usecase.dart';
+import '../../../../../core/error/error_mapper.dart';
+import '../../../../../core/error/failures.dart';
+import '../../../domain/usecases/get_current_user_usecase.dart';
+import '../../../domain/usecases/login_usecase.dart';
+import '../../../domain/usecases/logout_usecase.dart';
+import '../../../domain/usecases/refresh_token_usecase.dart';
 import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
@@ -52,7 +52,6 @@ class AuthCubit extends Cubit<AuthState> {
           emit(const Unauthenticated());
         }
       } on Failure {
-        // Lỗi mạng / server tạm thời: giữ phiên đã lưu theo tài liệu BE
         emit(Authenticated(cachedUser));
       }
     } catch (_) {

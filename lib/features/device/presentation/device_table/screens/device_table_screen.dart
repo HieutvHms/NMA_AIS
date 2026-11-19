@@ -52,16 +52,6 @@ class _DeviceTableScreenState extends State<DeviceTableScreen> {
             context.go('/devices');
           }
         },
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(
-        //       Icons.add_circle_outline_rounded,
-        //       color: AppColors.primary,
-        //     ),
-        //     tooltip: 'Thêm mới trạm',
-        //     onPressed: _openAddDialog,
-        //   ),
-        // ],
       ),
       body: BlocBuilder<DeviceListCubit, DeviceListState>(
         builder: (context, state) {

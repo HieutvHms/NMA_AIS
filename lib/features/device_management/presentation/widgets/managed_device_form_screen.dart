@@ -172,7 +172,7 @@ class _ManagedDeviceFormScreenState extends State<ManagedDeviceFormScreen> {
                       SizedBox(height: 4.h),
                       Text(
                         '* Mã IMEI là định danh phần cứng, không thể sửa đổi sau khi tạo.',
-                        style: AppTextStyles.s11w400(
+                        style: AppTextStyles.s10w400(
                           color: AppColors.textSecondary,
                         ),
                       ),
@@ -204,7 +204,7 @@ class _ManagedDeviceFormScreenState extends State<ManagedDeviceFormScreen> {
                     ),
                     SizedBox(height: 12.h),
                     AppTextField(
-                      label: 'Mã nhận dạng MMSI',
+                      label: 'Mã MMSI',
                       isRequired: true,
                       hintText: 'Nhập mã MMSI',
                       controller: _mmsiController,
@@ -319,7 +319,7 @@ class _ManagedDeviceFormScreenState extends State<ManagedDeviceFormScreen> {
           children: [
             Text(
               'Loại module AIS',
-              style: AppTextStyles.s13w500(color: AppColors.textPrimary),
+              style: AppTextStyles.s12w500(color: AppColors.textPrimary),
             ),
             // Text(' *', style: AppTextStyles.s13w500(color: AppColors.error)),
           ],

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import '../../../../core/base/base_remote_datasource.dart';
 import '../../../../core/config/app_config.dart';
 import '../../../../core/error/exceptions.dart';
+import '../models/change_password_request.dart';
 import '../models/user_model.dart';
 import 'auth_remote_data_source.dart';
 
@@ -157,5 +158,55 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
         message: e.toString().replaceFirst('Exception: ', ''),
       );
     }
+  }
+
+  @override
+  Future<void> changePassword(ChangePasswordRequest request) async {
+    try {
+      final body = await post(
+        AppConfig.changePasswordUrl,
+        data: request.toJson(),
+      );
+
+      if (body is Map<String, dynamic> && body['success'] == false) {
+        _throwChangePasswordApiError(body);
+      }
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      if (data is Map<String, dynamic>) {
+        _throwChangePasswordApiError(data, statusCode: e.response?.statusCode);
+      }
+      rethrow;
+    } on ValidationException {
+      rethrow;
+    } on ServerException {
+      rethrow;
+    } catch (e) {
+      throw ServerException(
+        message: e.toString().replaceFirst('Exception: ', ''),
+      );
+    }
+  }
+
+  /// Tách mã lỗi `INVALID_PASSWORD` thành [ValidationException] để UI hiển thị
+  /// trực tiếp dưới ô "Mật khẩu hiện tại", các lỗi khác ném [ServerException].
+  Never _throwChangePasswordApiError(
+    Map<String, dynamic> body, {
+    int? statusCode,
+  }) {
+    final code = body['code']?.toString().trim() ?? '';
+    final message = body['message']?.toString().trim();
+    final effectiveMessage = (message != null && message.isNotEmpty)
+        ? message
+        : 'Thay đổi mật khẩu thất bại.';
+
+    if (code == 'INVALID_PASSWORD') {
+      throw ValidationException(
+        message: effectiveMessage,
+        errors: {'oldPassword': [effectiveMessage]},
+      );
+    }
+
+    throw ServerException(message: effectiveMessage, statusCode: statusCode);
   }
 }

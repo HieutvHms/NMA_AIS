@@ -1,3 +1,4 @@
+import '../models/change_password_request.dart';
 import '../models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
@@ -9,4 +10,6 @@ abstract class AuthRemoteDataSource {
   Future<Map<String, dynamic>> refreshToken({required String refreshToken});
 
   Future<void> logout({required String refreshToken});
+
+  Future<void> changePassword(ChangePasswordRequest request);
 }

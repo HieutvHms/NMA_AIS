@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../app/theme/text_style.dart';
-import '../../../../core/utils/snackbar_helper.dart';
+import '../../../../../app/theme/text_style.dart';
+import '../../../../../core/utils/snackbar_helper.dart';
 
 class ForgotPasswordButton extends StatelessWidget {
   final VoidCallback? onPressed;

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../app/theme/text_style.dart';
-import '../../../auth/presentation/cubit/auth_cubit.dart';
-import '../../../auth/presentation/cubit/auth_state.dart';
+import '../../../auth/presentation/login/cubit/auth_cubit.dart';
+import '../../../auth/presentation/login/cubit/auth_state.dart';
 import '../widgets/profile_avatar_section.dart';
 import '../widgets/profile_menu_list.dart';
 
@@ -35,7 +35,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 if (user != null) ...[
                   ProfileAvatarSection(user: user),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 10.h),
                 ],
                 ProfileMenuList(user: user),
                 SizedBox(height: 24.h),

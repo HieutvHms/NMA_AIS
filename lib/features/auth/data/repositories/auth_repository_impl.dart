@@ -5,6 +5,7 @@ import '../../../../core/storage/local_storage.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
+import '../models/change_password_request.dart';
 import '../models/user_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -109,6 +110,27 @@ class AuthRepositoryImpl implements AuthRepository {
       role: role,
       accessToken: token,
       refreshToken: refreshToken,
+    );
+  }
+
+  @override
+  Future<void> changePassword({
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    final username = _localStorage.getUsername()?.trim() ?? '';
+    if (username.isEmpty) {
+      throw const ServerException(
+        message: 'Không tìm thấy thông tin tài khoản hiện tại.',
+      );
+    }
+
+    await _remoteDataSource.changePassword(
+      ChangePasswordRequest(
+        username: username,
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      ),
     );
   }
 }
