@@ -32,14 +32,14 @@ class _ManagedDeviceTableViewState extends State<ManagedDeviceTableView> {
 
   double get colSttWidth => 50.w;
   double get colNameWidth => 130.w;
-  double get colImeiWidth => 148.w;
+  double get colImeiWidth => 130.w;
   double get colMmsiWidth => 120.w;
-  double get colSimWidth => 195.w;
-  double get colPortWidth => 170.w;
-  double get colStatusWidth => 100.w;
-  double get colLastMsgWidth => 200.w;
-  double get colLastAisWidth => 200.w;
-  double get colSignalWidth => 140.w;
+  double get colSimWidth => 170.w;
+  double get colPortWidth => 150.w;
+  double get colStatusWidth => 80.w;
+  double get colLastMsgWidth => 180.w;
+  double get colLastAisWidth => 180.w;
+  double get colSignalWidth => 120.w;
   double get colModuleWidth => 130.w;
   double get colActionWidth => 105.w;
 
@@ -200,7 +200,7 @@ class _ManagedDeviceTableViewState extends State<ManagedDeviceTableView> {
                 Row(
                   children: [
                     _buildHeaderCell('STT', colSttWidth, isCenter: true),
-                    _buildHeaderCell('Tên trạm', colNameWidth),
+                    _buildHeaderCell('Tên trạm', colNameWidth, isCenter: true),
                   ],
                 ),
                 Expanded(

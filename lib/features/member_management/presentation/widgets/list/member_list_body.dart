@@ -6,7 +6,6 @@ import '../../../domain/entities/member_entity.dart';
 import '../../cubit/member_management_state.dart';
 import 'member_list_item.dart';
 
-/// Phần nội dung danh sách thành viên (xử lý các trạng thái Loading / Error / Empty / Loaded).
 class MemberListBody extends StatelessWidget {
   final MemberManagementState state;
   final Future<void> Function() onRefresh;
@@ -37,9 +36,7 @@ class MemberListBody extends StatelessWidget {
     if (state is MemberManagementLoaded) {
       final loaded = state as MemberManagementLoaded;
       if (loaded.filteredMembers.isEmpty) {
-        return _buildEmptyView(
-          hasQuery: loaded.searchQuery.trim().isNotEmpty,
-        );
+        return _buildEmptyView(hasQuery: loaded.searchQuery.trim().isNotEmpty);
       }
       return _buildMemberList(loaded.filteredMembers);
     }
@@ -116,10 +113,10 @@ class MemberListBody extends StatelessWidget {
       child: ListView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(12.w, 4.h, 12.w, 16.h),
+        padding: EdgeInsets.fromLTRB(12.w, 1.h, 12.w, 12.h),
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
             child: Text(
               'Thành viên · ${members.length}',
               style: AppTextStyles.s14w500(color: AppColors.textSecondary),
@@ -139,4 +136,3 @@ class MemberListBody extends StatelessWidget {
     );
   }
 }
-

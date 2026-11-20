@@ -61,6 +61,7 @@ class AppTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isUnderline = tabStyle == AppTabBarStyle.underline;
+    final effectiveHeight = height ?? 40.h;
     final indicatorColor = activeIndicatorColor ?? AppColors.primary;
     final effectiveLabelColor =
         labelColor ?? (isUnderline ? indicatorColor : Colors.white);
@@ -99,20 +100,22 @@ class AppTabBar extends StatelessWidget {
       unselectedLabelStyle: AppTextStyles.s13w500(
         color: effectiveUnselectedColor,
       ),
-      tabs: tabs.map((item) => _buildTab(item, isUnderline)).toList(),
+      tabs: tabs
+          .map((item) => _buildTab(item, isUnderline, effectiveHeight))
+          .toList(),
     );
 
     if (isUnderline) {
       return Container(
-        margin: margin ?? EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-        height: height ?? 40.h,
+        margin: margin ?? EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        height: effectiveHeight,
         child: tabBar,
       );
     }
 
     return Container(
-      margin: margin ?? EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-      height: height ?? 40.h,
+      margin: margin ?? EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+      height: effectiveHeight,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: backgroundColor ?? AppColors.borderDark,
@@ -122,11 +125,12 @@ class AppTabBar extends StatelessWidget {
     );
   }
 
-  Widget _buildTab(AppTabItem item, bool isUnderline) {
+  Widget _buildTab(AppTabItem item, bool isUnderline, double tabHeight) {
     final shouldShowBadge =
         item.count != null && (item.count! > 0 || item.showBadgeIfZero);
 
     return Tab(
+      height: tabHeight,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,

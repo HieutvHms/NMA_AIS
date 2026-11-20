@@ -16,7 +16,7 @@ class LoginBackground extends StatelessWidget {
           right: 0,
           bottom: 0,
           child: Image.asset(
-            'assets/images/login_bg.jpg',
+            'assets/images/login_bg.png',
             fit: BoxFit.cover,
             alignment: Alignment.bottomCenter,
           ),

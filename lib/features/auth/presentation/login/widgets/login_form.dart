@@ -7,6 +7,7 @@ import '../../../../../core/utils/snackbar_helper.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'forgot_password_button.dart';
+import 'package:ais/app/theme/app_colors.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -39,8 +40,10 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void _handleLogin() {
+    final authCubit = context.read<AuthCubit>();
+    if (authCubit.state is AuthLoading) return;
     FocusScope.of(context).unfocus();
-    context.read<AuthCubit>().login(
+    authCubit.login(
       _usernameController.text,
       _passwordController.text,
     );
@@ -65,12 +68,13 @@ class _LoginFormState extends State<LoginForm> {
             AppTextField(
               controller: _usernameController,
               hintText: 'Tên đăng nhập',
+              enabled: !isLoading,
               prefixSvgPath: 'assets/icons/sign_in/ic_user.svg',
               borderRadius: 16.r,
               fillColor: Colors.white,
-              borderColor: const Color.fromARGB(255, 137, 148, 164),
+              borderColor: AppColors.borderDark,
               borderWidth: 0.5,
-              focusedBorderColor: const Color(0xFF1B63C6),
+              focusedBorderColor: AppColors.primary,
               focusedBorderWidth: 0.8,
               height: 46.h,
             ),
@@ -78,14 +82,15 @@ class _LoginFormState extends State<LoginForm> {
             AppTextField(
               controller: _passwordController,
               hintText: 'Mật khẩu',
+              enabled: !isLoading,
               prefixSvgPath: 'assets/icons/sign_in/ic_pass.svg',
               isPassword: true,
               onSubmitted: (_) => _handleLogin(),
               borderRadius: 16.r,
               fillColor: Colors.white,
-              borderColor: const Color.fromARGB(255, 137, 148, 164),
+              borderColor: AppColors.borderDark,
               borderWidth: 0.5,
-              focusedBorderColor: const Color(0xFF1B63C6),
+              focusedBorderColor: AppColors.primary,
               focusedBorderWidth: 0.8,
               height: 46.h,
             ),
@@ -97,7 +102,10 @@ class _LoginFormState extends State<LoginForm> {
               isLoading: isLoading,
               onPressed: _handleLogin,
             ),
-            const ForgotPasswordButton(),
+            IgnorePointer(
+              ignoring: isLoading,
+              child: const ForgotPasswordButton(),
+            ),
           ],
         );
       },

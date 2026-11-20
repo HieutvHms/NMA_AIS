@@ -1,3 +1,4 @@
+import 'package:ais/app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -52,9 +53,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       onTap: _dismissKeyboard,
       behavior: HitTestBehavior.translucent,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.background,
           elevation: 0,
           scrolledUnderElevation: 0,
           centerTitle: true,
@@ -62,13 +63,16 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             onPressed: () => context.pop(),
             icon: Icon(
               Icons.arrow_back_ios_new_rounded,
-              size: 18.r,
-              color: _primaryColor,
+              size: 20.r,
+              color: _titleColor,
             ),
           ),
           title: Text(
             'Đổi mật khẩu',
             style: AppTextStyles.s16w600(color: _titleColor),
+          ),
+          shape: const Border(
+            bottom: BorderSide(color: _inputBorderColor, width: 1),
           ),
         ),
         body: BlocConsumer<ChangePasswordCubit, ChangePasswordState>(

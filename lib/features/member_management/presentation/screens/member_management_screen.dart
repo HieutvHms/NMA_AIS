@@ -114,18 +114,19 @@ class _MemberManagementScreenState extends State<MemberManagementScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: MemberTopBar(
+        onBack: () => context.pop(),
+        onAddMember: _openCreateMember,
+      ),
       body: SafeArea(
+        top: false,
         child: BlocConsumer<MemberManagementCubit, MemberManagementState>(
           listener: _handleFeedback,
           builder: (context, state) {
             return Column(
               children: [
-                MemberTopBar(
-                  onBack: () => context.pop(),
-                  onAddMember: _openCreateMember,
-                ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(16.w, 6.h, 16.w, 12.h),
+                  padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 12.h),
                   child: AppSearchBar(
                     controller: _searchController,
                     hintText: 'Tìm theo tên hoặc email',
@@ -133,7 +134,7 @@ class _MemberManagementScreenState extends State<MemberManagementScreen> {
                       color: AppColors.textMuted,
                     ),
                     backgroundColor: AppColors.surface,
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: AppColors.borderDark),
                     borderRadius: 12.r,
                     height: 40.h,
                     onChanged: cubit.searchMembers,

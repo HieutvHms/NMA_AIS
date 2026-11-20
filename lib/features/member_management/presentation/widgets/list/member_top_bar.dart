@@ -4,8 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../app/theme/text_style.dart';
 
-/// Thanh tiêu đề màn hình Quản lý thành viên.
-class MemberTopBar extends StatelessWidget {
+class MemberTopBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onBack;
   final VoidCallback onAddMember;
 
@@ -16,68 +15,66 @@ class MemberTopBar extends StatelessWidget {
   });
 
   @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(12.w, 0.h, 12.w, 0.h),
-      child: SizedBox(
-        height: 42.r,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                onPressed: onBack,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  size: 20.r,
-                  color: AppColors.textAppbar,
-                ),
-              ),
-            ),
-            Text(
-              'Thành viên',
-              textAlign: TextAlign.center,
-              style: AppTextStyles.s16w600(color: AppColors.textAppbar),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Material(
-                color: const Color(0xFFDCEAFB),
+    return AppBar(
+      backgroundColor: AppColors.background,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      centerTitle: true,
+      shape: const Border(
+        bottom: BorderSide(color: AppColors.border, width: 1),
+      ),
+      leading: IconButton(
+        onPressed: onBack,
+        icon: Icon(
+          Icons.arrow_back_ios,
+          size: 20.r,
+          color: AppColors.textAppbar,
+        ),
+      ),
+      title: Text(
+        'Thành viên',
+        style: AppTextStyles.s16w600(color: AppColors.textAppbar),
+      ),
+      actions: [
+        Padding(
+          padding: EdgeInsets.only(right: 12.w),
+          child: Center(
+            child: Material(
+              color: const Color(0xFFDCEAFB),
+              borderRadius: BorderRadius.circular(12.r),
+              child: InkWell(
+                onTap: onAddMember,
                 borderRadius: BorderRadius.circular(12.r),
-                child: InkWell(
-                  onTap: onAddMember,
-                  borderRadius: BorderRadius.circular(12.r),
-                  child: Container(
-                    width: 36.r,
-                    height: 36.r,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(
-                        color: const Color(0xFFC6DCF7),
-                        width: 1,
-                      ),
+                child: Container(
+                  width: 36.r,
+                  height: 36.r,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(
+                      color: const Color(0xFFC6DCF7),
+                      width: 1,
                     ),
-                    alignment: Alignment.center,
-                    child: SvgPicture.asset(
-                      'assets/icons/member/ic_add_member.svg',
-                      width: 24.r,
-                      height: 24.r,
-                      colorFilter: const ColorFilter.mode(
-                        AppColors.textAppbar,
-                        BlendMode.srcIn,
-                      ),
+                  ),
+                  alignment: Alignment.center,
+                  child: SvgPicture.asset(
+                    'assets/icons/member/ic_add_member.svg',
+                    width: 24.r,
+                    height: 24.r,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.textAppbar,
+                      BlendMode.srcIn,
                     ),
                   ),
                 ),
               ),
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
-

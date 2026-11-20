@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../../app/commom/app_bar/searchable_app_bar.dart';
+import '../../../../../../app/commom/dia_logs/app_confirm_dialog.dart';
 import '../../../../../../app/theme/app_colors.dart';
 import '../../../../../../app/theme/text_style.dart';
 import '../../../../../../core/utils/snackbar_helper.dart';
@@ -54,37 +55,12 @@ class _ManagedDeviceTableScreenState extends State<ManagedDeviceTableScreen> {
   }
 
   void _confirmDelete(ManagedDeviceEntity device) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        title: Text('Xác nhận xóa thiết bị 4G', style: AppTextStyles.s16w600()),
-        content: Text(
-          'Bạn có chắc chắn muốn xóa trạm "${device.stationName}" (IMEI: ${device.imei}) khỏi hệ thống không?',
-          style: AppTextStyles.s14w500(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text('Hủy', style: AppTextStyles.s14w500()),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFFDC2626),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-            ),
-            onPressed: () {
-              Navigator.pop(ctx);
-              context.read<DeviceManagementCubit>().deleteDevice(device);
-            },
-            child: Text('Xóa', style: AppTextStyles.s14w500()),
-          ),
-        ],
-      ),
+    AppConfirmDialog.showDelete(
+      context,
+      itemName: 'trạm "${device.stationName}"',
+      onConfirm: () {
+        context.read<DeviceManagementCubit>().deleteDevice(device);
+      },
     );
   }
 

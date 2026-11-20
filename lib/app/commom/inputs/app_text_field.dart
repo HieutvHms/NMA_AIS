@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/text_style.dart';
 
-/// TextField dùng chung cho toàn bộ ứng dụng
 class AppTextField extends StatefulWidget {
   final String? label;
   final bool isRequired;

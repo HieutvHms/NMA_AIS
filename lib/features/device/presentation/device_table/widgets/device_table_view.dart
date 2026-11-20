@@ -25,7 +25,7 @@ class _DeviceTableViewState extends State<DeviceTableView> {
 
   double get colSttWidth => 50.w;
   double get colNameWidth => 130.w;
-  double get colImeiWidth => 148.w;
+  double get colImeiWidth => 130.w;
   double get colSimWidth => 195.w;
   double get colPortWidth => 170.w;
   double get colStatusWidth => 100.w;
@@ -97,7 +97,7 @@ class _DeviceTableViewState extends State<DeviceTableView> {
     return Container(
       width: width,
       height: headerHeight,
-      alignment: Alignment.center,
+      alignment: isCenter ? Alignment.center : Alignment.centerLeft,
       padding: EdgeInsets.symmetric(horizontal: 10.w),
       decoration: BoxDecoration(
         color: const Color(0xFF1976D2),
@@ -111,20 +111,12 @@ class _DeviceTableViewState extends State<DeviceTableView> {
           bottom: const BorderSide(color: Color(0xFF1565C0), width: 1.0),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: isCenter
-            ? MainAxisAlignment.center
-            : MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            child: Text(
-              text,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.s12w600(color: Colors.white),
-            ),
-          ),
-        ],
+      child: Text(
+        text,
+        textAlign: isCenter ? TextAlign.center : TextAlign.start,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: AppTextStyles.s12w600(color: Colors.white),
       ),
     );
   }
@@ -183,7 +175,6 @@ class _DeviceTableViewState extends State<DeviceTableView> {
       ),
       child: Row(
         children: [
-          // 1. Khối 2 cột cố định bên trái (STT + Tên trạm)
           SizedBox(
             width: colSttWidth + colNameWidth,
             child: Column(
@@ -192,7 +183,7 @@ class _DeviceTableViewState extends State<DeviceTableView> {
                 Row(
                   children: [
                     _buildHeaderCell('STT', colSttWidth, isCenter: true),
-                    _buildHeaderCell('Tên trạm', colNameWidth),
+                    _buildHeaderCell('Tên trạm', colNameWidth, isCenter: true),
                   ],
                 ),
                 // Data list cố định bên trái
@@ -219,12 +210,14 @@ class _DeviceTableViewState extends State<DeviceTableView> {
                           _buildDataCell(
                             Text(
                               item.stationName,
+                              textAlign: TextAlign.center,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.s13w500(),
                             ),
                             colNameWidth,
                             isEven,
+                            isCenter: true,
                           ),
                         ],
                       );

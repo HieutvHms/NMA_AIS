@@ -85,6 +85,7 @@ class _EditMemberSheetState extends State<EditMemberSheet> {
           'Chỉnh sửa thành viên',
           style: AppTextStyles.s16w600(color: AppColors.textAppbar),
         ),
+        shape: const Border(bottom: BorderSide(color: AppColors.border)),
       ),
       body: SafeArea(
         top: false,

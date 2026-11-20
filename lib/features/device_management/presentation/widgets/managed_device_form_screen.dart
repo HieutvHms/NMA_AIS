@@ -109,15 +109,15 @@ class _ManagedDeviceFormScreenState extends State<ManagedDeviceFormScreen> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new_rounded,
-            size: 18,
-            color: Color(0xFF1565C0),
+            size: 20,
+            color: AppColors.textAppbar,
           ),
           tooltip: 'Quay lại',
           onPressed: () => context.pop(),
         ),
         title: Text(
           isEdit ? 'Cập nhật trạm thu' : 'Thêm trạm thu',
-          style: AppTextStyles.s16w600(color: const Color(0xFF1565C0)),
+          style: AppTextStyles.s16w600(color: AppColors.textAppbar),
         ),
         shape: const Border(
           bottom: BorderSide(color: AppColors.borderDark, width: 1),
@@ -262,7 +262,7 @@ class _ManagedDeviceFormScreenState extends State<ManagedDeviceFormScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 4.w, bottom: 8.h),
+          padding: EdgeInsets.only(bottom: 8.h),
           child: Row(
             children: [
               if (svgPath != null)
@@ -271,16 +271,16 @@ class _ManagedDeviceFormScreenState extends State<ManagedDeviceFormScreen> {
                   width: 18.r,
                   height: 18.r,
                   colorFilter: const ColorFilter.mode(
-                    Color(0xFF1565C0),
+                    AppColors.primary,
                     BlendMode.srcIn,
                   ),
                 )
               else if (icon != null)
-                Icon(icon, size: 18.r, color: const Color(0xFF1565C0)),
+                Icon(icon, size: 18.r, color: AppColors.primary),
               SizedBox(width: 8.w),
               Text(
                 title,
-                style: AppTextStyles.s14w500(color: const Color(0xFF0F172A)),
+                style: AppTextStyles.s13w500(color: AppColors.primary),
               ),
             ],
           ),
@@ -296,7 +296,7 @@ class _ManagedDeviceFormScreenState extends State<ManagedDeviceFormScreen> {
             border: Border.all(color: const Color(0xFFE2E8F0)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
+                color: Colors.black.withValues(alpha: 0.2),
                 offset: const Offset(0, 2),
                 blurRadius: 4,
               ),

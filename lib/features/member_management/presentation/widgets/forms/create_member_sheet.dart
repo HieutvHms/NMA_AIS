@@ -94,6 +94,7 @@ class _CreateMemberSheetState extends State<CreateMemberSheet> {
           'Thêm thành viên',
           style: AppTextStyles.s16w600(color: AppColors.textAppbar),
         ),
+        shape: const Border(bottom: BorderSide(color: AppColors.border)),
       ),
       body: SafeArea(
         top: false,

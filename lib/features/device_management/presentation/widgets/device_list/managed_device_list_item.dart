@@ -41,7 +41,7 @@ class ManagedDeviceListItem extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0D3B7A).withValues(alpha: 0.12),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 6.r,
             offset: Offset(0, 3.h),
           ),

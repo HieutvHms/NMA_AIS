@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../app/commom/dia_logs/app_confirm_dialog.dart';
 import '../../../../app/commom/inputs/app_search_bar.dart';
 import '../../../../app/commom/tabs/app_tab_bar.dart';
 import '../../../../app/theme/app_colors.dart';
@@ -57,43 +58,12 @@ class _DeviceManagementScreenState extends State<DeviceManagementScreen> {
   }
 
   void _confirmDelete(ManagedDeviceEntity device) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        title: Text('Xác nhận xóa thiết bị 4G', style: AppTextStyles.s15w600()),
-        content: Text(
-          'Bạn có chắc chắn muốn xóa trạm "${device.stationName}" (IMEI: ${device.imei}) khỏi hệ thống không?',
-          style: AppTextStyles.s14w500(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              'Hủy',
-              style: AppTextStyles.s14w500(color: AppColors.textSecondary),
-            ),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFFDC2626),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-            ),
-            onPressed: () {
-              Navigator.pop(ctx);
-              context.read<DeviceManagementCubit>().deleteDevice(device);
-            },
-            child: Text(
-              'Xóa',
-              style: AppTextStyles.s14w500(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
+    AppConfirmDialog.showDelete(
+      context,
+      itemName: 'trạm "${device.stationName}"',
+      onConfirm: () {
+        context.read<DeviceManagementCubit>().deleteDevice(device);
+      },
     );
   }
 
@@ -108,86 +78,6 @@ class _DeviceManagementScreenState extends State<DeviceManagementScreen> {
     );
   }
 
-  // void _showFilterSheet() {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     backgroundColor: Colors.white,
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(18.r)),
-  //     ),
-  //     builder: (ctx) {
-  //       return SafeArea(
-  //         child: Padding(
-  //           padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Text(
-  //                 'Lọc trạng thái thiết bị 4G',
-  //                 style: AppTextStyles.s16w600(),
-  //               ),
-  //               SizedBox(height: 12.h),
-  //               ListTile(
-  //                 title: Text(
-  //                   'Tất cả trạng thái',
-  //                   style: AppTextStyles.s14w500(),
-  //                 ),
-  //                 leading: const Icon(Icons.all_inclusive_rounded),
-  //                 trailing: _currentStatusFilter == null
-  //                     ? const Icon(Icons.check, color: AppColors.primary)
-  //                     : null,
-  //                 onTap: () {
-  //                   Navigator.pop(ctx);
-  //                   _applyFilter(null);
-  //                 },
-  //               ),
-  //               ListTile(
-  //                 title: Text(
-  //                   'Online',
-  //                   style: AppTextStyles.s14w500(
-  //                     color: const Color(0xFF16A34A),
-  //                   ),
-  //                 ),
-  //                 leading: const Icon(
-  //                   Icons.check_circle_outline,
-  //                   color: Color(0xFF16A34A),
-  //                 ),
-  //                 trailing: _currentStatusFilter == ManagedDeviceStatus.online
-  //                     ? const Icon(Icons.check, color: Color(0xFF16A34A))
-  //                     : null,
-  //                 onTap: () {
-  //                   Navigator.pop(ctx);
-  //                   _applyFilter(ManagedDeviceStatus.online);
-  //                 },
-  //               ),
-  //               ListTile(
-  //                 title: Text(
-  //                   'Ngoại tuyến (Offline)',
-  //                   style: AppTextStyles.s14w500(
-  //                     color: const Color(0xFFDC2626),
-  //                   ),
-  //                 ),
-  //                 leading: const Icon(
-  //                   Icons.cancel_outlined,
-  //                   color: Color(0xFFDC2626),
-  //                 ),
-  //                 trailing: _currentStatusFilter == ManagedDeviceStatus.offline
-  //                     ? const Icon(Icons.check, color: Color(0xFFDC2626))
-  //                     : null,
-  //                 onTap: () {
-  //                   Navigator.pop(ctx);
-  //                   _applyFilter(ManagedDeviceStatus.offline);
-  //                 },
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -200,7 +90,7 @@ class _DeviceManagementScreenState extends State<DeviceManagementScreen> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios,
-            size: 18,
+            size: 20,
             color: AppColors.textAppbar,
           ),
           tooltip: 'Quay lại',
@@ -230,6 +120,7 @@ class _DeviceManagementScreenState extends State<DeviceManagementScreen> {
             onPressed: _openAddDialog,
           ),
         ],
+        shape: const Border(bottom: BorderSide(color: AppColors.border)),
       ),
       body: Column(
         children: [
@@ -293,6 +184,7 @@ class _DeviceManagementScreenState extends State<DeviceManagementScreen> {
             length: 2,
             initialIndex: _isTableView ? 1 : 0,
             child: AppTabBar(
+              height: 36.h,
               margin: EdgeInsets.fromLTRB(12.w, 0, 12.w, 10.h),
               tabs: const [
                 AppTabItem(
