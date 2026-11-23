@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/commom/dia_logs/app_confirm_dialog.dart';
 import '../../../../app/router/route_names.dart';
 import '../../../../app/theme/text_style.dart';
+import '../../../../core/config/app_config.dart';
 import '../../../auth/domain/entities/user_entity.dart';
 import '../../../auth/presentation/login/cubit/auth_cubit.dart';
 
@@ -176,7 +177,7 @@ class ProfileMenuList extends StatelessWidget {
             _ProfileMenuItem(
               icon: Icons.info_outline_rounded,
               label: 'Phiên bản ứng dụng',
-              value: '1.0.0',
+              value: AppConfig.appFullVersion,
               showChevron: false,
               isFirst: true,
               isLast: true,

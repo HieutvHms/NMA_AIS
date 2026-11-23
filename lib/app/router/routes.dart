@@ -29,7 +29,6 @@ import '../../features/device_management/domain/entities/managed_device_entity.d
 import '../../features/device_management/presentation/cubit/device_management_cubit.dart';
 import '../../features/device_management/presentation/screens/device_management_screen.dart';
 import '../../features/device_management/presentation/widgets/managed_device_form_screen.dart';
-import '../../features/device_management/presentation/widgets/device_table/screens/managed_device_table_screen.dart';
 import '../../features/member_management/presentation/cubit/member_management_cubit.dart';
 import '../../features/member_management/presentation/screens/member_management_screen.dart';
 import '../di/injection_container.dart';
@@ -203,15 +202,6 @@ GoRouter createRouter(AuthCubit authCubit) {
                       child: const DeviceManagementScreen(),
                     ),
                     routes: [
-                      GoRoute(
-                        path: 'table',
-                        parentNavigatorKey: _rootNavigatorKey,
-                        builder: (context, state) => BlocProvider(
-                          create: (_) =>
-                              sl<DeviceManagementCubit>()..loadDevices(),
-                          child: const ManagedDeviceTableScreen(),
-                        ),
-                      ),
                       GoRoute(
                         path: 'form',
                         parentNavigatorKey: _rootNavigatorKey,

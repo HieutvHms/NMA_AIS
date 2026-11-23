@@ -4,14 +4,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../app/commom/app_bar/searchable_app_bar.dart';
+import '../../../../../app/commom/skeleton/app_skeleton.dart';
+import '../../../../../app/commom/tabs/app_filter_chip_bar.dart';
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../app/theme/text_style.dart';
+import '../../../../../core/utils/snackbar_helper.dart';
 import '../cubit/device_list_cubit.dart';
 import '../cubit/device_list_state.dart';
 import '../../../domain/entities/device_entity.dart';
 import '../widgets/device_list_item.dart';
+import '../widgets/device_sort_bottom_sheet.dart';
 
-/// Màn hình danh sách thiết bị AIS tuân thủ Mockup 3 và Clean Architecture
 class DeviceListScreen extends StatefulWidget {
   const DeviceListScreen({super.key});
 
@@ -20,8 +23,16 @@ class DeviceListScreen extends StatefulWidget {
 }
 
 class _DeviceListScreenState extends State<DeviceListScreen> {
+  static const List<DeviceStatus?> _statusTabs = [
+    null,
+    DeviceStatus.online,
+    DeviceStatus.offline,
+    DeviceStatus.unknown,
+  ];
+
   final _searchController = TextEditingController();
   DeviceStatus? _currentStatusFilter;
+  DeviceSortOption _currentSort = DeviceSortOption.latestUpdated;
 
   @override
   void initState() {
@@ -46,81 +57,15 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
     );
   }
 
-  void _showFilterSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(18.r)),
-      ),
-      builder: (ctx) {
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Lọc trạng thái thiết bị', style: AppTextStyles.s16w600()),
-                SizedBox(height: 12.h),
-                ListTile(
-                  title: Text(
-                    'Tất cả trạng thái',
-                    style: AppTextStyles.s14w500(),
-                  ),
-                  leading: const Icon(Icons.all_inclusive_rounded),
-                  trailing: _currentStatusFilter == null
-                      ? const Icon(Icons.check, color: AppColors.primary)
-                      : null,
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _applyFilter(null);
-                  },
-                ),
-                ListTile(
-                  title: Text(
-                    'Online',
-                    style: AppTextStyles.s14w500(
-                      color: const Color(0xFF16A34A),
-                    ),
-                  ),
-                  leading: const Icon(
-                    Icons.check_circle_outline,
-                    color: Color(0xFF16A34A),
-                  ),
-                  trailing: _currentStatusFilter == DeviceStatus.online
-                      ? const Icon(Icons.check, color: Color(0xFF16A34A))
-                      : null,
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _applyFilter(DeviceStatus.online);
-                  },
-                ),
-                ListTile(
-                  title: Text(
-                    'Ngoại tuyến (Offline)',
-                    style: AppTextStyles.s14w500(
-                      color: const Color(0xFFDC2626),
-                    ),
-                  ),
-                  leading: const Icon(
-                    Icons.cancel_outlined,
-                    color: Color(0xFFDC2626),
-                  ),
-                  trailing: _currentStatusFilter == DeviceStatus.offline
-                      ? const Icon(Icons.check, color: Color(0xFFDC2626))
-                      : null,
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _applyFilter(DeviceStatus.offline);
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+  Future<void> _showFilterSheet() async {
+    final selected = await DeviceSortBottomSheet.show(
+      context,
+      initialSort: _currentSort,
     );
+    if (selected != null && mounted) {
+      setState(() => _currentSort = selected);
+      context.read<DeviceListCubit>().loadDevices(sortOption: selected);
+    }
   }
 
   @override
@@ -141,7 +86,6 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
               BlendMode.srcIn,
             ),
           ),
-          tooltip: 'Xem dạng bảng dữ liệu',
           onPressed: () => context.push('/devices/table'),
         ),
         showBackButton: false,
@@ -149,6 +93,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
         bottomBorderColor: const Color(0xFFE2E8F0),
         searchController: _searchController,
         searchHintText: 'Tìm kiếm...',
+        searchHintStyle: AppTextStyles.s13w400(color: AppColors.textMuted),
         searchBackgroundColor: Colors.white,
         searchBorder: Border.all(color: const Color(0xFFCBD5E1)),
         onSearch: (value) => context.read<DeviceListCubit>().loadDevices(
@@ -157,78 +102,146 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(
-              Icons.tune_rounded,
-              color: _currentStatusFilter != null
-                  ? AppColors.primary
-                  : const Color(0xFF475569),
-              size: 22.r,
+            icon: SvgPicture.asset(
+              'assets/icons/device/ic_loc.svg',
+              width: 22.r,
+              height: 22.r,
+              colorFilter: ColorFilter.mode(
+                AppColors.textAppbar,
+                BlendMode.srcIn,
+              ),
             ),
-            tooltip: 'Bộ lọc trạng thái',
             onPressed: _showFilterSheet,
           ),
         ],
       ),
       body: Column(
         children: [
-          if (_currentStatusFilter != null)
-            Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 10.h),
-              child: Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Lọc: ${_currentStatusFilter!.label}',
-                          style: AppTextStyles.s12w400(
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        SizedBox(width: 4.w),
-                        InkWell(
-                          onTap: () => _applyFilter(null),
-                          child: const Icon(
-                            Icons.close_rounded,
-                            size: 16,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ],
-                    ),
+          BlocBuilder<DeviceListCubit, DeviceListState>(
+            builder: (context, state) {
+              final loaded = state is DeviceListLoaded ? state : null;
+              final selectedIndex = _statusTabs.indexOf(_currentStatusFilter);
+              return AppFilterChipBar(
+                selectedIndex: selectedIndex == -1 ? 0 : selectedIndex,
+                onSelected: (index) => _applyFilter(_statusTabs[index]),
+                items: [
+                  AppFilterChipItem(
+                    label: 'Tất cả',
+                    count: loaded?.totalCount,
+                    activeColor: AppColors.primary,
+                    activeBackgroundColor: const Color(0xFFE8F1FC),
+                    activeBorderColor: const Color(0xFF93C5FD),
+                    activeBadgeColor: const Color(0xFFDBEAFE),
+                  ),
+                  AppFilterChipItem(
+                    label: 'Online',
+                    count: loaded?.onlineCount,
+                    dotColor: const Color(0xFF16A34A),
+                    activeColor: const Color(0xFF15803D),
+                    activeBackgroundColor: const Color(0xFFDCFCE7),
+                    activeBorderColor: const Color(0xFF86EFAC),
+                    activeBadgeColor: const Color(0xFFBBF7D0),
+                  ),
+                  AppFilterChipItem(
+                    label: 'Offline',
+                    count: loaded?.offlineCount,
+                    dotColor: const Color(0xFFDC2626),
+                    activeColor: const Color(0xFFB91C1C),
+                    activeBackgroundColor: const Color(0xFFFEE2E2),
+                    activeBorderColor: const Color(0xFFFCA5A5),
+                    activeBadgeColor: const Color(0xFFFECACA),
+                  ),
+                  AppFilterChipItem(
+                    label: 'Không xác định',
+                    count: loaded?.unknownCount,
+                    dotColor: const Color(0xFF64748B),
+                    activeColor: const Color(0xFF475569),
+                    activeBackgroundColor: const Color(0xFFF1F5F9),
+                    activeBorderColor: const Color(0xFFCBD5E1),
+                    activeBadgeColor: const Color(0xFFE2E8F0),
                   ),
                 ],
-              ),
-            ),
+              );
+            },
+          ),
           Expanded(
-            child: BlocBuilder<DeviceListCubit, DeviceListState>(
+            child: BlocConsumer<DeviceListCubit, DeviceListState>(
+              listener: (context, state) {
+                if (state is DeviceListError) {
+                  SnackbarHelper.showError(context, message: state.message);
+                }
+              },
               builder: (context, state) {
-                if (state is DeviceListLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                if (state is DeviceListLoading || state is DeviceListInitial) {
+                  return AppSkeletonListView(
+                    itemCount: 8,
+                    padding: EdgeInsets.all(12.r),
+                    itemBuilder: (_, _) => const AppSkeletonCardItem(
+                      subtitleLines: 1,
+                      showStatusBadge: true,
+                      showTrailing: false,
+                    ),
+                  );
                 }
                 if (state is DeviceListError) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                  return RefreshIndicator(
+                    onRefresh: () =>
+                        context.read<DeviceListCubit>().loadDevices(
+                          query: _searchController.text,
+                          statusFilter: _currentStatusFilter,
+                          forceRefresh: true,
+                        ),
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
                       children: [
+                        SizedBox(height: 110.h),
+                        Icon(
+                          Icons.wifi_off_rounded,
+                          size: 52.r,
+                          color: const Color(0xFF94A3B8),
+                        ),
+                        SizedBox(height: 12.h),
+                        Text(
+                          'Không thể tải dữ liệu',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.s16w600(),
+                        ),
+                        SizedBox(height: 6.h),
                         Text(
                           state.message,
-                          style: AppTextStyles.s14w500(color: Colors.red),
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.s13w400(
+                            color: AppColors.textSecondary,
+                          ),
                         ),
-                        SizedBox(height: 8.h),
-                        TextButton(
-                          onPressed: () =>
-                              context.read<DeviceListCubit>().loadDevices(),
-                          child: const Text('Thử lại'),
+                        SizedBox(height: 16.h),
+                        Center(
+                          child: ElevatedButton.icon(
+                            onPressed: () =>
+                                context.read<DeviceListCubit>().loadDevices(
+                                  query: _searchController.text,
+                                  statusFilter: _currentStatusFilter,
+                                  forceRefresh: true,
+                                ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20.w,
+                                vertical: 10.h,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                            ),
+                            icon: Icon(Icons.refresh_rounded, size: 18.r),
+                            label: Text(
+                              'Thử lại',
+                              style: AppTextStyles.s14w500(color: Colors.white),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -236,31 +249,58 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                 }
                 if (state is DeviceListLoaded) {
                   if (state.devices.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
+                    final hasFilter =
+                        _currentStatusFilter != null ||
+                        _searchController.text.trim().isNotEmpty;
+                    return RefreshIndicator(
+                      onRefresh: () =>
+                          context.read<DeviceListCubit>().loadDevices(
+                            query: _searchController.text,
+                            statusFilter: _currentStatusFilter,
+                            forceRefresh: true,
+                          ),
+                      child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
                         children: [
+                          SizedBox(height: 110.h),
                           Icon(
-                            Icons.devices_other_rounded,
-                            size: 48.r,
+                            hasFilter
+                                ? Icons.search_off_rounded
+                                : Icons.devices_other_rounded,
+                            size: 52.r,
                             color: const Color(0xFFCBD5E1),
                           ),
-                          SizedBox(height: 8.h),
+                          SizedBox(height: 12.h),
                           Text(
-                            'Không tìm thấy trạm thu AIS nào.',
+                            hasFilter
+                                ? 'Không tìm thấy thiết bị phù hợp'
+                                : 'Chưa có thiết bị nào',
+                            textAlign: TextAlign.center,
                             style: AppTextStyles.s16w600(
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          SizedBox(height: 6.h),
+                          Text(
+                            hasFilter
+                                ? 'Thử thay đổi từ khóa tìm kiếm hoặc bỏ bộ lọc trạng thái.'
+                                : 'Kéo xuống để làm mới danh sách thiết bị.',
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.s13w400(
                               color: AppColors.textSecondary,
                             ),
                           ),
-                          if (_currentStatusFilter != null ||
-                              _searchController.text.isNotEmpty) ...[
-                            SizedBox(height: 6.h),
-                            TextButton(
-                              onPressed: () {
-                                _searchController.clear();
-                                _applyFilter(null);
-                              },
-                              child: const Text('Xóa bộ lọc'),
+                          if (hasFilter) ...[
+                            SizedBox(height: 12.h),
+                            Center(
+                              child: TextButton(
+                                onPressed: () {
+                                  _searchController.clear();
+                                  _applyFilter(null);
+                                },
+                                child: const Text('Xóa bộ lọc'),
+                              ),
                             ),
                           ],
                         ],
@@ -272,8 +312,12 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                         context.read<DeviceListCubit>().loadDevices(
                           query: _searchController.text,
                           statusFilter: _currentStatusFilter,
+                          forceRefresh: true,
                         ),
                     child: ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
                       padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
                       itemCount: state.devices.length,
                       separatorBuilder: (context, index) =>

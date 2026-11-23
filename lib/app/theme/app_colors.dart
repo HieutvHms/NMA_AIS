@@ -12,12 +12,14 @@ class AppColors {
   // 2. BACKGROUNDS & SURFACES
   static const Color background = Color(0xFFEAF1F9);
   static const Color surface = Color(0xFFFFFFFF);
-  static const Color surfaceSecondary = Color(0xFFF8FAFC);
+  static const Color surfaceSecondary = Color(0XFFF8FAFC);
+  // 3. Text
+  static const Color textBlack = Color(0xFF000000);
+  static const Color textWhite = Color(0xFFFFFFFF);
 
   static const Color textPrimary = Color(0xFF0F172A);
   static const Color textSecondary = Color(0xFF475569);
   static const Color textMuted = Color(0xFF94A3B8);
-  static const Color textWhite = Color(0xFFFFFFFF);
 
   // 4. BORDERS & DIVIDERS
   static const Color border = Color(0xFFE2E8F0);
@@ -30,6 +32,7 @@ class AppColors {
   static const Color offline = Color(0xFFDC2626);
   static const Color offlineBg = Color(0xFFFEE2E2);
   static const Color maintenanceBg = Color(0xFFFFEDD5);
+  static const Color unknown = Color(0xFF94A3B8);
 
   // 6. COMMON SHORTHANDS
   static const Color success = online;

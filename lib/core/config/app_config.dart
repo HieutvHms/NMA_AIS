@@ -1,12 +1,27 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../constants/api_endpoints.dart';
 
 class AppConfig {
   AppConfig._();
 
+  static String _appVersion = '1.0.0';
+  static String _buildNumber = '1';
+
+  static String get appVersion => _appVersion;
+  static String get appFullVersion =>
+      _buildNumber.isNotEmpty ? _appVersion : _appVersion;
+
   static Future<void> init({String envFile = '.env'}) async {
     try {
       await dotenv.load(fileName: envFile);
+    } catch (_) {}
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (info.version.isNotEmpty) {
+        _appVersion = info.version;
+        _buildNumber = info.buildNumber;
+      }
     } catch (_) {}
   }
 
@@ -14,7 +29,7 @@ class AppConfig {
   static String get authBaseUrl {
     final url = dotenv.get(
       'AUTH_BASE_URL',
-      fallback: 'http://192.168.1.9:9800',
+      fallback: 'http://192.168.1.10:9800',
     );
     return url.replaceAll(RegExp(r'/auth(/login)?/?$'), '');
   }
@@ -24,6 +39,10 @@ class AppConfig {
   static String get refreshTokenUrl =>
       '$authBaseUrl${ApiEndpoints.refreshToken}';
   static String get logoutUrl => '$authBaseUrl${ApiEndpoints.logout}';
+
+  // Device Status
+  static String get deviceStatusUrl =>
+      '$authBaseUrl${ApiEndpoints.deviceStatus}';
 
   // Device Management
   static String get deviceQueryUrl => '$authBaseUrl${ApiEndpoints.deviceQuery}';

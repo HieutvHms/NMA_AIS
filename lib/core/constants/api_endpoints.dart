@@ -9,6 +9,8 @@ class ApiEndpoints {
   // Device Management
   static const String deviceQuery = '/device/query';
   static const String deviceUpdate = '/device/update';
+  // Device Status
+  static const String deviceStatus = '/device/status';
 
   // User / Member Management
   static const String userQuery = '/user/query';

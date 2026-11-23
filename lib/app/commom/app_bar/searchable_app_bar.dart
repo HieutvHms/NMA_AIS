@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/text_style.dart';
+import '../../../../../app/theme/app_colors.dart';
+
 import '../inputs/app_search_bar.dart';
 
 /// AppBar chuẩn chung có hỗ trợ hiệu ứng chuyển cảnh mượt mà giữa chế độ thường và tìm kiếm
@@ -31,6 +33,7 @@ class SearchableAppBar extends StatefulWidget implements PreferredSizeWidget {
   final TextEditingController? searchController;
   final FocusNode? searchFocusNode;
   final String? searchHintText;
+  final TextStyle? searchHintStyle;
   final ValueChanged<String>?
   onSearch; // Hỗ trợ tương thích ngược (onSearchChanged)
   final ValueChanged<String>? onSearchSubmitted;
@@ -78,6 +81,7 @@ class SearchableAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.searchController,
     this.searchFocusNode,
     this.searchHintText,
+    this.searchHintStyle,
     this.onSearch,
     this.onSearchSubmitted,
     this.onSearchOpened,
@@ -257,7 +261,6 @@ class _SearchableAppBarState extends State<SearchableAppBar>
           color: widget.textColor,
           size: 20.sp,
         ),
-        tooltip: 'Quay lại',
         onPressed: _handleBack,
       );
     }
@@ -275,7 +278,6 @@ class _SearchableAppBarState extends State<SearchableAppBar>
             height: 22.r,
             colorFilter: ColorFilter.mode(widget.textColor, BlendMode.srcIn),
           ),
-      tooltip: 'Tìm kiếm',
       onPressed: _openSearch,
     );
   }
@@ -307,7 +309,7 @@ class _SearchableAppBarState extends State<SearchableAppBar>
                     preferredSize: Size.fromHeight(widget.bottomBorderHeight),
                     child: Container(
                       color:
-                          widget.bottomBorderColor ?? const Color(0xFFE2E8F0),
+                          widget.bottomBorderColor ?? AppColors.textSecondary,
                       height: widget.bottomBorderHeight,
                     ),
                   )
@@ -387,7 +389,6 @@ class _SearchableAppBarState extends State<SearchableAppBar>
                                   color: widget.textColor,
                                   size: 20.sp,
                                 ),
-                                tooltip: 'Quay lại',
                                 onPressed: _closeSearch,
                               ),
                               Expanded(
@@ -396,6 +397,11 @@ class _SearchableAppBarState extends State<SearchableAppBar>
                                   focusNode: _focusNode,
                                   hintText:
                                       widget.searchHintText ?? 'Tìm kiếm...',
+                                  hintStyle:
+                                      widget.searchHintStyle ??
+                                      AppTextStyles.s13w500(
+                                        color: AppColors.textSecondary,
+                                      ),
                                   height: widget.searchHeight ?? 38.h,
                                   margin: EdgeInsets.zero,
                                   borderRadius:
@@ -422,7 +428,6 @@ class _SearchableAppBarState extends State<SearchableAppBar>
                                       color: widget.textColor,
                                       size: 24.sp,
                                     ),
-                                tooltip: 'Đóng tìm kiếm',
                                 onPressed: _closeSearch,
                               ),
                               SizedBox(width: 4.w),

@@ -1,4 +1,3 @@
-// file: core/base/base_remote_datasource.dart
 import 'package:dio/dio.dart';
 import '../error/exceptions.dart';
 
@@ -12,7 +11,9 @@ abstract class BaseRemoteDataSource {
     final response = await dio.post(endpoint, data: data ?? const {});
 
     // Xử lý logic chung của API (Ví dụ: success == false)
-    if (response.data != null && response.data is Map && response.data['success'] == false) {
+    if (response.data != null &&
+        response.data is Map &&
+        response.data['success'] == false) {
       throw ServerException(
         message: response.data['message']?.toString() ?? 'Lỗi từ Server',
       );
@@ -26,7 +27,9 @@ abstract class BaseRemoteDataSource {
     final response = await dio.get(endpoint, data: data);
 
     // Xử lý logic chung của API (Ví dụ: success == false)
-    if (response.data != null && response.data is Map && response.data['success'] == false) {
+    if (response.data != null &&
+        response.data is Map &&
+        response.data['success'] == false) {
       throw ServerException(
         message: response.data['message']?.toString() ?? 'Lỗi từ Server',
       );
@@ -40,7 +43,9 @@ abstract class BaseRemoteDataSource {
     final response = await dio.delete(endpoint, data: data);
 
     // Xử lý logic chung của API (Ví dụ: success == false)
-    if (response.data != null && response.data is Map && response.data['success'] == false) {
+    if (response.data != null &&
+        response.data is Map &&
+        response.data['success'] == false) {
       throw ServerException(
         message: response.data['message']?.toString() ?? 'Lỗi từ Server',
       );
@@ -54,7 +59,9 @@ abstract class BaseRemoteDataSource {
     final response = await dio.put(endpoint, data: data);
 
     // Xử lý logic chung của API (Ví dụ: success == false)
-    if (response.data != null && response.data is Map && response.data['success'] == false) {
+    if (response.data != null &&
+        response.data is Map &&
+        response.data['success'] == false) {
       throw ServerException(
         message: response.data['message']?.toString() ?? 'Lỗi từ Server',
       );

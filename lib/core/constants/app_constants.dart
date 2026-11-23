@@ -2,6 +2,7 @@ class AppConstants {
   AppConstants._();
 
   static const String appName = 'AIS AtoN Manager';
+  static const String appVersion = '1.0.0';
   static const String baseUrl = 'https://api.example.com/v1';
 
   // Timeout cấu hình thiết bị IoT 4G/AIS

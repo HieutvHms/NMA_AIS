@@ -43,10 +43,7 @@ class _LoginFormState extends State<LoginForm> {
     final authCubit = context.read<AuthCubit>();
     if (authCubit.state is AuthLoading) return;
     FocusScope.of(context).unfocus();
-    authCubit.login(
-      _usernameController.text,
-      _passwordController.text,
-    );
+    authCubit.login(_usernameController.text, _passwordController.text);
   }
 
   @override
@@ -81,11 +78,12 @@ class _LoginFormState extends State<LoginForm> {
             SizedBox(height: 14.h),
             AppTextField(
               controller: _passwordController,
-              hintText: 'Mật khẩu',
+              hintText: 'Nhập mật khẩu',
               enabled: !isLoading,
               prefixSvgPath: 'assets/icons/sign_in/ic_pass.svg',
               isPassword: true,
-              onSubmitted: (_) => _handleLogin(),
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => FocusScope.of(context).unfocus(),
               borderRadius: 16.r,
               fillColor: Colors.white,
               borderColor: AppColors.borderDark,

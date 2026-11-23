@@ -112,7 +112,6 @@ class _ManagedDeviceFormScreenState extends State<ManagedDeviceFormScreen> {
             size: 20,
             color: AppColors.textAppbar,
           ),
-          tooltip: 'Quay lại',
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -143,7 +142,7 @@ class _ManagedDeviceFormScreenState extends State<ManagedDeviceFormScreen> {
                       showClearButton: true,
                       borderRadius: 12.r,
                       height: 42.h,
-                      borderColor: const Color(0xFFCBD5E1),
+                      borderColor: AppColors.borderDark,
                       validator: Validators.validateDeviceName,
                     ),
                     SizedBox(height: 12.h),
@@ -153,7 +152,7 @@ class _ManagedDeviceFormScreenState extends State<ManagedDeviceFormScreen> {
                       hintText: 'Nhập mã IMEI',
                       controller: _imeiController,
                       enabled: !isEdit,
-                      borderColor: const Color(0xFFCBD5E1),
+                      borderColor: AppColors.borderDark,
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       borderRadius: 12.r,
@@ -291,9 +290,9 @@ class _ManagedDeviceFormScreenState extends State<ManagedDeviceFormScreen> {
           width: double.infinity,
           padding: EdgeInsets.all(12.w),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.surface,
             borderRadius: BorderRadius.circular(14.r),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            border: Border.all(color: AppColors.borderDark),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.2),

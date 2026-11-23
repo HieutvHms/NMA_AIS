@@ -5,85 +5,71 @@ class DeviceModel extends DeviceEntity {
     required super.imei,
     required super.stationName,
     super.simSerial = '',
+    super.mmsi = '',
     required super.aisPort,
     super.secondaryUdpPort,
-    super.status = DeviceStatus.online,
+    super.status = DeviceStatus.unknown,
     super.signalStrength = 0,
     super.lastMessageTime,
     super.lastAisTime,
+    super.offlineAtUtc,
+    super.isOldData = false,
     super.aisModuleType = 'AIS AtoN Type 1',
-    super.updatedAt,
   });
 
-  // Getter tương thích ngược nếu cần
-  String get deviceName => stationName;
-  int? get mainUdpPort => aisPort;
-  String? get aisDeviceType => aisModuleType;
-
   factory DeviceModel.fromJson(Map<String, dynamic> json) {
+    final imei = json['imei']?.toString().trim() ?? '';
+    final latest = json['latestMessage'] is Map<String, dynamic>
+        ? json['latestMessage'] as Map<String, dynamic>
+        : null;
+
+    final rawName = latest?['deviceName']?.toString().trim() ?? '';
+    final stationName = rawName.isNotEmpty
+        ? rawName
+        : (imei.isNotEmpty ? 'Trạm $imei' : 'Chưa đặt tên');
+
+    final portRaw =
+        json['udpPort']?.toString() ?? latest?['udpPort']?.toString() ?? '0';
+    final aisPort = int.tryParse(portRaw) ?? 0;
+
+    final receivedTime = _parseDateTime(latest?['receivedAtUtc']);
+    final rawAisTime = _parseDateTime(latest?['aisThoiGian']);
+    // Bỏ qua mốc thời gian mặc định 2000-01-01 khi thiết bị chưa có dữ liệu AIS
+    final lastAisTime = (rawAisTime != null && rawAisTime.year > 2000)
+        ? rawAisTime
+        : null;
+
     return DeviceModel(
-      imei: json['imei']?.toString() ?? '',
-      stationName:
-          json['stationName']?.toString() ??
-          json['deviceName']?.toString() ??
+      imei: imei,
+      stationName: stationName,
+      simSerial: latest?['simimei']?.toString().trim() ?? '',
+      mmsi:
+          latest?['mmsi']?.toString().trim() ??
+          json['mmsi']?.toString().trim() ??
           '',
-      simSerial: json['simSerial']?.toString() ?? '',
-      aisPort:
-          int.tryParse(
-            json['aisPort']?.toString() ??
-                json['mainUdpPort']?.toString() ??
-                '6000',
-          ) ??
-          6000,
-      secondaryUdpPort: int.tryParse(
-        json['secondaryUdpPort']?.toString() ?? '',
-      ),
-      status: DeviceStatus.fromString(json['status']?.toString()),
-      signalStrength:
-          int.tryParse(json['signalStrength']?.toString() ?? '0') ?? 0,
-      lastMessageTime: json['lastMessageTime'] != null
-          ? DateTime.tryParse(json['lastMessageTime'].toString())
-          : null,
-      lastAisTime: json['lastAisTime'] != null
-          ? DateTime.tryParse(json['lastAisTime'].toString())
-          : null,
-      aisModuleType:
-          json['aisModuleType']?.toString() ??
-          json['aisDeviceType']?.toString() ??
-          'AIS AtoN Type 1',
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'].toString())
-          : null,
+      aisPort: aisPort,
+      status: DeviceStatus.fromString(json['connectionStatus']?.toString()),
+      signalStrength: int.tryParse(latest?['csq']?.toString() ?? '0') ?? 0,
+      lastMessageTime: receivedTime,
+      lastAisTime: lastAisTime,
+      offlineAtUtc: _parseDateTime(json['offlineAtUtc']),
+      isOldData: latest?['isOldData'] == true,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'imei': imei,
-      'stationName': stationName,
-      'simSerial': simSerial,
-      'aisPort': aisPort,
-      'secondaryUdpPort': secondaryUdpPort,
-      'status': status.name,
-      'signalStrength': signalStrength,
-      'lastMessageTime': lastMessageTime?.toIso8601String(),
-      'lastAisTime': lastAisTime?.toIso8601String(),
-      'aisModuleType': aisModuleType,
-      'updatedAt': updatedAt?.toIso8601String(),
-    };
-  }
-
   DeviceModel copyWith({
-    String? id,
     String? imei,
     String? stationName,
     String? simSerial,
+    String? mmsi,
     int? aisPort,
     int? secondaryUdpPort,
     DeviceStatus? status,
     int? signalStrength,
     DateTime? lastMessageTime,
     DateTime? lastAisTime,
+    DateTime? offlineAtUtc,
+    bool? isOldData,
     String? aisModuleType,
     DateTime? updatedAt,
   }) {
@@ -91,14 +77,21 @@ class DeviceModel extends DeviceEntity {
       imei: imei ?? this.imei,
       stationName: stationName ?? this.stationName,
       simSerial: simSerial ?? this.simSerial,
+      mmsi: mmsi ?? this.mmsi,
       aisPort: aisPort ?? this.aisPort,
       secondaryUdpPort: secondaryUdpPort ?? this.secondaryUdpPort,
       status: status ?? this.status,
       signalStrength: signalStrength ?? this.signalStrength,
       lastMessageTime: lastMessageTime ?? this.lastMessageTime,
       lastAisTime: lastAisTime ?? this.lastAisTime,
+      offlineAtUtc: offlineAtUtc ?? this.offlineAtUtc,
+      isOldData: isOldData ?? this.isOldData,
       aisModuleType: aisModuleType ?? this.aisModuleType,
-      updatedAt: updatedAt ?? this.updatedAt,
     );
+  }
+
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null) return null;
+    return DateTime.tryParse(value.toString())?.toLocal();
   }
 }

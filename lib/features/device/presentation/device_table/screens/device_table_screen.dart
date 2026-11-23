@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../app/commom/app_bar/searchable_app_bar.dart';
+import '../../../../../app/commom/tables/ais_device_table_view.dart';
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../app/theme/text_style.dart';
+import '../../../../../core/utils/snackbar_helper.dart';
+import '../../../domain/entities/device_entity.dart';
 import '../../device_list/cubit/device_list_cubit.dart';
 import '../../device_list/cubit/device_list_state.dart';
-import '../widgets/device_table_view.dart';
 
 class DeviceTableScreen extends StatefulWidget {
   const DeviceTableScreen({super.key});
@@ -53,19 +55,54 @@ class _DeviceTableScreenState extends State<DeviceTableScreen> {
           }
         },
       ),
-      body: BlocBuilder<DeviceListCubit, DeviceListState>(
+      body: BlocConsumer<DeviceListCubit, DeviceListState>(
+        listener: (context, state) {
+          if (state is DeviceListError) {
+            SnackbarHelper.showError(context, message: state.message);
+          }
+        },
         builder: (context, state) {
           if (state is DeviceListLoading || state is DeviceListInitial) {
             return const Center(child: CircularProgressIndicator());
           }
           if (state is DeviceListError) {
             return Center(
-              child: Text(state.message, style: AppTextStyles.s14w500()),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(state.message, style: AppTextStyles.s14w500()),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () => context
+                        .read<DeviceListCubit>()
+                        .loadDevices(forceRefresh: true),
+                    child: const Text('Thử lại'),
+                  ),
+                ],
+              ),
             );
           }
           if (state is DeviceListLoaded) {
-            return DeviceTableView(
-              devices: state.devices,
+            return AisDeviceTableView<DeviceEntity>(
+              items: state.devices,
+              emptyMessage: 'Không có dữ liệu thiết bị',
+              rowBuilder: (item) => AisDeviceTableRow(
+                stationName: item.stationName,
+                imei: item.imei,
+                mmsi: item.mmsi,
+                simSerial: item.simSerial,
+                aisPort: item.aisPort,
+                statusLabel: item.status.label,
+                statusColor: item.status == DeviceStatus.online
+                    ? const Color(0xFF15803D)
+                    : (item.status == DeviceStatus.offline
+                          ? const Color(0xFFDC2626)
+                          : const Color(0xFF64748B)),
+                lastMessageTime: item.lastMessageTime,
+                lastAisTime: item.lastAisTime,
+                signalStrength: item.signalStrength,
+                aisModuleType: item.aisModuleType,
+              ),
               onSelect: (dev) =>
                   context.push('/devices/${dev.imei}', extra: dev),
             );

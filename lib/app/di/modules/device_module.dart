@@ -1,19 +1,17 @@
 import 'package:get_it/get_it.dart';
-import '../../../features/device/presentation/device_config/cubit/device_config_cubit.dart';
-import '../../../features/device/presentation/device_list/cubit/device_list_cubit.dart';
+import '../../../core/network/dio_client.dart';
+import '../../../features/device/data/datasources/device_remote_data_source_impl.dart';
 import '../../../features/device/data/datasources/device_remote_datasource.dart';
 import '../../../features/device/data/repositories/device_repository_impl.dart';
 import '../../../features/device/domain/repositories/device_repository.dart';
-import '../../../features/device/domain/usecases/create_device_usecase.dart';
-import '../../../features/device/domain/usecases/delete_device_usecase.dart';
-import '../../../features/device/domain/usecases/get_device_detail_usecase.dart';
 import '../../../features/device/domain/usecases/get_devices_usecase.dart';
-import '../../../features/device/domain/usecases/update_device_usecase.dart';
+import '../../../features/device/presentation/device_config/cubit/device_config_cubit.dart';
+import '../../../features/device/presentation/device_list/cubit/device_list_cubit.dart';
 
 void registerDeviceModule(GetIt sl) {
   // DataSource
   sl.registerLazySingleton<DeviceRemoteDataSource>(
-    () => DeviceRemoteDataSourceImpl(),
+    () => DeviceRemoteDataSourceImpl(sl<DioClient>().dio),
   );
 
   // Repository
@@ -23,21 +21,10 @@ void registerDeviceModule(GetIt sl) {
 
   // UseCases
   sl.registerLazySingleton(() => GetDevicesUseCase(sl<DeviceRepository>()));
-  sl.registerLazySingleton(() => GetDeviceDetailUseCase(sl<DeviceRepository>()));
-  sl.registerLazySingleton(() => CreateDeviceUseCase(sl<DeviceRepository>()));
-  sl.registerLazySingleton(() => UpdateDeviceUseCase(sl<DeviceRepository>()));
-  sl.registerLazySingleton(() => DeleteDeviceUseCase(sl<DeviceRepository>()));
 
   // Cubits
   sl.registerFactory<DeviceListCubit>(
-    () => DeviceListCubit(
-      getDevicesUseCase: sl<GetDevicesUseCase>(),
-      createDeviceUseCase: sl<CreateDeviceUseCase>(),
-      updateDeviceUseCase: sl<UpdateDeviceUseCase>(),
-      deleteDeviceUseCase: sl<DeleteDeviceUseCase>(),
-    ),
+    () => DeviceListCubit(getDevicesUseCase: sl<GetDevicesUseCase>()),
   );
-  sl.registerFactory<DeviceConfigCubit>(
-    () => DeviceConfigCubit(sl<UpdateDeviceUseCase>()),
-  );
+  sl.registerFactory<DeviceConfigCubit>(() => DeviceConfigCubit());
 }

@@ -241,10 +241,13 @@ class _AppTextFieldState extends State<AppTextField> {
             height: 20.r,
           ),
         ),
+        style: IconButton.styleFrom(
+          overlayColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
+        ),
         padding: EdgeInsets.symmetric(horizontal: 12.w),
         constraints: const BoxConstraints(),
         visualDensity: VisualDensity.compact,
-        tooltip: _obscureText ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
         onPressed: () => setState(() => _obscureText = !_obscureText),
         splashRadius: 18.r,
       );
@@ -258,7 +261,6 @@ class _AppTextFieldState extends State<AppTextField> {
           size: 18.r,
           color: const Color(0xFF94A3B8),
         ),
-        tooltip: 'Xóa nội dung',
         onPressed: _clearText,
         splashRadius: 16.r,
       );

@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/commom/dia_logs/app_confirm_dialog.dart';
 import '../../../../app/commom/inputs/app_search_bar.dart';
+import '../../../../app/commom/tables/ais_device_table_view.dart';
 import '../../../../app/commom/tabs/app_tab_bar.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/text_style.dart';
@@ -12,7 +13,6 @@ import '../../../../core/utils/snackbar_helper.dart';
 import '../../domain/entities/managed_device_entity.dart';
 import '../cubit/device_management_cubit.dart';
 import '../cubit/device_management_state.dart';
-import '../widgets/device_table/widgets/managed_device_table_view.dart';
 import '../widgets/managed_device_form_screen.dart';
 import '../widgets/device_list/managed_device_list_item.dart';
 
@@ -93,7 +93,6 @@ class _DeviceManagementScreenState extends State<DeviceManagementScreen> {
             size: 20,
             color: AppColors.textAppbar,
           ),
-          tooltip: 'Quay lại',
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -313,8 +312,26 @@ class _DeviceManagementScreenState extends State<DeviceManagementScreen> {
                     );
                   }
                   if (_isTableView) {
-                    return ManagedDeviceTableView(
-                      devices: state.devices,
+                    return AisDeviceTableView<ManagedDeviceEntity>(
+                      items: state.devices,
+                      showActions: true,
+                      showStatus: false,
+                      showSignal: false,
+                      rowBuilder: (item) => AisDeviceTableRow(
+                        stationName: item.stationName,
+                        imei: item.imei,
+                        mmsi: item.mmsi,
+                        simSerial: item.simSerial,
+                        aisPort: item.aisPort,
+                        statusLabel: item.status.label,
+                        statusColor: item.status == ManagedDeviceStatus.online
+                            ? AppColors.success
+                            : AppColors.alertRed,
+                        lastMessageTime: item.lastMessageTime,
+                        lastAisTime: item.lastAisTime,
+                        signalStrength: item.signalStrength,
+                        aisModuleType: item.aisModuleType,
+                      ),
                       onEdit: _openEditDialog,
                       onDelete: _confirmDelete,
                     );

@@ -83,7 +83,6 @@ class MemberDetailSheet extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   visualDensity: VisualDensity.compact,
-                  tooltip: 'Đóng',
                   icon: Icon(
                     Icons.close_rounded,
                     size: 22.r,

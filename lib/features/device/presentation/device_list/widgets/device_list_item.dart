@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import '../../../../../app/theme/text_style.dart';
+import '../../../../../app/theme/app_colors.dart';
+
 import '../../../domain/entities/device_entity.dart';
 
 class DeviceListItem extends StatelessWidget {
@@ -13,28 +16,46 @@ class DeviceListItem extends StatelessWidget {
   Color _getStatusColor() {
     switch (device.status) {
       case DeviceStatus.online:
-        return const Color(0xFF15803D);
+        return AppColors.online;
       case DeviceStatus.offline:
-        return const Color(0xFFDC2626);
+        return AppColors.offline;
+      case DeviceStatus.unknown:
+        return AppColors.unknown;
     }
+  }
+
+  String _formatLastUpdated(DateTime? time) {
+    if (time == null) return 'Chưa cập nhật';
+    final diff = DateTime.now().difference(time);
+    if (diff.isNegative || diff.inSeconds < 60) {
+      return 'Vừa xong';
+    }
+    if (diff.inMinutes < 60) {
+      return '${diff.inMinutes} phút trước';
+    }
+    if (diff.inHours < 24) {
+      return '${diff.inHours} giờ trước';
+    }
+    if (diff.inDays < 7) {
+      return '${diff.inDays} ngày trước';
+    }
+    return DateFormat('dd/MM HH:mm').format(time);
   }
 
   @override
   Widget build(BuildContext context) {
     final statusColor = _getStatusColor();
     final radius = BorderRadius.circular(16.r);
+    final lastUpdatedText = _formatLastUpdated(device.lastMessageTime);
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: radius,
-        border: Border.all(
-          color: const Color.fromARGB(255, 198, 204, 211),
-          width: 1.0,
-        ),
+        border: Border.all(color: AppColors.borderDark),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0D3B7A).withValues(alpha: 0.15),
+            color: AppColors.surfaceSecondary.withValues(alpha: 0.15),
             blurRadius: 6.r,
             offset: Offset(0, 3.h),
           ),
@@ -46,10 +67,8 @@ class DeviceListItem extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
-          splashColor: const Color(0xFF1565C0).withValues(alpha: 0.08),
-          highlightColor: const Color(0xFF1565C0).withValues(alpha: 0.04),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -58,23 +77,22 @@ class DeviceListItem extends StatelessWidget {
                   width: 36.r,
                   height: 36.r,
                   colorFilter: const ColorFilter.mode(
-                    Color(0xFF1565C0),
+                    AppColors.primary,
                     BlendMode.srcIn,
                   ),
                 ),
-                SizedBox(width: 14.w),
+                SizedBox(width: 8.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Hàng tiêu đề gồm: Tên thiết bị (chữ chính navy #0F2A4A) + Trạng thái
                       Row(
                         children: [
                           Expanded(
                             child: Text(
                               device.stationName,
-                              style: AppTextStyles.s16w600(),
+                              style: AppTextStyles.s15w500(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -94,29 +112,40 @@ class DeviceListItem extends StatelessWidget {
                               SizedBox(width: 5.w),
                               Text(
                                 device.status.label,
-                                style: AppTextStyles.s14w500(),
+                                style: AppTextStyles.s13w500(
+                                  color: statusColor,
+                                ),
                               ),
                             ],
                           ),
                         ],
                       ),
                       SizedBox(height: 4.h),
-                      // Số IMEI (chữ phụ xám xanh #5B6B82)
-                      Text(
-                        'IMEI: ${device.imei}',
-                        style: AppTextStyles.s14w400(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'IMEI: ${device.imei}',
+                              style: AppTextStyles.s13w500(
+                                color: AppColors.textSecondary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            lastUpdatedText,
+                            style: AppTextStyles.s12w400(
+                              color: AppColors.textSecondary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ),
-                SizedBox(width: 6.w),
-                // Icon chevron nhỏ để gợi ý xem chi tiết
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: const Color(0xFF94A3B8),
-                  size: 20.r,
                 ),
               ],
             ),

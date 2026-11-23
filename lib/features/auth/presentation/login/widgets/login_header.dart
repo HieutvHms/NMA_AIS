@@ -1,31 +1,42 @@
 import 'package:flutter/material.dart';
-import '../../../../../app/theme/text_style.dart';
-import 'ais_logo_icon.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../../app/theme/text_style.dart';
+import '../../../../../app/theme/app_colors.dart';
 
 class LoginHeader extends StatelessWidget {
   const LoginHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        AisLogoIcon(size: 72.h),
-        SizedBox(height: 14.h),
-        Text(
-          'NMA AIS',
-          textAlign: TextAlign.center,
-          style: AppTextStyles.titleLarge(
-            color: const Color.fromARGB(255, 5, 81, 144),
+        ClipOval(
+          child: Image.asset(
+            'assets/images/ais_logo.png',
+            width: 56.r,
+            height: 56.r,
+            fit: BoxFit.cover,
           ),
         ),
-        Text(
-          'Quản lý và cấu hình thiết bị AIS',
-          textAlign: TextAlign.center,
-          style: AppTextStyles.s14w500(
-            color: const Color.fromARGB(255, 5, 81, 144),
-          ),
+        SizedBox(width: 12.w),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'NMA AIS',
+              style: AppTextStyles.titleLarge(
+                color: AppColors.textAppbar,
+              ).copyWith(height: 1.15),
+            ),
+            SizedBox(height: 2.h),
+            Text(
+              'Configure · Monitor · Track',
+              style: AppTextStyles.s13w500(color: AppColors.textAppbar),
+            ),
+          ],
         ),
       ],
     );
