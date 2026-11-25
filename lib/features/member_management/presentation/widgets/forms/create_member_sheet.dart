@@ -5,6 +5,7 @@ import '../../../../../app/commom/inputs/app_text_field.dart';
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../app/theme/text_style.dart';
 import '../../../domain/entities/member_entity.dart';
+import 'udp_port_list_field.dart';
 
 /// Màn hình tạo mới thành viên con (`POST /user/update` type: 1).
 class CreateMemberSheet extends StatefulWidget {
@@ -22,13 +23,14 @@ class CreateMemberSheet extends StatefulWidget {
 
 class _CreateMemberSheetState extends State<CreateMemberSheet> {
   final _formKey = GlobalKey<FormState>();
+  final _udpPortFieldKey = GlobalKey<UdpPortListFieldState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _udpPortController = TextEditingController();
 
+  List<String> _udpPorts = [];
   bool _hasMinPasswordLength = false;
 
   static final _emailRegex = RegExp(r'^\S+@\S+\.\S+$');
@@ -47,7 +49,6 @@ class _CreateMemberSheetState extends State<CreateMemberSheet> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _udpPortController.dispose();
     super.dispose();
   }
 
@@ -59,7 +60,9 @@ class _CreateMemberSheetState extends State<CreateMemberSheet> {
   }
 
   void _submit() {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+    final isFormValid = _formKey.currentState?.validate() ?? false;
+    final isUdpValid = _udpPortFieldKey.currentState?.commitPendingInput() ?? true;
+    if (!isFormValid || !isUdpValid) return;
 
     Navigator.of(context).pop(
       MemberEntity(
@@ -68,7 +71,7 @@ class _CreateMemberSheetState extends State<CreateMemberSheet> {
         name: _nameController.text.trim(),
         email: _emailController.text.trim(),
         phone: _phoneController.text.trim(),
-        udpPort: _udpPortController.text.trim(),
+        udpPort: List<String>.from(_udpPorts),
       ),
     );
   }
@@ -209,16 +212,11 @@ class _CreateMemberSheetState extends State<CreateMemberSheet> {
                   height: 40.h,
                 ),
                 SizedBox(height: 14.h),
-                AppTextField(
-                  controller: _udpPortController,
-                  label: 'Cổng UDP',
+                UdpPortListField(
+                  key: _udpPortFieldKey,
+                  ports: _udpPorts,
                   hintText: '8002',
-                  prefixIcon: Icons.settings_ethernet_rounded,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  borderColor: const Color(0xFFCBD5E1),
-                  height: 40.h,
-                  onSubmitted: (_) => _submit(),
+                  onChanged: (ports) => setState(() => _udpPorts = ports),
                 ),
                 SizedBox(height: 24.h),
                 SizedBox(

@@ -54,8 +54,10 @@ class DeviceDetailScreen extends StatelessWidget {
           ),
           SizedBox(height: 20.h),
           DeviceActionsSection(
-            onConfigTap: () =>
-                context.push('/devices/${device.imei}/config', extra: device),
+            onConfigTap: () {
+              final routeId = device.imei.isNotEmpty ? device.imei : 'detail';
+              context.push('/devices/$routeId/config', extra: device);
+            },
             onViewAisTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(

@@ -25,7 +25,7 @@ class MemberModel extends MemberEntity {
       phone: json['phone']?.toString() ?? '',
       role: _parseInt(json['role'], fallback: 1),
       parentId: _parseInt(json['parentId']),
-      udpPort: json['udpPort']?.toString() ?? '',
+      udpPort: _parseUdpPorts(json['udpPort']),
       createdAt: _parseDateTime(json['createdAt']),
     );
   }
@@ -46,6 +46,11 @@ class MemberModel extends MemberEntity {
     );
   }
 
+  List<String> get _normalizedUdpPorts => udpPort
+      .map((port) => port.trim())
+      .where((port) => port.isNotEmpty)
+      .toList();
+
   Map<String, dynamic> toCreateJson(int userId) {
     return {
       'userId': userId,
@@ -54,7 +59,7 @@ class MemberModel extends MemberEntity {
       'email': email.trim(),
       'phone': phone.trim(),
       'name': name.trim(),
-      'udpPort': udpPort.trim(),
+      'udpPort': _normalizedUdpPorts,
     };
   }
 
@@ -64,8 +69,27 @@ class MemberModel extends MemberEntity {
       'name': name.trim(),
       'email': email.trim(),
       'phone': phone.trim(),
-      'udpPort': udpPort.trim(),
+      'udpPort': _normalizedUdpPorts,
     };
+  }
+
+  static List<String> _parseUdpPorts(dynamic value) {
+    if (value is List) {
+      return value
+          .map((item) => item?.toString().trim() ?? '')
+          .where((item) => item.isNotEmpty)
+          .toList();
+    }
+    if (value is String) {
+      final trimmed = value.trim();
+      if (trimmed.isEmpty) return const [];
+      return trimmed
+          .split(',')
+          .map((item) => item.trim())
+          .where((item) => item.isNotEmpty)
+          .toList();
+    }
+    return const [];
   }
 
   static int _parseInt(dynamic value, {int fallback = 0}) {

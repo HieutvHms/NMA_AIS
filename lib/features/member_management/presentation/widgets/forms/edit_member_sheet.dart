@@ -5,6 +5,7 @@ import '../../../../../app/commom/inputs/app_text_field.dart';
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../app/theme/text_style.dart';
 import '../../../domain/entities/member_entity.dart';
+import 'udp_port_list_field.dart';
 
 class EditMemberSheet extends StatefulWidget {
   final MemberEntity member;
@@ -23,11 +24,12 @@ class EditMemberSheet extends StatefulWidget {
 
 class _EditMemberSheetState extends State<EditMemberSheet> {
   final _formKey = GlobalKey<FormState>();
+  final _udpPortFieldKey = GlobalKey<UdpPortListFieldState>();
   late final TextEditingController _usernameController;
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
-  late final TextEditingController _udpPortController;
+  late List<String> _udpPorts;
 
   static final _emailRegex = RegExp(r'^\S+@\S+\.\S+$');
 
@@ -38,7 +40,7 @@ class _EditMemberSheetState extends State<EditMemberSheet> {
     _nameController = TextEditingController(text: widget.member.name);
     _emailController = TextEditingController(text: widget.member.email);
     _phoneController = TextEditingController(text: widget.member.phone);
-    _udpPortController = TextEditingController(text: widget.member.udpPort);
+    _udpPorts = List<String>.from(widget.member.udpPort);
   }
 
   @override
@@ -47,19 +49,20 @@ class _EditMemberSheetState extends State<EditMemberSheet> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _udpPortController.dispose();
     super.dispose();
   }
 
   void _submit() {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+    final isFormValid = _formKey.currentState?.validate() ?? false;
+    final isUdpValid = _udpPortFieldKey.currentState?.commitPendingInput() ?? true;
+    if (!isFormValid || !isUdpValid) return;
 
     Navigator.of(context).pop(
       widget.member.copyWith(
         name: _nameController.text.trim(),
         email: _emailController.text.trim(),
         phone: _phoneController.text.trim(),
-        udpPort: _udpPortController.text.trim(),
+        udpPort: List<String>.from(_udpPorts),
       ),
     );
   }
@@ -150,23 +153,11 @@ class _EditMemberSheetState extends State<EditMemberSheet> {
                   height: 40.h,
                 ),
                 SizedBox(height: 14.h),
-                AppTextField(
-                  controller: _udpPortController,
-                  label: 'Cổng UDP',
-                  isRequired: true,
+                UdpPortListField(
+                  key: _udpPortFieldKey,
+                  ports: _udpPorts,
                   hintText: '8010',
-                  prefixIcon: Icons.settings_ethernet_rounded,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  borderColor: const Color(0xFFCBD5E1),
-                  height: 40.h,
-                  onSubmitted: (_) => _submit(),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Không được để trống.';
-                    }
-                    return null;
-                  },
+                  onChanged: (ports) => setState(() => _udpPorts = ports),
                 ),
                 SizedBox(height: 24.h),
                 SizedBox(

@@ -1,7 +1,7 @@
 class ApiEndpoints {
   ApiEndpoints._();
 
-  //  Auth
+  // Auth
   static const String login = '/auth/login';
   static const String logout = '/auth/logout';
   static const String refreshToken = '/auth/refresh';
@@ -9,6 +9,7 @@ class ApiEndpoints {
   // Device Management
   static const String deviceQuery = '/device/query';
   static const String deviceUpdate = '/device/update';
+
   // Device Status
   static const String deviceStatus = '/device/status';
 
@@ -17,4 +18,8 @@ class ApiEndpoints {
   static const String userUpdate = '/user/update';
   static const String changePassword = '/user/change-password';
   static const String resetPassword = '/user/reset-password';
+
+  // Giám sát bản đồ AIS
+  // TODO: Điền endpoint thật từ Backend khi đã chốt API
+  static const String mapTargets = '/ais/targets';
 }

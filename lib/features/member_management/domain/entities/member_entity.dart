@@ -10,7 +10,7 @@ class MemberEntity extends Equatable {
   final String phone;
   final int role;
   final int parentId;
-  final String udpPort;
+  final List<String> udpPort;
   final DateTime? createdAt;
 
   const MemberEntity({
@@ -23,7 +23,7 @@ class MemberEntity extends Equatable {
     this.phone = '',
     this.role = 1,
     this.parentId = 0,
-    this.udpPort = '',
+    this.udpPort = const [],
     this.createdAt,
   });
 
@@ -48,7 +48,7 @@ class MemberEntity extends Equatable {
     String? phone,
     int? role,
     int? parentId,
-    String? udpPort,
+    List<String>? udpPort,
     DateTime? createdAt,
   }) {
     return MemberEntity(

@@ -112,7 +112,7 @@ class MemberDetailSheet extends StatelessWidget {
             _DetailRow(
               label: 'Cổng UDP',
               value: member.udpPort.isNotEmpty
-                  ? member.udpPort
+                  ? member.udpPort.join(', ')
                   : 'Chưa cấu hình',
               icon: Icons.settings_ethernet_rounded,
             ),

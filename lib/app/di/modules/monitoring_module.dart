@@ -1,16 +1,39 @@
 import 'package:get_it/get_it.dart';
-import '../../../features/monitoring/cubit/monitoring_cubit.dart';
-import '../../../features/monitoring/cubit/route_cubit.dart';
-import '../../../features/monitoring/data/repositories/monitoring_repository.dart';
+import '../../../core/config/app_config.dart';
+import '../../../core/network/dio_client.dart';
+import '../../../features/monitoring/data/datasources/map_mock_datasource.dart';
+import '../../../features/monitoring/data/datasources/map_remote_data_source_impl.dart';
+import '../../../features/monitoring/data/datasources/map_remote_datasource.dart';
+import '../../../features/monitoring/data/repositories/map_repository_impl.dart';
+import '../../../features/monitoring/domain/repositories/map_repository.dart';
+import '../../../features/monitoring/domain/usecases/get_all_map_targets_usecase.dart';
+import '../../../features/monitoring/domain/usecases/get_map_targets_usecase.dart';
+import '../../../features/monitoring/domain/usecases/search_map_target_by_mmsi_usecase.dart';
+import '../../../features/monitoring/presentation/cubit/map_monitoring_cubit.dart';
 
 void registerMonitoringModule(GetIt sl) {
-  // Repository
-  sl.registerLazySingleton<MonitoringRepository>(() => MonitoringRepository());
-
-  // Cubits
-  sl.registerFactory<MonitoringCubit>(
-    () => MonitoringCubit(sl<MonitoringRepository>()),
+  // Chuyển đổi linh hoạt giữa Mock (~2.000 đối tượng) và API thật qua cờ AppConfig.useMockMapData
+  sl.registerLazySingleton<MapRemoteDataSource>(
+    () => AppConfig.useMockMapData
+        ? MapMockDataSource()
+        : MapRemoteDataSourceImpl(sl<DioClient>().dio),
   );
-  sl.registerFactory<RouteCubit>(() => RouteCubit());
-}
 
+  sl.registerLazySingleton<MapRepository>(
+    () => MapRepositoryImpl(sl<MapRemoteDataSource>()),
+  );
+
+  sl.registerLazySingleton(() => GetMapTargetsUseCase(sl<MapRepository>()));
+  sl.registerLazySingleton(() => GetAllMapTargetsUseCase(sl<MapRepository>()));
+  sl.registerLazySingleton(
+    () => SearchMapTargetByMmsiUseCase(sl<MapRepository>()),
+  );
+
+  sl.registerFactory<MapMonitoringCubit>(
+    () => MapMonitoringCubit(
+      getMapTargetsUseCase: sl<GetMapTargetsUseCase>(),
+      getAllMapTargetsUseCase: sl<GetAllMapTargetsUseCase>(),
+      searchMapTargetByMmsiUseCase: sl<SearchMapTargetByMmsiUseCase>(),
+    ),
+  );
+}

@@ -44,6 +44,10 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Environment variables
+# Environment variables & Map API Keys
 .env
 !.env.example
+android/local.properties
+!android/local.properties.example
+ios/Flutter/Secrets.xcconfig
+!ios/Flutter/Secrets.xcconfig.example

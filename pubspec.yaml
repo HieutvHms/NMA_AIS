@@ -35,6 +35,7 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_screenutil: ^5.9.3
   package_info_plus: ^9.0.1
+  google_maps_flutter: ^2.10.0
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +55,8 @@ flutter:
   assets:
     - .env
     - assets/images/
+    - assets/icons/
+    - assets/icons/map/
     - assets/icons/device/
     - assets/icons/sign_in/
     - assets/icons/navbar/

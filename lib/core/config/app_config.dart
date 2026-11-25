@@ -86,4 +86,14 @@ class AppConfig {
 
   static bool get isDevelopment => environment.toLowerCase() == 'development';
   static bool get isProduction => environment.toLowerCase() == 'production';
+
+  // Giám sát bản đồ AIS: cờ bật/tắt dữ liệu giả lập (mặc định true khi chưa có API thật)
+  static bool get useMockMapData {
+    final raw = dotenv.get('USE_MOCK_MAP', fallback: 'true').trim().toLowerCase();
+    return raw == 'true' || raw == '1';
+  }
+
+  // TODO: Xác nhận base URL dùng cho bản đồ AIS (processDataBaseUrl hay authBaseUrl)
+  static String get mapTargetsUrl =>
+      '$processDataBaseUrl${ApiEndpoints.mapTargets}';
 }

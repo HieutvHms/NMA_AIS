@@ -86,7 +86,10 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
               BlendMode.srcIn,
             ),
           ),
-          onPressed: () => context.push('/devices/table'),
+          onPressed: () => context.push(
+            '/devices/table',
+            extra: context.read<DeviceListCubit>(),
+          ),
         ),
         showBackButton: false,
         showBottomBorder: true,
@@ -324,12 +327,13 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                           SizedBox(height: 10.h),
                       itemBuilder: (context, index) {
                         final device = state.devices[index];
+                        final routeId = device.imei.isNotEmpty
+                            ? device.imei
+                            : 'detail';
                         return DeviceListItem(
                           device: device,
-                          onTap: () => context.push(
-                            '/devices/${device.imei}',
-                            extra: device,
-                          ),
+                          onTap: () =>
+                              context.push('/devices/$routeId', extra: device),
                         );
                       },
                     ),

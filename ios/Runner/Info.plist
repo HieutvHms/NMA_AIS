@@ -52,5 +52,7 @@
 	</dict>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Ứng dụng cần truy cập mạng nội bộ để kết nối tới máy chủ quản lý thiết bị AIS.</string>
+	<key>MapApiKey</key>
+	<string>$(IOS_MAPS_API_KEY)</string>
 </dict>
 </plist>

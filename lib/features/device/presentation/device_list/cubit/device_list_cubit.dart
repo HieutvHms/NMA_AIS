@@ -47,7 +47,6 @@ class DeviceListCubit extends Cubit<DeviceListState> {
       }
     }
 
-    // Lọc tức thì trên bộ nhớ đệm (In-memory Filtering): 0ms, mượt mà 60 FPS
     _applyFilterAndEmit();
   }
 
@@ -59,6 +58,7 @@ class DeviceListCubit extends Cubit<DeviceListState> {
       queried = queried.where((e) {
         return e.stationName.toLowerCase().contains(q) ||
             e.imei.toLowerCase().contains(q) ||
+            e.mmsi.toLowerCase().contains(q) ||
             e.aisPort.toString().contains(q) ||
             e.simSerial.toLowerCase().contains(q);
       }).toList();

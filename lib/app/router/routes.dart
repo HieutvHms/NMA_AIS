@@ -2,9 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/ais_config/cubit/ais_config_cubit.dart';
-import '../../features/ais_config/presentation/screens/ais_config_screen.dart';
-import '../../features/ais_config/presentation/screens/buoy_config_screen.dart';
 import '../../features/auth/presentation/login/cubit/auth_cubit.dart';
 import '../../features/auth/presentation/login/cubit/auth_state.dart';
 import '../../features/auth/presentation/change_password/cubit/change_password_cubit.dart';
@@ -17,12 +14,8 @@ import '../../features/device/presentation/device_config/screens/device_config_s
 import '../../features/device/presentation/device_detail/screens/device_detail_screen.dart';
 import '../../features/device/presentation/device_list/screens/device_list_screen.dart';
 import '../../features/device/presentation/device_table/screens/device_table_screen.dart';
-import '../../features/monitoring/cubit/monitoring_cubit.dart';
-import '../../features/monitoring/cubit/route_cubit.dart';
-import '../../features/monitoring/data/models/vessel_model.dart';
-import '../../features/monitoring/presentation/screens/monitor_screen.dart';
-import '../../features/monitoring/presentation/screens/route_screen.dart';
-import '../../features/monitoring/presentation/screens/vessel_detail_screen.dart';
+import '../../features/monitoring/presentation/cubit/map_monitoring_cubit.dart';
+import '../../features/monitoring/presentation/screens/map_monitoring_screen.dart';
 import '../../features/overview/presentation/screens/overview_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/device_management/domain/entities/managed_device_entity.dart';
@@ -104,14 +97,25 @@ GoRouter createRouter(AuthCubit authCubit) {
                   GoRoute(
                     path: 'table',
                     parentNavigatorKey: _rootNavigatorKey,
-                    builder: (context, state) => BlocProvider(
-                      create: (_) => sl<DeviceListCubit>(),
-                      child: const DeviceTableScreen(),
-                    ),
+                    builder: (context, state) {
+                      final existingCubit = state.extra;
+                      if (existingCubit is DeviceListCubit) {
+                        return BlocProvider.value(
+                          value: existingCubit,
+                          child: const DeviceTableScreen(),
+                        );
+                      }
+                      return BlocProvider(
+                        create: (_) => sl<DeviceListCubit>(),
+                        child: const DeviceTableScreen(),
+                      );
+                    },
                   ),
                   GoRoute(
                     path: ':id',
                     parentNavigatorKey: _rootNavigatorKey,
+                    redirect: (context, state) =>
+                        state.extra is DeviceEntity ? null : '/devices',
                     builder: (context, state) {
                       final device = state.extra as DeviceEntity;
                       return DeviceDetailScreen(device: device);
@@ -120,6 +124,8 @@ GoRouter createRouter(AuthCubit authCubit) {
                       GoRoute(
                         path: 'config',
                         parentNavigatorKey: _rootNavigatorKey,
+                        redirect: (context, state) =>
+                            state.extra is DeviceEntity ? null : '/devices',
                         builder: (context, state) {
                           final device = state.extra as DeviceEntity;
                           return BlocProvider(
@@ -128,61 +134,21 @@ GoRouter createRouter(AuthCubit authCubit) {
                           );
                         },
                       ),
-                      GoRoute(
-                        path: 'ais-config',
-                        parentNavigatorKey: _rootNavigatorKey,
-                        builder: (context, state) {
-                          final deviceId = state.pathParameters['id']!;
-                          return BlocProvider(
-                            create: (_) => sl<AisConfigCubit>(),
-                            child: AisConfigScreen(deviceId: deviceId),
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: 'buoy-config',
-                        parentNavigatorKey: _rootNavigatorKey,
-                        builder: (context, state) {
-                          final deviceId = state.pathParameters['id']!;
-                          return BuoyConfigScreen(deviceId: deviceId);
-                        },
-                      ),
                     ],
                   ),
                 ],
               ),
             ],
           ),
-          // Tab 2: Giám sát
+          // Tab 2: Giám sát trên bản đồ Google Maps
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: '/monitoring',
                 builder: (context, state) => BlocProvider(
-                  create: (_) => sl<MonitoringCubit>(),
-                  child: const MonitorScreen(),
+                  create: (_) => sl<MapMonitoringCubit>(),
+                  child: const MapMonitoringScreen(),
                 ),
-                routes: [
-                  GoRoute(
-                    path: 'detail/:mmsi',
-                    parentNavigatorKey: _rootNavigatorKey,
-                    builder: (context, state) {
-                      final vessel = state.extra as VesselModel;
-                      return VesselDetailScreen(vessel: vessel);
-                    },
-                  ),
-                  GoRoute(
-                    path: 'route/:mmsi',
-                    parentNavigatorKey: _rootNavigatorKey,
-                    builder: (context, state) {
-                      final mmsi = state.pathParameters['mmsi']!;
-                      return BlocProvider(
-                        create: (_) => sl<RouteCubit>(),
-                        child: RouteScreen(mmsi: mmsi),
-                      );
-                    },
-                  ),
-                ],
               ),
             ],
           ),
