@@ -17,18 +17,8 @@ class ManagedDeviceListItem extends StatelessWidget {
     required this.onDelete,
   });
 
-  Color _getStatusColor() {
-    switch (device.status) {
-      case ManagedDeviceStatus.online:
-        return const Color(0xFF15803D);
-      case ManagedDeviceStatus.offline:
-        return const Color(0xFFDC2626);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final statusColor = _getStatusColor();
     final radius = BorderRadius.circular(16.r);
 
     return Container(
@@ -78,34 +68,6 @@ class ManagedDeviceListItem extends StatelessWidget {
                             style: AppTextStyles.s14w500(),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 6.w),
-                          decoration: BoxDecoration(
-                            color: statusColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 6.r,
-                                height: 6.r,
-                                decoration: BoxDecoration(
-                                  color: statusColor,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              SizedBox(width: 4.w),
-                              Text(
-                                device.status.label,
-                                style: AppTextStyles.s10w500(
-                                  color: statusColor,
-                                ),
-                              ),
-                            ],
                           ),
                         ),
                       ],

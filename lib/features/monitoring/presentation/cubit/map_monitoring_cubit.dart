@@ -68,8 +68,8 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
       _autoRefreshTimer = null;
       _viewportCancelToken?.cancel('Screen inactive');
       _searchCancelToken?.cancel('Screen inactive');
-      if (state.isRefreshing || state.isSearching) {
-        emit(state.copyWith(isRefreshing: false, isSearching: false));
+      if (state.isRefreshing) {
+        emit(state.copyWith(isRefreshing: false));
       }
     } else {
       _startAutoRefreshTimer();
@@ -82,12 +82,7 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
 
   // Chọn đối tượng khi người dùng chạm trực tiếp vào marker trên bản đồ.
   void selectTargetFromMarker(AisTargetEntity target) {
-    emit(
-      state.copyWith(
-        selectedTarget: target,
-        detailSheetRequestId: state.detailSheetRequestId + 1,
-      ),
-    );
+    emit(state.copyWith(selectedTarget: target));
   }
 
   // Tải toàn bộ danh sách trạm và tàu mà user được phép xem (cho bottom sheet Danh sách).
@@ -120,6 +115,14 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
           allTargetsError: ErrorMapper.map(e).message,
         ),
       );
+    } on Failure catch (failure) {
+      if (isClosed) return;
+      emit(
+        state.copyWith(
+          isLoadingAllTargets: false,
+          allTargetsError: failure.message,
+        ),
+      );
     } catch (e) {
       if (isClosed) return;
       emit(
@@ -143,7 +146,6 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
           selectedTarget: target,
           cameraFocusTarget: target,
           cameraMoveRequestId: state.cameraMoveRequestId + 1,
-          detailSheetRequestId: state.detailSheetRequestId + 1,
         ),
       );
       return;
@@ -154,7 +156,6 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
         selectedTarget: target,
         cameraFocusTarget: target,
         cameraMoveRequestId: state.cameraMoveRequestId + 1,
-        detailSheetRequestId: state.detailSheetRequestId + 1,
       ),
     );
   }
@@ -187,7 +188,7 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
     final token = CancelToken();
     _searchCancelToken = token;
 
-    emit(state.copyWith(isSearching: true, clearSearchFeedback: true));
+    emit(state.copyWith(clearSearchFeedback: true));
 
     try {
       final found = await _searchMapTargetByMmsiUseCase(
@@ -199,7 +200,6 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
       if (found == null) {
         emit(
           state.copyWith(
-            isSearching: false,
             searchFeedbackMessage:
                 'Không tìm thấy đối tượng AIS có MMSI "$query".',
           ),
@@ -213,33 +213,22 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
 
       emit(
         state.copyWith(
-          isSearching: false,
           targets: updatedMap.values.toList(growable: false),
           targetsByMmsi: updatedMap,
           selectedTarget: found,
           cameraFocusTarget: found,
           cameraMoveRequestId: state.cameraMoveRequestId + 1,
-          detailSheetRequestId: state.detailSheetRequestId + 1,
         ),
       );
     } on DioException catch (e) {
       if (e.type == DioExceptionType.cancel || isClosed) return;
-      final failure = ErrorMapper.map(e);
-      emit(
-        state.copyWith(
-          isSearching: false,
-          searchFeedbackMessage: failure.message,
-        ),
-      );
+      emit(state.copyWith(searchFeedbackMessage: ErrorMapper.map(e).message));
+    } on Failure catch (failure) {
+      if (isClosed) return;
+      emit(state.copyWith(searchFeedbackMessage: failure.message));
     } catch (e) {
       if (isClosed) return;
-      final failure = ErrorMapper.map(e);
-      emit(
-        state.copyWith(
-          isSearching: false,
-          searchFeedbackMessage: failure.message,
-        ),
-      );
+      emit(state.copyWith(searchFeedbackMessage: ErrorMapper.map(e).message));
     }
   }
 
@@ -283,13 +272,7 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
 
       // Khi auto-refresh mà không có bất kỳ đối tượng nào thay đổi -> giữ nguyên list cũ
       if (isAutoRefresh && !hasChanged && state.errorMessage == null) {
-        emit(
-          state.copyWith(
-            isInitialLoading: false,
-            isRefreshing: false,
-            lastUpdatedAt: DateTime.now(),
-          ),
-        );
+        emit(state.copyWith(isInitialLoading: false, isRefreshing: false));
         return;
       }
 
@@ -301,21 +284,22 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
           isInitialLoading: false,
           isRefreshing: false,
           clearError: true,
-          lastUpdatedAt: DateTime.now(),
         ),
       );
     } on DioException catch (e) {
       // Bỏ qua hoàn toàn nếu request chủ động bị hủy bởi CancelToken
       if (e.type == DioExceptionType.cancel || isClosed) return;
-      _handleFetchError(e);
+      _handleFailure(ErrorMapper.map(e));
+    } on Failure catch (failure) {
+      if (isClosed) return;
+      _handleFailure(failure);
     } catch (e) {
       if (isClosed) return;
-      _handleFetchError(e);
+      _handleFailure(ErrorMapper.map(e));
     }
   }
 
-  void _handleFetchError(Object error) {
-    final failure = ErrorMapper.map(error);
+  void _handleFailure(Failure failure) {
     emit(
       state.copyWith(
         isInitialLoading: false,

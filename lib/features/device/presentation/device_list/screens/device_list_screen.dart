@@ -288,7 +288,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                           Text(
                             hasFilter
                                 ? 'Thử thay đổi từ khóa tìm kiếm hoặc bỏ bộ lọc trạng thái.'
-                                : 'Kéo xuống để làm mới danh sách thiết bị.',
+                                : 'Hãy thêm thiết bị mới vào danh sách thiết bị.',
                             textAlign: TextAlign.center,
                             style: AppTextStyles.s13w400(
                               color: AppColors.textSecondary,

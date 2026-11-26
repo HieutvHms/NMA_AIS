@@ -11,15 +11,12 @@ class MapMonitoringState extends Equatable {
   final MapBoundsEntity? currentBounds;
   final bool isInitialLoading;
   final bool isRefreshing;
-  final bool isSearching;
   final String? errorMessage;
   final bool isNetworkError;
   final AisTargetEntity? selectedTarget;
   final AisTargetEntity? cameraFocusTarget;
   final int cameraMoveRequestId;
-  final int detailSheetRequestId;
   final String? searchFeedbackMessage;
-  final DateTime? lastUpdatedAt;
 
   const MapMonitoringState({
     this.targets = const [],
@@ -30,15 +27,12 @@ class MapMonitoringState extends Equatable {
     this.currentBounds,
     this.isInitialLoading = true,
     this.isRefreshing = false,
-    this.isSearching = false,
     this.errorMessage,
     this.isNetworkError = false,
     this.selectedTarget,
     this.cameraFocusTarget,
     this.cameraMoveRequestId = 0,
-    this.detailSheetRequestId = 0,
     this.searchFeedbackMessage,
-    this.lastUpdatedAt,
   });
 
   int get totalInView => targets.length;
@@ -55,19 +49,15 @@ class MapMonitoringState extends Equatable {
     MapBoundsEntity? currentBounds,
     bool? isInitialLoading,
     bool? isRefreshing,
-    bool? isSearching,
     String? errorMessage,
     bool clearError = false,
     bool? isNetworkError,
     AisTargetEntity? selectedTarget,
     bool clearSelectedTarget = false,
     AisTargetEntity? cameraFocusTarget,
-    bool clearCameraFocusTarget = false,
     int? cameraMoveRequestId,
-    int? detailSheetRequestId,
     String? searchFeedbackMessage,
     bool clearSearchFeedback = false,
-    DateTime? lastUpdatedAt,
   }) {
     return MapMonitoringState(
       targets: targets ?? this.targets,
@@ -80,22 +70,18 @@ class MapMonitoringState extends Equatable {
       currentBounds: currentBounds ?? this.currentBounds,
       isInitialLoading: isInitialLoading ?? this.isInitialLoading,
       isRefreshing: isRefreshing ?? this.isRefreshing,
-      isSearching: isSearching ?? this.isSearching,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
-      isNetworkError:
-          clearError ? false : (isNetworkError ?? this.isNetworkError),
+      isNetworkError: clearError
+          ? false
+          : (isNetworkError ?? this.isNetworkError),
       selectedTarget: clearSelectedTarget
           ? null
           : (selectedTarget ?? this.selectedTarget),
-      cameraFocusTarget: clearCameraFocusTarget
-          ? null
-          : (cameraFocusTarget ?? this.cameraFocusTarget),
+      cameraFocusTarget: cameraFocusTarget ?? this.cameraFocusTarget,
       cameraMoveRequestId: cameraMoveRequestId ?? this.cameraMoveRequestId,
-      detailSheetRequestId: detailSheetRequestId ?? this.detailSheetRequestId,
       searchFeedbackMessage: clearSearchFeedback
           ? null
           : (searchFeedbackMessage ?? this.searchFeedbackMessage),
-      lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
     );
   }
 
@@ -106,16 +92,13 @@ class MapMonitoringState extends Equatable {
     isLoadingAllTargets,
     allTargetsError,
     currentBounds,
-        isInitialLoading,
-        isRefreshing,
-        isSearching,
-        errorMessage,
-        isNetworkError,
-        selectedTarget,
-        cameraFocusTarget,
-        cameraMoveRequestId,
-        detailSheetRequestId,
-        searchFeedbackMessage,
-        lastUpdatedAt,
-      ];
+    isInitialLoading,
+    isRefreshing,
+    errorMessage,
+    isNetworkError,
+    selectedTarget,
+    cameraFocusTarget,
+    cameraMoveRequestId,
+    searchFeedbackMessage,
+  ];
 }

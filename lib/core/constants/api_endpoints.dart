@@ -20,6 +20,5 @@ class ApiEndpoints {
   static const String resetPassword = '/user/reset-password';
 
   // Giám sát bản đồ AIS
-  // TODO: Điền endpoint thật từ Backend khi đã chốt API
-  static const String mapTargets = '/ais/targets';
+  static const String aisData = '/ais/data';
 }

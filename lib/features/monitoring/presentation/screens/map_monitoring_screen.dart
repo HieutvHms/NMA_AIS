@@ -161,6 +161,7 @@ class _MapMonitoringScreenState extends State<MapMonitoringScreen>
   }
 
   Future<void> _moveCameraToTarget(AisTargetEntity target) async {
+    if (target.latitude == 0.0 && target.longitude == 0.0) return;
     final targetZoom = math.max(_currentZoom, AppConstants.mapTargetFocusZoom);
     await _mapController?.animateCamera(
       CameraUpdate.newLatLngZoom(
@@ -295,7 +296,7 @@ class _MapMonitoringScreenState extends State<MapMonitoringScreen>
               ),
             ),
 
-            // 2. Thanh trên cùng: nút Danh sách & trạng thái đồng bộ
+            // 2. Thanh trên cùng: nút Danh sách
             Positioned(
               top: 0,
               left: 0,

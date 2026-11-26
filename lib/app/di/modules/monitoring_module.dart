@@ -1,7 +1,5 @@
 import 'package:get_it/get_it.dart';
-import '../../../core/config/app_config.dart';
 import '../../../core/network/dio_client.dart';
-import '../../../features/monitoring/data/datasources/map_mock_datasource.dart';
 import '../../../features/monitoring/data/datasources/map_remote_data_source_impl.dart';
 import '../../../features/monitoring/data/datasources/map_remote_datasource.dart';
 import '../../../features/monitoring/data/repositories/map_repository_impl.dart';
@@ -12,11 +10,8 @@ import '../../../features/monitoring/domain/usecases/search_map_target_by_mmsi_u
 import '../../../features/monitoring/presentation/cubit/map_monitoring_cubit.dart';
 
 void registerMonitoringModule(GetIt sl) {
-  // Chuyển đổi linh hoạt giữa Mock (~2.000 đối tượng) và API thật qua cờ AppConfig.useMockMapData
   sl.registerLazySingleton<MapRemoteDataSource>(
-    () => AppConfig.useMockMapData
-        ? MapMockDataSource()
-        : MapRemoteDataSourceImpl(sl<DioClient>().dio),
+    () => MapRemoteDataSourceImpl(sl<DioClient>().dio),
   );
 
   sl.registerLazySingleton<MapRepository>(

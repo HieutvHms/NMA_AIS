@@ -11,7 +11,6 @@ import '../cubit/map_monitoring_cubit.dart';
 import '../cubit/map_monitoring_state.dart';
 
 /// Bottom Sheet hiển thị TOÀN BỘ danh sách trạm và tàu mà user được phép xem
-/// (không phụ thuộc vào vùng nhìn hiện tại trên bản đồ).
 class AisTargetListSheet extends StatefulWidget {
   final ValueChanged<AisTargetEntity> onTargetTap;
   final ValueChanged<String> onSearchGlobalMmsi;
@@ -64,9 +63,6 @@ class _AisTargetListSheetState extends State<AisTargetListSheet> {
     return source
         .where((item) {
           return item.mmsi.toLowerCase().contains(trimmed) ||
-              AisTypeMapper.shortLabel(
-                item.type,
-              ).toLowerCase().contains(trimmed) ||
               AisTypeMapper.detailLabel(
                 item.type,
               ).toLowerCase().contains(trimmed);
@@ -156,8 +152,8 @@ class _AisTargetListSheetState extends State<AisTargetListSheet> {
                               onPressed: () => Navigator.of(context).pop(),
                               visualDensity: VisualDensity.compact,
                               icon: Icon(
-                                Icons.close_rounded,
-                                size: 22.r,
+                                Icons.close,
+                                size: 20.r,
                                 color: AppColors.textSecondary,
                               ),
                             ),
@@ -168,8 +164,8 @@ class _AisTargetListSheetState extends State<AisTargetListSheet> {
                         padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 10.h),
                         child: AppSearchBar(
                           controller: _searchController,
-                          hintText: 'Tìm kiếm theo mã MMSI hoặc Type...',
-                          height: 40.h,
+                          hintText: 'Tìm kiếm theo mã MMSI',
+                          height: 36.h,
                           backgroundColor: AppColors.surfaceSecondary,
                           border: Border.all(color: AppColors.borderDark),
                           textStyle: AppTextStyles.s14w500(
@@ -278,16 +274,12 @@ class _AisTargetListSheetState extends State<AisTargetListSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.search_off_rounded,
-              size: 36.r,
-              color: AppColors.textMuted,
-            ),
+            Icon(Icons.search_off, size: 36.r, color: AppColors.textMuted),
             SizedBox(height: 8.h),
             Text(
               hasQuery
-                  ? 'Không tìm thấy đối tượng "$trimmed".'
-                  : 'Chưa có trạm hoặc tàu nào được phân quyền.',
+                  ? 'Không tìm thấy đối tượng "$trimmed"'
+                  : 'Chưa có trạm hoặc tàu nào được phân quyền',
               textAlign: TextAlign.center,
               style: AppTextStyles.s13w500(color: AppColors.textSecondary),
             ),
@@ -306,25 +298,39 @@ class _AisTargetListSheetState extends State<AisTargetListSheet> {
         children: [
           SizedBox(
             width: 38.w,
-            child: Text('STT', style: headerStyle),
+            child: Text('STT', style: headerStyle, textAlign: TextAlign.center),
           ),
           SizedBox(
             width: 38.w,
-            child: Center(child: Text('Icon', style: headerStyle)),
+            child: Center(
+              child: Text(
+                'Icon',
+                style: headerStyle,
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
           Expanded(
             flex: 4,
-            child: Padding(
-              padding: EdgeInsets.only(left: 6.w),
-              child: Text('MMSI', style: headerStyle),
+            child: Text(
+              'MMSI',
+              style: headerStyle,
+              textAlign: TextAlign.center,
             ),
           ),
-          Expanded(flex: 3, child: Text('Type', style: headerStyle)),
+          Expanded(
+            flex: 3,
+            child: Text(
+              'Type',
+              style: headerStyle,
+              textAlign: TextAlign.center,
+            ),
+          ),
           SizedBox(
             width: 68.w,
             child: Text(
               'Thời gian',
-              textAlign: TextAlign.end,
+              textAlign: TextAlign.center,
               style: headerStyle,
             ),
           ),
@@ -359,6 +365,7 @@ class _TargetRowItem extends StatelessWidget {
               width: 38.w,
               child: Text(
                 '$stt',
+                textAlign: TextAlign.center,
                 style: AppTextStyles.s12w500(color: AppColors.textSecondary),
               ),
             ),
@@ -376,22 +383,21 @@ class _TargetRowItem extends StatelessWidget {
             ),
             Expanded(
               flex: 4,
-              child: Padding(
-                padding: EdgeInsets.only(left: 6.w),
-                child: Text(
-                  target.mmsi,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.s13w600(color: AppColors.textPrimary),
-                ),
+              child: Text(
+                target.mmsi,
+                maxLines: 1,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.s13w600(color: AppColors.textPrimary),
               ),
             ),
             Expanded(
               flex: 3,
               child: Text(
-                AisTypeMapper.shortLabel(target.type),
+                '${target.type}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
                 style: AppTextStyles.s12w500(color: AppColors.textPrimary),
               ),
             ),
@@ -399,7 +405,7 @@ class _TargetRowItem extends StatelessWidget {
               width: 68.w,
               child: Text(
                 target.formattedTime,
-                textAlign: TextAlign.end,
+                textAlign: TextAlign.center,
                 style: AppTextStyles.s12w500(color: AppColors.textSecondary),
               ),
             ),

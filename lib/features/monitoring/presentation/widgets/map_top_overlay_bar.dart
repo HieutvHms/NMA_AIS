@@ -30,8 +30,7 @@ class MapTopOverlayBar extends StatelessWidget {
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.surface,
-                  foregroundColor: AppColors.primary,
-                  elevation: 2,
+                  elevation: 4,
                   shadowColor: AppColors.primary.withValues(alpha: 0.14),
                   padding: EdgeInsets.symmetric(horizontal: 12.w),
                   side: const BorderSide(color: AppColors.primary, width: 0.8),

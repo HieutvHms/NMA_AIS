@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../app/theme/text_style.dart';
 
-/// Banner thông báo các trạng thái trên bản đồ: Đang tải lần đầu, Trống vùng nhìn, Lỗi / Mất mạng.
+// Banner thông báo các trạng thái trên bản đồ: Đang tải lần đầu, Trống vùng nhìn, Lỗi / Mất mạng.
 class MapStatusBanner extends StatelessWidget {
   final bool isInitialLoading;
   final bool isEmptyInView;
@@ -87,28 +87,6 @@ class MapStatusBanner extends StatelessWidget {
               child: Text(
                 'Thử lại',
                 style: AppTextStyles.s12w600(color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (isEmptyInView) {
-      return _buildCard(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.explore_off_outlined,
-              size: 18.r,
-              color: AppColors.textSecondary,
-            ),
-            SizedBox(width: 8.w),
-            Flexible(
-              child: Text(
-                'Không có đối tượng AIS trong vùng nhìn hiện tại.',
-                style: AppTextStyles.s12w500(color: AppColors.textSecondary),
               ),
             ),
           ],
