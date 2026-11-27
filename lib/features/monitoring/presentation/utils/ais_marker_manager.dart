@@ -117,15 +117,17 @@ class AisMarkerManager {
     double zoom,
   ) {
     final step = _gridStepForZoom(zoom);
-    if (step <= 0.0) return state.targetsByMmsi;
-
     final selectedMmsi = state.selectedTarget?.mmsi;
     final visible = <String, AisTargetEntity>{};
     final occupiedVesselCells = <int>{};
 
     for (final target in state.targets) {
-      // Luôn giữ 100% Trạm/Đèn biển và đối tượng đang được chọn
-      if (target.isStationOrAton || target.mmsi == selectedMmsi) {
+      // // Bỏ qua các bản ghi lỗi tọa độ (0, 0) khỏi bản đồ
+      // if (target.latitude == 0.0 && target.longitude == 0.0) continue;
+      // Zoom gần hoặc Trạm/Đèn biển hoặc đối tượng đang chọn -> luôn giữ 100%
+      if (step <= 0.0 ||
+          target.isStationOrAton ||
+          target.mmsi == selectedMmsi) {
         visible[target.mmsi] = target;
         continue;
       }

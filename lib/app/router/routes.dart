@@ -16,6 +16,7 @@ import '../../features/device/presentation/device_list/screens/device_list_scree
 import '../../features/device/presentation/device_table/screens/device_table_screen.dart';
 import '../../features/monitoring/presentation/cubit/map_monitoring_cubit.dart';
 import '../../features/monitoring/presentation/screens/map_monitoring_screen.dart';
+import '../../features/overview/presentation/cubit/overview_cubit.dart';
 import '../../features/overview/presentation/screens/overview_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/device_management/domain/entities/managed_device_entity.dart';
@@ -80,7 +81,10 @@ GoRouter createRouter(AuthCubit authCubit) {
             routes: [
               GoRoute(
                 path: '/overview',
-                builder: (context, state) => const OverviewScreen(),
+                builder: (context, state) => BlocProvider(
+                  create: (_) => sl<OverviewCubit>()..loadOverview(),
+                  child: const OverviewScreen(),
+                ),
               ),
             ],
           ),

@@ -1,18 +1,19 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/ais_target_entity.dart';
-import '../../domain/entities/map_bounds_entity.dart';
 
 class MapMonitoringState extends Equatable {
   final List<AisTargetEntity> targets;
   final Map<String, AisTargetEntity> targetsByMmsi;
+
   final List<AisTargetEntity> allTargets;
   final bool isLoadingAllTargets;
   final String? allTargetsError;
-  final MapBoundsEntity? currentBounds;
+
   final bool isInitialLoading;
   final bool isRefreshing;
   final String? errorMessage;
   final bool isNetworkError;
+
   final AisTargetEntity? selectedTarget;
   final AisTargetEntity? cameraFocusTarget;
   final int cameraMoveRequestId;
@@ -24,7 +25,6 @@ class MapMonitoringState extends Equatable {
     this.allTargets = const [],
     this.isLoadingAllTargets = false,
     this.allTargetsError,
-    this.currentBounds,
     this.isInitialLoading = true,
     this.isRefreshing = false,
     this.errorMessage,
@@ -46,7 +46,6 @@ class MapMonitoringState extends Equatable {
     bool? isLoadingAllTargets,
     String? allTargetsError,
     bool clearAllTargetsError = false,
-    MapBoundsEntity? currentBounds,
     bool? isInitialLoading,
     bool? isRefreshing,
     String? errorMessage,
@@ -67,7 +66,6 @@ class MapMonitoringState extends Equatable {
       allTargetsError: clearAllTargetsError
           ? null
           : (allTargetsError ?? this.allTargetsError),
-      currentBounds: currentBounds ?? this.currentBounds,
       isInitialLoading: isInitialLoading ?? this.isInitialLoading,
       isRefreshing: isRefreshing ?? this.isRefreshing,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
@@ -91,7 +89,6 @@ class MapMonitoringState extends Equatable {
     allTargets,
     isLoadingAllTargets,
     allTargetsError,
-    currentBounds,
     isInitialLoading,
     isRefreshing,
     errorMessage,

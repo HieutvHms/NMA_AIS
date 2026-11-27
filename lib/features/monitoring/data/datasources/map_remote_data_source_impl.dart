@@ -3,7 +3,6 @@ import '../../../../core/base/base_remote_datasource.dart';
 import '../../../../core/config/app_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/error/exceptions.dart';
-import '../../domain/entities/map_bounds_entity.dart';
 import '../models/ais_target_model.dart';
 import 'map_remote_datasource.dart';
 
@@ -15,22 +14,15 @@ class MapRemoteDataSourceImpl extends BaseRemoteDataSource
   MapRemoteDataSourceImpl(super.dio);
 
   @override
-  Future<List<AisTargetModel>> getTargetsInBounds(
-    MapBoundsEntity bounds, {
+  Future<List<AisTargetModel>> getAllTargets({
     CancelToken? cancelToken,
+    bool forceRefresh = false,
   }) async {
-    final allTargets = await getAllTargets(cancelToken: cancelToken);
-    return allTargets
-        .where((item) => bounds.contains(item.latitude, item.longitude))
-        .toList(growable: false);
-  }
-
-  @override
-  Future<List<AisTargetModel>> getAllTargets({CancelToken? cancelToken}) async {
     final now = DateTime.now();
     final cacheTTL =
         AppConstants.mapAutoRefreshInterval - const Duration(seconds: 1);
     final isCacheValid =
+        !forceRefresh &&
         _clientFilterCache != null &&
         _lastFullFetchTime != null &&
         now.difference(_lastFullFetchTime!) < cacheTTL;

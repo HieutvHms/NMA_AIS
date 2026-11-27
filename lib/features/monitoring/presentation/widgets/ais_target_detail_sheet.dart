@@ -115,7 +115,7 @@ class AisTargetDetailSheet extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Thông tin ${target.displayTitle}',
+                              'Thông tin ${target.mmsi}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.s16w600(
@@ -162,8 +162,8 @@ class AisTargetDetailSheet extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _InfoRow(label: 'MMSI', value: target.mmsi),
-                    _InfoRow(label: 'MMSI Type', value: target.mmsiType),
+                    // _InfoRow(label: 'MMSI', value: target.mmsi),
+                    _InfoRow(label: 'MMSI Type', value: target.name),
                     _InfoRow(
                       label: 'Lat',
                       value: target.latitude.toStringAsFixed(6),

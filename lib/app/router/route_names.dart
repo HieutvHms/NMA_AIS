@@ -6,8 +6,10 @@ class RouteNames {
   // Auth
   static const String splash = '/';
   static const String login = '/login';
+  // Tổng quan
   static const String overview = '/overview';
   static const String devices = '/devices';
+  // Bảng
   static const String deviceTable = '/devices/table';
   static const String monitoring = '/monitoring';
   static const String profile = '/profile';

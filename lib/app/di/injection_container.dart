@@ -6,6 +6,7 @@ import 'modules/device_management_module.dart';
 import 'modules/device_module.dart';
 import 'modules/member_management_module.dart';
 import 'modules/monitoring_module.dart';
+import 'modules/overview_module.dart';
 
 final sl = GetIt.instance;
 
@@ -17,4 +18,5 @@ Future<void> setupDependencies() async {
   registerMemberManagementModule(sl);
   registerAisConfigModule(sl);
   registerMonitoringModule(sl);
+  registerOverviewModule(sl);
 }

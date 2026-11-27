@@ -174,24 +174,20 @@ class AppConfirmDialog extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Title
               Text(
                 title,
                 style: AppTextStyles.s16w600(color: textColor),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 10.h),
-              // Subtitle
               Text(
                 subtitle,
                 style: AppTextStyles.s13w500(color: subtextColor),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 24.h),
-              // Buttons
               Row(
                 children: [
-                  // Cancel
                   Expanded(
                     child: _DialogOutlinedButton(
                       text: cancelText,

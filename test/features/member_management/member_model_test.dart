@@ -30,7 +30,10 @@ void main() {
         isEmpty,
       );
       expect(
-        MemberModel.fromJson({'username': 'u3', 'udpPort': '8001, 8002'}).udpPort,
+        MemberModel.fromJson({
+          'username': 'u3',
+          'udpPort': '8001, 8002',
+        }).udpPort,
         ['8001', '8002'],
       );
     });
@@ -56,10 +59,7 @@ void main() {
     });
 
     test('toCreateJson and toUpdateJson send empty list when no ports', () {
-      const model = MemberModel(
-        userId: 5,
-        username: 'user_con',
-      );
+      const model = MemberModel(userId: 5, username: 'user_con');
 
       expect(model.toCreateJson(1)['udpPort'], isEmpty);
       expect(model.toUpdateJson()['udpPort'], isEmpty);

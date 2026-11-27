@@ -5,56 +5,33 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/error/error_mapper.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/ais_target_entity.dart';
-import '../../domain/entities/map_bounds_entity.dart';
 import '../../domain/usecases/get_all_map_targets_usecase.dart';
-import '../../domain/usecases/get_map_targets_usecase.dart';
 import '../../domain/usecases/search_map_target_by_mmsi_usecase.dart';
 import 'map_monitoring_state.dart';
 
 class MapMonitoringCubit extends Cubit<MapMonitoringState> {
-  final GetMapTargetsUseCase _getMapTargetsUseCase;
   final GetAllMapTargetsUseCase _getAllMapTargetsUseCase;
   final SearchMapTargetByMmsiUseCase _searchMapTargetByMmsiUseCase;
 
-  Timer? _cameraDebounceTimer;
   Timer? _autoRefreshTimer;
-  CancelToken? _viewportCancelToken;
+  CancelToken? _mapCancelToken;
   CancelToken? _allTargetsCancelToken;
   CancelToken? _searchCancelToken;
   bool _isScreenActive = true;
 
   MapMonitoringCubit({
-    required GetMapTargetsUseCase getMapTargetsUseCase,
     required GetAllMapTargetsUseCase getAllMapTargetsUseCase,
     required SearchMapTargetByMmsiUseCase searchMapTargetByMmsiUseCase,
-  }) : _getMapTargetsUseCase = getMapTargetsUseCase,
-       _getAllMapTargetsUseCase = getAllMapTargetsUseCase,
+  }) : _getAllMapTargetsUseCase = getAllMapTargetsUseCase,
        _searchMapTargetByMmsiUseCase = searchMapTargetByMmsiUseCase,
        super(const MapMonitoringState()) {
     _startAutoRefreshTimer();
+    _fetchTargets(isAutoRefresh: false);
   }
 
-  // Được gọi khi người dùng dừng kéo/zoom bản đồ
-  void onViewportChanged(MapBoundsEntity bounds) {
-    if (!_isScreenActive) return;
-
-    _cameraDebounceTimer?.cancel();
-    _cameraDebounceTimer = Timer(AppConstants.mapCameraDebounce, () {
-      _fetchTargetsForBounds(bounds, isAutoRefresh: false);
-    });
-  }
-
-  // Thử tải lại vùng nhìn hiện tại khi gặp lỗi mạng / máy chủ.
+  // Thử tải lại dữ liệu khi gặp lỗi mạng / máy chủ.
   Future<void> retry() async {
-    final bounds =
-        state.currentBounds ??
-        const MapBoundsEntity(
-          minLat: 8.0,
-          minLng: 104.0,
-          maxLat: 21.0,
-          maxLng: 112.0,
-        );
-    await _fetchTargetsForBounds(bounds, isAutoRefresh: false);
+    await _fetchTargets(isAutoRefresh: false, forceRefresh: true);
   }
 
   /// Điều khiển tạm dừng / tiếp tục timer 10s khi chuyển tab hoặc app vào background.
@@ -63,20 +40,16 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
     _isScreenActive = active;
 
     if (!active) {
-      _cameraDebounceTimer?.cancel();
       _autoRefreshTimer?.cancel();
       _autoRefreshTimer = null;
-      _viewportCancelToken?.cancel('Screen inactive');
+      _mapCancelToken?.cancel('Screen inactive');
       _searchCancelToken?.cancel('Screen inactive');
       if (state.isRefreshing) {
         emit(state.copyWith(isRefreshing: false));
       }
     } else {
       _startAutoRefreshTimer();
-      final bounds = state.currentBounds;
-      if (bounds != null) {
-        _fetchTargetsForBounds(bounds, isAutoRefresh: true);
-      }
+      _fetchTargets(isAutoRefresh: true);
     }
   }
 
@@ -98,7 +71,10 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
     );
 
     try {
-      final all = await _getAllMapTargetsUseCase(cancelToken: token);
+      final all = await _getAllMapTargetsUseCase(
+        cancelToken: token,
+        forceRefresh: forceRefresh,
+      );
       if (isClosed || token.isCancelled) return;
       emit(
         state.copyWith(
@@ -232,21 +208,20 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
     }
   }
 
-  Future<void> _fetchTargetsForBounds(
-    MapBoundsEntity bounds, {
+  Future<void> _fetchTargets({
     required bool isAutoRefresh,
+    bool forceRefresh = false,
   }) async {
     if (!_isScreenActive || isClosed) return;
 
-    // Hủy ngay request vùng nhìn trước đó để tránh race condition
-    _viewportCancelToken?.cancel('Superseded by newer viewport request');
+    // Hủy ngay request trước đó để tránh race condition
+    _mapCancelToken?.cancel('Superseded by newer map request');
     final token = CancelToken();
-    _viewportCancelToken = token;
+    _mapCancelToken = token;
 
     final isFirstLoad = state.isInitialLoading && state.targets.isEmpty;
     emit(
       state.copyWith(
-        currentBounds: bounds,
         isInitialLoading: isFirstLoad,
         isRefreshing: !isFirstLoad,
         clearError: !isAutoRefresh,
@@ -254,7 +229,10 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
     );
 
     try {
-      final fetched = await _getMapTargetsUseCase(bounds, cancelToken: token);
+      final fetched = await _getAllMapTargetsUseCase(
+        cancelToken: token,
+        forceRefresh: forceRefresh || isAutoRefresh,
+      );
       if (isClosed || token.isCancelled) return;
 
       // Giữ lại đối tượng đang được chọn (nếu có) để tránh mất marker đang xem chi tiết
@@ -327,21 +305,16 @@ class MapMonitoringCubit extends Cubit<MapMonitoringState> {
     _autoRefreshTimer = Timer.periodic(AppConstants.mapAutoRefreshInterval, (
       _,
     ) {
-      final bounds = state.currentBounds;
-      if (_isScreenActive &&
-          bounds != null &&
-          !state.isInitialLoading &&
-          !state.isRefreshing) {
-        _fetchTargetsForBounds(bounds, isAutoRefresh: true);
+      if (_isScreenActive && !state.isInitialLoading && !state.isRefreshing) {
+        _fetchTargets(isAutoRefresh: true);
       }
     });
   }
 
   @override
   Future<void> close() {
-    _cameraDebounceTimer?.cancel();
     _autoRefreshTimer?.cancel();
-    _viewportCancelToken?.cancel('Cubit closed');
+    _mapCancelToken?.cancel('Cubit closed');
     _allTargetsCancelToken?.cancel('Cubit closed');
     _searchCancelToken?.cancel('Cubit closed');
     return super.close();

@@ -7,7 +7,13 @@ class GetAllMapTargetsUseCase {
 
   const GetAllMapTargetsUseCase(this._repository);
 
-  Future<List<AisTargetEntity>> call({CancelToken? cancelToken}) {
-    return _repository.getAllTargets(cancelToken: cancelToken);
+  Future<List<AisTargetEntity>> call({
+    CancelToken? cancelToken,
+    bool forceRefresh = false,
+  }) {
+    return _repository.getAllTargets(
+      cancelToken: cancelToken,
+      forceRefresh: forceRefresh,
+    );
   }
 }
