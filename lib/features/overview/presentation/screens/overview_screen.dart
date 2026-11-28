@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/router/route_names.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/text_style.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../cubit/overview_cubit.dart';
 import '../cubit/overview_state.dart';
 import '../widgets/overview_alerts_section.dart';
@@ -23,7 +24,7 @@ class OverviewScreen extends StatelessWidget {
         bottom: false,
         child: BlocBuilder<OverviewCubit, OverviewState>(
           builder: (context, state) {
-            return RefreshIndicator(
+            return RefreshIndicator.adaptive(
               color: AppColors.primary,
               onRefresh: () =>
                   context.read<OverviewCubit>().loadOverview(isRefresh: true),
@@ -58,6 +59,7 @@ class OverviewScreen extends StatelessWidget {
                               icon: Icons.router_rounded,
                               iconColor: AppColors.primary,
                               iconBgColor: AppColors.primaryLight,
+                              bannerAsset: AppAssets.kpi4gBanner,
                               count: state.totalDevices,
                               title: 'Thiết bị 4G',
                               hasError: state.devicesError != null,
@@ -74,22 +76,23 @@ class OverviewScreen extends StatelessWidget {
                               onTap: () => context.go(RouteNames.devices),
                             ),
                           ),
-                          SizedBox(width: 12.w),
+                          SizedBox(width: 8.w),
                           Expanded(
                             child: OverviewKpiCard(
                               icon: Icons.radar_rounded,
                               iconColor: const Color(0xFF0F766E),
                               iconBgColor: const Color(0xFFCCFBF1),
+                              bannerAsset: AppAssets.kpiAisBanner,
                               count: state.totalAisTargets,
                               title: 'Tàu và Phao AIS',
                               hasError: state.aisError != null,
                               metrics: [
                                 OverviewKpiMetric(
-                                  dotColor: AppColors.primary,
+                                  dotColor: AppColors.primaryDark,
                                   label: '${state.vesselCount} Tàu thuyền',
                                 ),
                                 OverviewKpiMetric(
-                                  dotColor: const Color(0xFF0F766E),
+                                  dotColor: AppColors.primaryDark,
                                   label:
                                       '${state.stationOrAtonCount} Phao / Đèn',
                                 ),

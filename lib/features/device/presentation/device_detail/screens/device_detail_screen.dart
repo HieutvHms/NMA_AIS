@@ -30,7 +30,7 @@ class DeviceDetailScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios,
-            size: 20,
+            size: 18,
             color: AppColors.textAppbar,
           ),
           onPressed: () => context.pop(),

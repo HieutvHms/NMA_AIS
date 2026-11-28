@@ -35,13 +35,15 @@ class OverviewState extends Equatable {
       .where((d) => d.status == DeviceStatus.offline)
       .toList(growable: false);
 
-  List<AisTargetEntity> get abnormalAtonList => aisTargets.where((t) {
-    if (!t.isStationOrAton) return false;
-    final lowVoltage =
-        t.voltage != null && t.voltage! > 0 && t.voltage! < 11.5;
-    final lightError = t.lightStatus?.toUpperCase() == 'ERROR';
-    return lowVoltage || lightError;
-  }).toList(growable: false);
+  List<AisTargetEntity> get abnormalAtonList => aisTargets
+      .where((t) {
+        if (!t.isStationOrAton) return false;
+        final lowVoltage =
+            t.voltage != null && t.voltage! > 0 && t.voltage! < 11.5;
+        final lightError = t.lightStatus?.toUpperCase() == 'ERROR';
+        return lowVoltage || lightError;
+      })
+      .toList(growable: false);
 
   int get totalAlerts => offlineDeviceList.length + abnormalAtonList.length;
 

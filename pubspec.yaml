@@ -46,9 +46,9 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/logo_hms.png"
+  image_path: "assets/images/ais_logo.png"
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/logo_hms.png"
+  adaptive_icon_foreground: "assets/images/ais_logo.png"
 
 flutter:
   uses-material-design: true

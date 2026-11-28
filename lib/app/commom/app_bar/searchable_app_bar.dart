@@ -8,20 +8,19 @@ import '../../../../../app/theme/app_colors.dart';
 
 import '../inputs/app_search_bar.dart';
 
-/// AppBar chuẩn chung có hỗ trợ hiệu ứng chuyển cảnh mượt mà giữa chế độ thường và tìm kiếm
 class SearchableAppBar extends StatefulWidget implements PreferredSizeWidget {
-  // --- Tiêu đề & Căn chỉnh ---
+  //  Tiêu đề & Căn chỉnh
   final String? title;
   final Widget? titleWidget;
   final TextStyle? titleStyle;
   final bool centerTitle;
 
-  // --- Nút điều hướng (Leading) ---
+  //  Nút điều hướng
   final Widget? leading;
   final bool showBackButton;
   final VoidCallback? onBack;
 
-  // --- Các nút thao tác phụ (Actions) ---
+  //  Các nút thao tác phụ
   final List<Widget>? actions;
   final bool showSearchIcon;
   final bool searchBeforeActions;
@@ -29,13 +28,12 @@ class SearchableAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String searchSvgPath;
   final Widget? closeSearchIcon;
 
-  // --- Tìm kiếm (Search) ---
+  //  Tìm kiếm
   final TextEditingController? searchController;
   final FocusNode? searchFocusNode;
   final String? searchHintText;
   final TextStyle? searchHintStyle;
-  final ValueChanged<String>?
-  onSearch; // Hỗ trợ tương thích ngược (onSearchChanged)
+  final ValueChanged<String>? onSearch;
   final ValueChanged<String>? onSearchSubmitted;
   final VoidCallback? onSearchOpened;
   final VoidCallback? onSearchClosed;
@@ -45,11 +43,11 @@ class SearchableAppBar extends StatefulWidget implements PreferredSizeWidget {
   final double? searchBorderRadius;
   final double? searchHeight;
 
-  // --- Hiệu ứng Animation ---
+  //  Hiệu ứng Animation
   final Duration animationDuration;
   final Curve animationCurve;
 
-  // --- Giao diện & Màu sắc AppBar ---
+  //  Giao diện & Màu sắc AppBar
   final Color? backgroundColor;
   final Color textColor;
   final double toolbarHeight;
@@ -57,7 +55,7 @@ class SearchableAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Color? surfaceTintColor;
   final SystemUiOverlayStyle? systemOverlayStyle;
 
-  // --- Đường viền & Bottom ---
+  //  Đường viền & Bottom
   final PreferredSizeWidget? bottom;
   final bool showBottomBorder;
   final Color? bottomBorderColor;
@@ -256,11 +254,7 @@ class _SearchableAppBarState extends State<SearchableAppBar>
 
     if (widget.showBackButton) {
       return IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios_new_rounded,
-          color: widget.textColor,
-          size: 20.sp,
-        ),
+        icon: Icon(Icons.arrow_back_ios, color: widget.textColor, size: 18.sp),
         onPressed: _handleBack,
       );
     }

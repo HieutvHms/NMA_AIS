@@ -9,17 +9,13 @@ class AppFilterChipItem {
   final Color? dotColor;
   final Color activeColor;
   final Color? activeBackgroundColor;
-  final Color? activeBorderColor;
-  final Color? activeBadgeColor;
 
   const AppFilterChipItem({
     required this.label,
     this.count,
     this.dotColor,
-    this.activeColor = AppColors.primary,
+    this.activeColor = AppColors.textBlack,
     this.activeBackgroundColor,
-    this.activeBorderColor,
-    this.activeBadgeColor,
   });
 }
 
@@ -46,81 +42,66 @@ class AppFilterChipBar extends StatelessWidget {
         padding:
             padding ?? EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         itemCount: items.length,
-        separatorBuilder: (_, _) => SizedBox(width: 8.w),
+        separatorBuilder: (_, _) => SizedBox(width: 4.w),
         itemBuilder: (context, index) {
           final item = items[index];
           final isSelected = index == selectedIndex;
 
-          final bgColor = isSelected
-              ? (item.activeBackgroundColor ??
-                    item.activeColor.withValues(alpha: 0.12))
-              : Colors.white;
-          final borderColor = isSelected
-              ? (item.activeBorderColor ??
-                    item.activeColor.withValues(alpha: 0.45))
-              : AppColors.borderDark;
+          final activeBgColor =
+              item.activeBackgroundColor ?? AppColors.borderDark;
+          final bgColor = isSelected ? activeBgColor : Colors.transparent;
           final textColor = isSelected
               ? item.activeColor
-              : AppColors.textPrimary;
-          final badgeBgColor = isSelected
-              ? (item.activeBadgeColor ??
-                    item.activeColor.withValues(alpha: 0.18))
-              : const Color(0xFFF1F5F9);
-          final badgeTextColor = isSelected
+              : AppColors.textSecondary;
+          final countColor = isSelected
               ? item.activeColor
               : AppColors.textSecondary;
 
-          return Material(
-            color: bgColor,
-            shape: StadiumBorder(
-              side: BorderSide(color: borderColor, width: 1),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: () => onSelected(index),
-              splashColor: item.activeColor.withValues(alpha: 0.1),
-              highlightColor: item.activeColor.withValues(alpha: 0.05),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (item.dotColor != null) ...[
-                      Container(
-                        width: 7.r,
-                        height: 7.r,
-                        decoration: BoxDecoration(
-                          color: item.dotColor,
-                          shape: BoxShape.circle,
-                        ),
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              if (!isSelected) onSelected(index);
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+              decoration: isSelected
+                  ? ShapeDecoration(
+                      color: bgColor,
+                      shape: const StadiumBorder(),
+                    )
+                  : null,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (item.dotColor != null) ...[
+                    Container(
+                      width: 6.5.r,
+                      height: 6.5.r,
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? item.dotColor
+                            : item.dotColor!.withValues(alpha: 0.75),
+                        shape: BoxShape.circle,
                       ),
-                      SizedBox(width: 6.w),
-                    ],
-                    Text(
-                      item.label,
-                      style: isSelected
-                          ? AppTextStyles.s13w600(color: textColor)
-                          : AppTextStyles.s13w500(color: textColor),
                     ),
-                    if (item.count != null) ...[
-                      SizedBox(width: 6.w),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6.w,
-                          vertical: 1.5.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: badgeBgColor,
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Text(
-                          '${item.count}',
-                          style: AppTextStyles.s11w600(color: badgeTextColor),
-                        ),
-                      ),
-                    ],
+                    SizedBox(width: 6.w),
                   ],
-                ),
+                  Text(
+                    item.label,
+                    style: isSelected
+                        ? AppTextStyles.s13w600(color: textColor)
+                        : AppTextStyles.s13w500(color: textColor),
+                  ),
+                  if (item.count != null) ...[
+                    SizedBox(width: 5.w),
+                    Text(
+                      '${item.count}',
+                      style: isSelected
+                          ? AppTextStyles.s12w600(color: countColor)
+                          : AppTextStyles.s12w500(color: countColor),
+                    ),
+                  ],
+                ],
               ),
             ),
           );

@@ -10,7 +10,6 @@ class OverviewKpiMetric {
   const OverviewKpiMetric({required this.dotColor, required this.label});
 }
 
-/// Thẻ KPI trên màn hình Tổng quan (Thiết bị 4G / Tàu & Phao AIS).
 class OverviewKpiCard extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
@@ -20,6 +19,7 @@ class OverviewKpiCard extends StatelessWidget {
   final List<OverviewKpiMetric> metrics;
   final bool hasError;
   final VoidCallback onTap;
+  final String? bannerAsset;
 
   const OverviewKpiCard({
     super.key,
@@ -31,6 +31,7 @@ class OverviewKpiCard extends StatelessWidget {
     required this.metrics,
     this.hasError = false,
     required this.onTap,
+    this.bannerAsset,
   });
 
   String get _formattedCount {
@@ -39,93 +40,158 @@ class OverviewKpiCard extends StatelessWidget {
     return count.toString();
   }
 
+  String get _semanticsLabel {
+    final metricText = metrics.map((m) => m.label).join(', ');
+    if (metricText.isEmpty) return '$_formattedCount $title';
+    return '$_formattedCount $title. $metricText';
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(18.r),
-        border: Border.all(
-          color: hasError
-              ? AppColors.error.withValues(alpha: 0.35)
-              : AppColors.borderDark,
+    final borderRadius = BorderRadius.circular(16.r);
+
+    return Semantics(
+      button: true,
+      excludeSemantics: true,
+      label: _semanticsLabel,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: borderRadius,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 10.r,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10.r,
-            offset: const Offset(0, 4),
+        child: Material(
+          color: AppColors.surface,
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: borderRadius,
+            side: BorderSide(
+              color: hasError
+                  ? AppColors.error.withValues(alpha: 0.35)
+                  : AppColors.borderDark,
+            ),
           ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(18.r),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(18.r),
-          child: Padding(
-            padding: EdgeInsets.all(14.r),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: borderRadius,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  width: 38.r,
-                  height: 38.r,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: iconBgColor,
-                    borderRadius: BorderRadius.circular(11.r),
-                  ),
-                  child: Icon(icon, color: iconColor, size: 22.r),
-                ),
-                SizedBox(height: 12.h),
-                Text(
-                  _formattedCount,
-                  style: AppTextStyles.headlineMedium().copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
-                    height: 1.1,
-                  ),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.s14w600(color: AppColors.textPrimary),
-                ),
-                SizedBox(height: 8.h),
-                for (int i = 0; i < metrics.length; i++) ...[
-                  if (i > 0) SizedBox(height: 4.h),
-                  Row(
+                _buildBanner(),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(10.w, 8.h, 10.w, 12.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 7.r,
-                        height: 7.r,
-                        decoration: BoxDecoration(
-                          color: metrics[i].dotColor,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      SizedBox(width: 6.w),
-                      Expanded(
-                        child: Text(
-                          metrics[i].label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.s12w500(
-                            color: AppColors.textSecondary,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            _formattedCount,
+                            style: AppTextStyles.s16w600(
+                              color: AppColors.textPrimary,
+                            ),
                           ),
-                        ),
+                          SizedBox(width: 6.w),
+                          Expanded(
+                            child: Text(
+                              title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.s13w600(
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+                      SizedBox(height: 6.h),
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: AppColors.borderDark.withValues(alpha: 0.6),
+                      ),
+                      SizedBox(height: 6.h),
+                      for (int i = 0; i < metrics.length; i++) ...[
+                        if (i > 0) SizedBox(height: 6.h),
+                        Row(
+                          children: [
+                            Container(
+                              width: 7.r,
+                              height: 7.r,
+                              decoration: BoxDecoration(
+                                color: metrics[i].dotColor,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            SizedBox(width: 6.w),
+                            Expanded(
+                              child: Text(
+                                metrics[i].label,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.s12w500(
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
-                ],
+                ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBanner() {
+    return SizedBox(
+      height: 56.h,
+      width: double.infinity,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          if (bannerAsset != null)
+            Image.asset(
+              bannerAsset!,
+              fit: BoxFit.cover,
+              cacheWidth: 300,
+              excludeFromSemantics: true,
+              errorBuilder: (_, _, _) => ColoredBox(color: iconBgColor),
+            )
+          else
+            ColoredBox(color: iconBgColor),
+          // Padding(
+          //   padding: EdgeInsets.symmetric(horizontal: 14.w),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Container(
+          //         width: 40.r,
+          //         height: 40.r,
+          //         alignment: Alignment.center,
+          //         decoration: BoxDecoration(
+          //           color: Colors.white.withValues(alpha: 0.85),
+          //           borderRadius: BorderRadius.circular(12.r),
+          //         ),
+          //         child: Icon(icon, color: iconColor, size: 22.r),
+          //       ),
+          //       Icon(Icons.chevron_right_rounded, size: 22.r, color: iconColor),
+          //     ],
+          //   ),
+          // ),
+        ],
       ),
     );
   }

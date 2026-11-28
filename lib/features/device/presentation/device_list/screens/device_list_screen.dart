@@ -47,6 +47,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
   }
 
   void _applyFilter(DeviceStatus? status) {
+    if (_currentStatusFilter == status) return;
     setState(() {
       _currentStatusFilter = status;
     });
@@ -74,6 +75,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
       backgroundColor: AppColors.background,
       appBar: SearchableAppBar(
         title: 'Thiết bị',
+        searchHeight: 36.h,
         titleStyle: AppTextStyles.s16w600(color: AppColors.textAppbar),
         backgroundColor: AppColors.background,
         leading: IconButton(
@@ -128,40 +130,18 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                 selectedIndex: selectedIndex == -1 ? 0 : selectedIndex,
                 onSelected: (index) => _applyFilter(_statusTabs[index]),
                 items: [
-                  AppFilterChipItem(
-                    label: 'Tất cả',
-                    count: loaded?.totalCount,
-                    activeColor: AppColors.primary,
-                    activeBackgroundColor: const Color(0xFFE8F1FC),
-                    activeBorderColor: const Color(0xFF93C5FD),
-                    activeBadgeColor: const Color(0xFFDBEAFE),
-                  ),
+                  AppFilterChipItem(label: 'Tất cả', count: loaded?.totalCount),
                   AppFilterChipItem(
                     label: 'Online',
                     count: loaded?.onlineCount,
-                    dotColor: const Color(0xFF16A34A),
-                    activeColor: const Color(0xFF15803D),
-                    activeBackgroundColor: const Color(0xFFDCFCE7),
-                    activeBorderColor: const Color(0xFF86EFAC),
-                    activeBadgeColor: const Color(0xFFBBF7D0),
                   ),
                   AppFilterChipItem(
                     label: 'Offline',
                     count: loaded?.offlineCount,
-                    dotColor: const Color(0xFFDC2626),
-                    activeColor: const Color(0xFFB91C1C),
-                    activeBackgroundColor: const Color(0xFFFEE2E2),
-                    activeBorderColor: const Color(0xFFFCA5A5),
-                    activeBadgeColor: const Color(0xFFFECACA),
                   ),
                   AppFilterChipItem(
                     label: 'Không xác định',
                     count: loaded?.unknownCount,
-                    dotColor: const Color(0xFF64748B),
-                    activeColor: const Color(0xFF475569),
-                    activeBackgroundColor: const Color(0xFFF1F5F9),
-                    activeBorderColor: const Color(0xFFCBD5E1),
-                    activeBadgeColor: const Color(0xFFE2E8F0),
                   ),
                 ],
               );
@@ -277,35 +257,35 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                           SizedBox(height: 12.h),
                           Text(
                             hasFilter
-                                ? 'Không tìm thấy thiết bị phù hợp'
+                                ? 'Không tìm thấy thiết bị'
                                 : 'Chưa có thiết bị nào',
                             textAlign: TextAlign.center,
                             style: AppTextStyles.s16w600(
                               color: AppColors.textPrimary,
                             ),
                           ),
-                          SizedBox(height: 6.h),
-                          Text(
-                            hasFilter
-                                ? 'Thử thay đổi từ khóa tìm kiếm hoặc bỏ bộ lọc trạng thái.'
-                                : 'Hãy thêm thiết bị mới vào danh sách thiết bị.',
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.s13w400(
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                          if (hasFilter) ...[
-                            SizedBox(height: 12.h),
-                            Center(
-                              child: TextButton(
-                                onPressed: () {
-                                  _searchController.clear();
-                                  _applyFilter(null);
-                                },
-                                child: const Text('Xóa bộ lọc'),
-                              ),
-                            ),
-                          ],
+                          // SizedBox(height: 6.h),
+                          // Text(
+                          //   hasFilter
+                          //       ? 'Thử thay đổi từ khóa tìm kiếm hoặc bỏ bộ lọc trạng thái.'
+                          //       : 'Hãy thêm thiết bị mới vào danh sách thiết bị.',
+                          //   textAlign: TextAlign.center,
+                          //   style: AppTextStyles.s13w400(
+                          //     color: AppColors.textSecondary,
+                          //   ),
+                          // ),
+                          // if (hasFilter) ...[
+                          //   SizedBox(height: 12.h),
+                          //   Center(
+                          //     child: TextButton(
+                          //       onPressed: () {
+                          //         _searchController.clear();
+                          //         _applyFilter(null);
+                          //       },
+                          //       child: const Text('Xóa bộ lọc'),
+                          //     ),
+                          //   ),
+                          // ],
                         ],
                       ),
                     );

@@ -5,7 +5,6 @@ import '../../../../app/theme/text_style.dart';
 import '../../../device/domain/entities/device_entity.dart';
 import '../../../monitoring/domain/entities/ais_target_entity.dart';
 
-/// Khu vực "Cần chú ý": hiển thị các thiết bị ngoại tuyến và phao/đèn bất thường.
 class OverviewAlertsSection extends StatelessWidget {
   final List<DeviceEntity> offlineDevices;
   final List<AisTargetEntity> abnormalAtons;
@@ -61,10 +60,7 @@ class OverviewAlertsSection extends StatelessWidget {
           ],
         ),
         SizedBox(height: 10.h),
-        if (totalAlerts == 0)
-          _buildHealthyCard()
-        else
-          ..._buildAlertItems(),
+        if (totalAlerts == 0) _buildHealthyCard() else ..._buildAlertItems(),
       ],
     );
   }
@@ -124,7 +120,9 @@ class OverviewAlertsSection extends StatelessWidget {
       final title = device.stationName.trim().isNotEmpty
           ? device.stationName.trim()
           : 'Thiết bị ${device.imei}';
-      final lastTime = _formatTime(device.offlineAtUtc ?? device.lastMessageTime);
+      final lastTime = _formatTime(
+        device.offlineAtUtc ?? device.lastMessageTime,
+      );
 
       items.add(
         Padding(

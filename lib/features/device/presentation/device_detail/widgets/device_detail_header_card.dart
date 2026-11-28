@@ -18,11 +18,11 @@ class DeviceDetailHeaderCard extends StatelessWidget {
   Color _getStatusColor(DeviceStatus status) {
     switch (status) {
       case DeviceStatus.online:
-        return const Color(0xFF15803D);
+        return AppColors.online;
       case DeviceStatus.offline:
-        return const Color(0xFFDC2626);
+        return AppColors.offline;
       case DeviceStatus.unknown:
-        return const Color(0xFF64748B);
+        return AppColors.unknown;
     }
   }
 
